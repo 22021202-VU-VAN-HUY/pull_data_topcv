@@ -1,0 +1,19 @@
+services:
+  db:
+    image: postgres:16
+    container_name: topcv-postgres
+    restart: unless-stopped
+
+    # Lấy biến môi trường từ file ../.env (ở thư mục gốc)
+    env_file:
+      - ../.env
+
+    ports:
+      - "5440:5432"   # host:container
+
+    volumes:
+      - topcv_pg_data:/var/lib/postgresql/data
+      - ../db/db.sql:/docker-entrypoint-initdb.d/db.sql:ro
+
+volumes:
+  topcv_pg_data:

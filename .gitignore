@@ -1,7 +1,7 @@
 .env
 .env/example
 .venv
-/docker
+
 .example
 export_job_1.json
 export_job_3212.json
