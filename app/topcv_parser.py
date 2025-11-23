@@ -1,14 +1,56 @@
-# app/topcv_parser.py
+# -*- coding: utf-8 -*-
+"""
+Parser chi tiết 1 job trên TopCV.
+
+Trả về dict dạng:
+
+{
+  "url": ...,
+  "title": ...,
+  "salary": {
+    "min": ...,
+    "max": ...,
+    "currency": ...,
+    "interval": ...,
+    "raw_text": ...
+  },
+  "locations": [...],
+  "experience": {
+    "months": ...,
+    "raw_text": ...
+  },
+  "detail_sections": {
+    "mo_ta_cong_viec": {"html": ..., "text": ...},
+    "yeu_cau_ung_vien": {...},
+    ...
+  },
+  "deadline": ...,
+  "company": {
+    "name": ...,
+    "url": ...,
+    "logo": ...,
+    "size": ...,
+    "industry": ...,
+    "address": ...
+  },
+  "general_info": {
+    "cap_bac": ...,
+    "hoc_van": ...,
+    "so_luong_tuyen": ...,
+    "hinh_thuc_lam_viec": ...,
+    "hinh_thuc_lam_viec_raw": ...,
+    "so_luong_tuyen_raw": ...
+  }
+}
+"""
+
 import json
+import re
 from typing import Dict, Any, List, Optional
 
 import requests
 from bs4 import BeautifulSoup, Tag
 
-from .config import settings
-from .headless_fetch import fetch_html_headless
-
-# ================== CẤU HÌNH REQUESTS ==================
 
 HEADERS = {
     "User-Agent": (
@@ -19,79 +61,24 @@ HEADERS = {
 }
 
 
-# ================== HỖ TRỢ FETCH HTML + FALLBACK HEADLESS ==================
-
-
-def html_looks_blocked_or_empty(html: str) -> bool:
-    """
-    Heuristic đơn giản: HTML có vẻ bị chặn / không đúng trang job.
-    Có thể chỉnh sửa thêm tuỳ bạn.
-    """
-    if not html or len(html) < 1000:
-        return True
-    lower = html.lower()
-    bad_keywords = [
-        "too many requests",
-        "captcha",
-        "access denied",
-        "đã chặn truy cập",
-    ]
-    return any(k in lower for k in bad_keywords)
-
-
-def fetch_html_with_fallback(url: str) -> str:
-    """
-    Tải HTML bằng requests; nếu bị chặn (429/403) hoặc HTML xấu
-    và USE_HEADLESS_FALLBACK=true thì fallback sang Playwright.
-    """
-    use_headless = (
-        str(getattr(settings, "USE_HEADLESS_FALLBACK", "false")).lower() == "true"
-    )
-
-    try:
-        resp = requests.get(url, headers=HEADERS, timeout=30)
-        status = resp.status_code
-
-        # Nếu OK và HTML trông ổn: dùng luôn
-        if status == 200 and not html_looks_blocked_or_empty(resp.text):
-            return resp.text
-
-        # Nếu bị chặn hoặc HTML xấu mà cho phép headless → fallback
-        if use_headless and status in (403, 429):
-            print(f"[HEADLESS] Fallback for {url} (status={status})")
-            return fetch_html_headless(url, user_agent=HEADERS["User-Agent"])
-
-        if use_headless and html_looks_blocked_or_empty(resp.text):
-            print(f"[HEADLESS] Fallback for {url} (html looks blocked/empty)")
-            return fetch_html_headless(url, user_agent=HEADERS["User-Agent"])
-
-        # Trường hợp khác: raise như cũ
-        resp.raise_for_status()
-        return resp.text
-
-    except requests.HTTPError as e:
-        if use_headless:
-            status = getattr(e.response, "status_code", None)
-            print(f"[HEADLESS] HTTPError {status}, fallback for {url}: {e}")
-            return fetch_html_headless(url, user_agent=HEADERS["User-Agent"])
-        raise
+# ----------------- HỖ TRỢ CƠ BẢN -----------------
 
 
 def fetch_soup(url: str) -> BeautifulSoup:
-    html = fetch_html_with_fallback(url)
-    return BeautifulSoup(html, "html.parser")
-
-
-# ================== PARSE JSON-LD ==================
+    resp = requests.get(url, headers=HEADERS, timeout=30)
+    resp.raise_for_status()
+    return BeautifulSoup(resp.text, "html.parser")
 
 
 def parse_jsonld(soup: BeautifulSoup) -> Dict[str, Any]:
     script = soup.find("script", {"type": "application/ld+json"})
     if not script:
         return {}
+
     raw = (script.string or script.get_text() or "").strip()
     if not raw:
         return {}
+
     try:
         data = json.loads(raw)
     except json.JSONDecodeError:
@@ -99,94 +86,14 @@ def parse_jsonld(soup: BeautifulSoup) -> Dict[str, Any]:
 
     if isinstance(data, list):
         data = data[0]
+
     return data if isinstance(data, dict) else {}
-
-
-def parse_job_from_jsonld(data: Dict[str, Any]) -> Dict[str, Any]:
-    """
-    Bóc các field cơ bản từ JSON-LD JobPosting.
-    """
-    # Tên job
-    title = data.get("title") or data.get("name")
-
-    # Lương
-    base_salary = data.get("baseSalary") or {}
-    salary_value = base_salary.get("value") or {}
-    salary = {
-        "min": salary_value.get("minValue"),
-        "max": salary_value.get("maxValue"),
-        "currency": base_salary.get("currency"),
-        "interval": salary_value.get("unitText"),
-        "raw_text": None,  # sẽ bóc thêm từ UI
-    }
-
-    # Kinh nghiệm
-    exp_req = data.get("experienceRequirements") or {}
-    experience = {
-        "months": exp_req.get("monthsOfExperience"),
-        "raw_text": None,  # sẽ bóc thêm từ UI
-    }
-
-    # Deadline
-    deadline = data.get("validThrough")
-
-    # Thông tin chung
-    general_info = {
-        "cap_bac": data.get("occupationalCategory"),
-        "hoc_van": None,
-        "so_luong_tuyen": data.get("totalJobOpenings"),
-        "hinh_thuc_lam_viec": data.get("employmentType"),
-    }
-
-    # Company
-    org = data.get("hiringOrganization") or {}
-    company = {
-        "name": org.get("name"),
-        "url": org.get("sameAs"),
-        "logo": org.get("logo"),
-        "size": None,
-        "industry": data.get("industry"),
-        "address": None,
-    }
-
-    # Địa điểm cơ bản từ JSON-LD
-    job_location = (data.get("jobLocation") or {}).get("address") or {}
-    locations: List[str] = []
-    if job_location.get("addressRegion"):
-        locations.append(job_location["addressRegion"])
-
-    return {
-        "title": title,
-        "salary": salary,
-        "experience": experience,
-        "deadline": deadline,
-        "general_info": general_info,
-        "company": company,
-        "locations": locations,
-    }
-
-
-# ================== PARSE CÁC SECTION CHI TIẾT ==================
-
-
-def find_job_detail_container(soup: BeautifulSoup) -> Tag:
-    heading = soup.find(
-        string=lambda t: isinstance(t, str) and "Chi tiết tin tuyển dụng" in t
-    )
-    if not heading:
-        return soup.body or soup
-
-    container = heading.find_parent()
-    for _ in range(5):
-        if container and container.name != "body":
-            container = container.parent
-    return container or (soup.body or soup)
 
 
 def get_section_by_title(container: BeautifulSoup, titles: List[str]) -> Dict[str, Optional[str]]:
     """
-    Tìm 1 section theo tiêu đề (h2/h3).
-    Trả về {"html": ..., "text": ...}.
+    Tìm section theo h2/h3 có chứa 1 trong các titles (case-insensitive).
+    Trả về {"html": ..., "text": ...} (có thể None).
     """
     heading = None
     for tag in container.find_all(["h2", "h3"]):
@@ -219,6 +126,78 @@ def get_section_by_title(container: BeautifulSoup, titles: List[str]) -> Dict[st
     }
 
 
+# ----------------- BÓC TỪ JSON-LD -----------------
+
+
+def parse_job_from_jsonld(data: Dict[str, Any]) -> Dict[str, Any]:
+    title = data.get("title") or data.get("name")
+
+    base_salary = data.get("baseSalary") or {}
+    salary_value = base_salary.get("value") or {}
+    salary = {
+        "min": salary_value.get("minValue"),
+        "max": salary_value.get("maxValue"),
+        "currency": base_salary.get("currency"),
+        "interval": salary_value.get("unitText"),
+        "raw_text": None,
+    }
+
+    exp_req = data.get("experienceRequirements") or {}
+    experience = {
+        "months": exp_req.get("monthsOfExperience"),
+        "raw_text": None,
+    }
+
+    deadline = data.get("validThrough")
+
+    general_info = {
+        "cap_bac": data.get("occupationalCategory"),
+        "hoc_van": None,
+        "so_luong_tuyen": data.get("totalJobOpenings"),
+        "hinh_thuc_lam_viec": data.get("employmentType"),
+    }
+
+    org = data.get("hiringOrganization") or {}
+    company = {
+        "name": org.get("name"),
+        "url": org.get("sameAs"),
+        "logo": org.get("logo"),
+        "size": None,
+        "industry": data.get("industry"),
+        "address": None,
+    }
+
+    job_location = (data.get("jobLocation") or {}).get("address") or {}
+    locations = []
+    if job_location.get("addressRegion"):
+        locations.append(job_location["addressRegion"])
+
+    return {
+        "title": title,
+        "salary": salary,
+        "experience": experience,
+        "deadline": deadline,
+        "general_info": general_info,
+        "company": company,
+        "locations": locations,
+    }
+
+
+# ----------------- BÓC CHI TIẾT TUYỂN DỤNG -----------------
+
+
+def find_job_detail_container(soup: BeautifulSoup) -> Tag:
+    heading = soup.find(string=lambda t: isinstance(t, str) and "Chi tiết tin tuyển dụng" in t)
+    if not heading:
+        return soup.body or soup
+
+    container = heading.find_parent()
+    for _ in range(5):
+        if container and container.name != "body":
+            container = container.parent
+    return container or (soup.body or soup)
+
+
 def parse_detail_sections(soup: BeautifulSoup) -> Dict[str, Dict[str, Optional[str]]]:
     container = find_job_detail_container(soup)
 
@@ -226,19 +205,14 @@ def parse_detail_sections(soup: BeautifulSoup) -> Dict[str, Dict[str, Optional[s
         "mo_ta_cong_viec": get_section_by_title(container, ["Mô tả công việc"]),
         "yeu_cau_ung_vien": get_section_by_title(container, ["Yêu cầu ứng viên"]),
         "thu_nhap": get_section_by_title(container, ["Thu nhập"]),
-        "quyen_loi": get_section_by_title(
-            container, ["Quyền lợi", "Quyền lợi được hưởng"]
-        ),
+        "quyen_loi": get_section_by_title(container, ["Quyền lợi", "Quyền lợi được hưởng"]),
         "phu_cap": get_section_by_title(container, ["Phụ cấp"]),
-        "thiet_bi_lam_viec": get_section_by_title(
-            container, ["Thiết bị làm việc", "Trang thiết bị làm việc"]
-        ),
+        "thiet_bi_lam_viec": get_section_by_title(container, ["Thiết bị làm việc", "Trang thiết bị làm việc"]),
         "dia_diem_lam_viec": get_section_by_title(container, ["Địa điểm làm việc"]),
         "thoi_gian_lam_viec": get_section_by_title(container, ["Thời gian làm việc"]),
-        "cach_thuc_ung_tuyen": get_section_by_title(
-            container, ["Cách thức ứng tuyển"]
-        ),
+        "cach_thuc_ung_tuyen": get_section_by_title(container, ["Cách thức ứng tuyển"]),
     }
+
     return sections
 
 
@@ -254,10 +228,14 @@ def parse_locations_from_section(section: Dict[str, Optional[str]]) -> List[str]
     return parts
 
 
-# ================== PARSE VỀ CÔNG TY (SIDEBAR) ==================
+# ----------------- COMPANY SIDEBAR -----------------
 
 
 def parse_company_sidebar(soup: BeautifulSoup) -> Dict[str, Optional[str]]:
+    """
+    Tìm box 'Giới thiệu công ty' / 'Thông tin công ty' / 'Về công ty'
+    rồi bóc ra: size, industry, address.
+    """
     result = {
         "size": None,
         "address": None,
@@ -267,10 +245,9 @@ def parse_company_sidebar(soup: BeautifulSoup) -> Dict[str, Optional[str]]:
     sidebar = None
     for div in soup.find_all("div"):
         txt = div.get_text(" ", strip=True)
-        if any(
-            kw in txt
-            for kw in ["Giới thiệu công ty", "Thông tin công ty", "Về công ty"]
-        ):
+        if not txt:
+            continue
+        if ("Giới thiệu công ty" in txt) or ("Thông tin công ty" in txt) or ("Về công ty" in txt):
             sidebar = div
             break
 
@@ -289,13 +266,13 @@ def parse_company_sidebar(soup: BeautifulSoup) -> Dict[str, Optional[str]]:
             else:
                 result["size"] = text
 
-        if ("Lĩnh vực" in text or "Ngành" in text) and result["industry"] is None:
+        if (("Lĩnh vực" in text) or ("Ngành" in text)) and result["industry"] is None:
             if ":" in text:
                 result["industry"] = text.split(":", 1)[-1].strip()
             else:
                 result["industry"] = text
 
-        if ("Địa điểm" in text or "Địa chỉ" in text) and result["address"] is None:
+        if (("Địa điểm" in text) or ("Địa chỉ" in text)) and result["address"] is None:
             if ":" in text:
                 result["address"] = text.split(":", 1)[-1].strip()
             else:
@@ -304,10 +281,19 @@ def parse_company_sidebar(soup: BeautifulSoup) -> Dict[str, Optional[str]]:
     return result
 
 
-# ================== PARSE BOX "THÔNG TIN CHUNG" ==================
+# ----------------- THÔNG TIN CHUNG -----------------
 
 
 def parse_general_info_box(soup: BeautifulSoup) -> Dict[str, Optional[str]]:
+    """
+    Bóc box 'Thông tin chung':
+    - Cấp bậc
+    - Học vấn
+    - Kinh nghiệm (raw text)
+    - Hình thức làm việc (raw text)
+    - Số lượng tuyển (raw text)
+    - Mức lương/Thu nhập (raw text)
+    """
     result = {
         "cap_bac": None,
         "hoc_van": None,
@@ -317,9 +303,7 @@ def parse_general_info_box(soup: BeautifulSoup) -> Dict[str, Optional[str]]:
         "salary_text": None,
     }
 
-    heading = soup.find(
-        string=lambda t: isinstance(t, str) and "Thông tin chung" in t
-    )
+    heading = soup.find(string=lambda t: isinstance(t, str) and "Thông tin chung" in t)
     if not heading:
         return result
 
@@ -348,37 +332,40 @@ def parse_general_info_box(soup: BeautifulSoup) -> Dict[str, Optional[str]]:
             result["hinh_thuc_lam_viec_text"] = value
         elif "Số lượng tuyển" in label:
             result["so_luong_tuyen_text"] = value
-        elif "Mức lương" in label or "Thu nhập" in label:
+        elif ("Mức lương" in label) or ("Thu nhập" in label):
             result["salary_text"] = value
 
     return result
 
 
-# ================== GHÉP THÀNH 1 JOB ==================
+# ----------------- HÀM CHÍNH: PARSE 1 JOB -----------------
 
 
-def build_job_from_soup(url: str, soup: BeautifulSoup, jld: Dict[str, Any]) -> Dict[str, Any]:
+def parse_job(url: str) -> Dict[str, Any]:
+    soup = fetch_soup(url)
+    jld = parse_jsonld(soup)
+
+    # 1) từ JSON-LD
     base = parse_job_from_jsonld(jld)
 
+    # 2) chi tiết tuyển dụng
     detail_sections = parse_detail_sections(soup)
 
-    # Địa điểm từ section "Địa điểm làm việc"
-    loc_from_section = parse_locations_from_section(
-        detail_sections.get("dia_diem_lam_viec", {})
-    )
+    # 3) địa điểm từ section
+    loc_from_section = parse_locations_from_section(detail_sections.get("dia_diem_lam_viec", {}))
     locations = base["locations"][:]
     for loc in loc_from_section:
         if loc not in locations:
             locations.append(loc)
 
-    # Company sidebar
+    # 4) company sidebar
     company_extra = parse_company_sidebar(soup)
     company = base["company"]
     for k, v in company_extra.items():
         if v:
             company[k] = v
 
-    # Thông tin chung box
+    # 5) thông tin chung box
     general_extra = parse_general_info_box(soup)
     general_info = base["general_info"]
 
@@ -409,29 +396,5 @@ def build_job_from_soup(url: str, soup: BeautifulSoup, jld: Dict[str, Any]) -> D
         "company": company,
         "general_info": general_info,
     }
-    return job
-
-
-def parse_job(url: str) -> Dict[str, Any]:
-    """
-    Hàm chính: nhận 1 job URL, trả về dict đầy đủ
-    cho crawl_one_job / DB.
-    """
-    # Lần 1: requests (+fallback nếu bị 403/429/HTML xấu)
-    html = fetch_html_with_fallback(url)
-    soup = BeautifulSoup(html, "html.parser")
-    jld = parse_jsonld(soup)
-    job = build_job_from_soup(url, soup, jld)
-
-    # Nếu bật headless và vẫn không có title → thử refetch bằng headless 1 lần
-    use_headless = (
-        str(getattr(settings, "USE_HEADLESS_FALLBACK", "false")).lower() == "true"
-    )
-    if use_headless and (not job.get("title") or not str(job["title"]).strip()):
-        print(f"[HEADLESS] Missing title, refetch with headless: {url}")
-        html2 = fetch_html_headless(url, user_agent=HEADERS["User-Agent"])
-        soup2 = BeautifulSoup(html2, "html.parser")
-        jld2 = parse_jsonld(soup2)
-        job = build_job_from_soup(url, soup2, jld2)
 
     return job
