@@ -9,3 +9,4 @@ export_job_50.json
 export_job_71.json
 
 __pycache__/
+app/config.py
