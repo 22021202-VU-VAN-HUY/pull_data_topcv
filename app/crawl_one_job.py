@@ -2,17 +2,12 @@
 from datetime import datetime, timezone
 from typing import Dict, Any, Optional
 
-from .config import settings  # hiện tại chưa dùng, nhưng giữ lại nếu bạn cần sau này
+from .config import settings 
 from .db import get_connection, get_cursor
 from .topcv_parser import parse_job
 
-
+# thêm hoặc update thông tin công ty
 def upsert_company(conn, cur, company_data: Dict[str, Any]) -> int:
-    """
-    Insert hoặc update company theo url.
-    Nếu url đã tồn tại trong bảng companies thì update toàn bộ thông tin,
-    sau đó trả về id.
-    """
     cur.execute(
         """
         INSERT INTO companies (name, url, logo, size, industry, address)
@@ -39,13 +34,8 @@ def upsert_company(conn, cur, company_data: Dict[str, Any]) -> int:
     row = cur.fetchone()
     return row["id"]
 
-
+# thêm hoặc update job
 def upsert_job(conn, cur, job_data: Dict[str, Any], company_id: int, crawled_at) -> int:
-    """
-    Insert hoặc update job theo url.
-    Nếu url đã tồn tại trong bảng jobs thì update toàn bộ thông tin job.
-    Trả về job_id.
-    """
     g = job_data["general_info"]
     salary = job_data["salary"]
     exp = job_data["experience"]
@@ -118,18 +108,12 @@ def upsert_job(conn, cur, job_data: Dict[str, Any], company_id: int, crawled_at)
     job_id = cur.fetchone()["id"]
     return job_id
 
-
+# cập nhật location mới
 def insert_locations(conn, cur, job_id: int, locations):
-    """
-    Xoá toàn bộ location cũ của job_id rồi insert lại danh sách mới.
-    """
-    # Xoá cũ
     cur.execute(
         "DELETE FROM job_locations WHERE job_id = %s",
         (job_id,),
     )
-
-    # Chèn mới
     for idx, loc in enumerate(locations):
         cur.execute(
             """
@@ -139,18 +123,12 @@ def insert_locations(conn, cur, job_id: int, locations):
             (job_id, loc, idx == 0, idx),
         )
 
-
+# cập nhật section mới
 def insert_sections(conn, cur, job_id: int, detail_sections: Dict[str, Any], crawled_at):
-    """
-    Xoá toàn bộ sections cũ của job_id rồi insert lại danh sách mới.
-    """
-    # Xoá cũ
     cur.execute(
         "DELETE FROM job_sections WHERE job_id = %s",
         (job_id,),
     )
-
-    # Chèn mới
     for section_type, sec in detail_sections.items():
         if not sec:
             continue
@@ -168,41 +146,29 @@ def insert_sections(conn, cur, job_id: int, detail_sections: Dict[str, Any], cra
             ),
         )
 
-
+# crawl. lưu 1 job
 def crawl_and_save_one_job(job_url: str, seq: Optional[int] = None):
-    """
-    Crawl 1 job và lưu DB.
-    seq: số thứ tự job trong batch (nếu có). Nếu chạy lẻ thì để None.
-    """
     job_data = parse_job(job_url)
     crawled_at = datetime.now(timezone.utc)
 
     conn = get_connection()
     cur = get_cursor(conn)
-
     try:
-        # 1) upsert company
         company_id = upsert_company(conn, cur, job_data["company"])
-        # 2) upsert job
         job_id = upsert_job(conn, cur, job_data, company_id, crawled_at)
-        # 3) refresh locations
         insert_locations(conn, cur, job_id, job_data.get("locations", []))
-        # 4) refresh sections
         insert_sections(conn, cur, job_id, job_data.get("detail_sections", {}), crawled_at)
-
         conn.commit()
 
-        # --------- LOG ---------
+        # console
         if seq is not None:
-            # có thứ tự trong batch
-            print(f"Saved job {seq} - id {job_id} for url={job_url}")
+            print(f"Đã lưu job {seq} - id {job_id} từ url={job_url}")
         else:
-            # chạy lẻ 1 job
-            print(f"Saved job id {job_id} for url={job_url}")
+            print(f"Đã lưu job - id {job_id} từ url={job_url}")
 
     except Exception as e:
         conn.rollback()
-        print(f"Error saving job for {job_url}: {e}")
+        print(f"Lỗi crawl {job_url}: {e}")
         raise
     finally:
         cur.close()
@@ -210,7 +176,6 @@ def crawl_and_save_one_job(job_url: str, seq: Optional[int] = None):
 
 
 if __name__ == "__main__":
-    # test 1 job cụ thể
     #test_url = "https://www.topcv.vn/viec-lam/nhan-vien-kinh-doanh-sale-mang-game-ca-chieu-13h45-23h-tu-thu-2-thu-6-thu-nhap-tu-14-17-trieu/1713005.html"
     test_url = "https://www.topcv.vn/viec-lam/data-engineer/1921346.html"
     crawl_and_save_one_job(test_url)
