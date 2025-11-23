@@ -1,0 +1,11 @@
+requests
+beautifulsoup4
+lxml
+psycopg2-binary
+python-dotenv
+
+# Nếu sau này bạn muốn dùng playwright:
+# playwright
+# và trong docker/app: chạy thêm "playwright install"
+pydantic
+playwright
