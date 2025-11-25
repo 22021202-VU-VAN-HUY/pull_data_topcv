@@ -16,10 +16,6 @@ def get_connection():
     )
     return conn
 
-
-# ================== UPSERT HELPERS ==================
-
-
 def upsert_company(cur, company_row: dict) -> int:
     """
     Insert hoặc update company theo url.

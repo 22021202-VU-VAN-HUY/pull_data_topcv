@@ -5,6 +5,7 @@
 
 import argparse
 import json
+
 from datetime import datetime
 from decimal import Decimal
 from typing import Any, Dict, Optional, List
@@ -12,7 +13,7 @@ from typing import Any, Dict, Optional, List
 import psycopg2
 from psycopg2.extras import RealDictCursor
 
-from .config import settings
+from app.config import settings
 
 def get_connection():
     conn = psycopg2.connect(

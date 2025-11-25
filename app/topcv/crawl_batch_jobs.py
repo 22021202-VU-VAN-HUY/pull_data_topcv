@@ -5,8 +5,8 @@ from typing import List, Set
 import requests
 from xml.etree import ElementTree as ET
 
-from .config import settings
-from .crawl_one_job import crawl_and_save_one_job
+from app.config import settings
+from app.topcv.crawl_one_job import crawl_and_save_one_job
 
 SITEMAP_ROOT_URL = settings.TOPCV_SITEMAP_ROOT
 SITEMAP_MAX_JOBS = settings.SITEMAP_MAX_JOBS

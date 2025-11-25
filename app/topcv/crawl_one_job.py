@@ -2,9 +2,9 @@
 from datetime import datetime, timezone
 from typing import Dict, Any, Optional
 
-from .config import settings 
-from .db import get_connection, get_cursor
-from .topcv_parser import parse_job
+from app.config import settings 
+from app.db import get_connection, get_cursor
+from app.topcv.topcv_parser import parse_job
 
 # thêm hoặc update thông tin công ty
 def upsert_company(conn, cur, company_data: Dict[str, Any]) -> int:
