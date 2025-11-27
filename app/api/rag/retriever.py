@@ -271,6 +271,109 @@ def _fetch_job_docs(job_id: int, limit: int = 6) -> List[Dict[str, Any]]:
     return results
 
 
+def fetch_full_job_detail(job_id: int) -> Optional[Dict[str, Any]]:
+    """
+    Lấy toàn bộ thông tin 1 job (metadata + các section text) để đưa vào prompt.
+    Trả về doc có cấu trúc tương tự kết quả retrieve, phục vụ cho job hiện tại.
+    """
+
+    sql_job = """
+        SELECT
+            j.id AS job_id,
+            j.title,
+            j.url,
+            j.salary_min,
+            j.salary_max,
+            j.salary_currency,
+            j.salary_interval,
+            j.salary_raw_text,
+            j.experience_raw_text,
+            j.cap_bac,
+            j.hinh_thuc_lam_viec,
+            j.hinh_thuc_lam_viec_raw,
+            j.hoc_van,
+            j.so_luong_tuyen,
+            j.so_luong_tuyen_raw,
+            j.deadline,
+            c.name AS company_name,
+            c.url AS company_url
+        FROM jobs j
+        LEFT JOIN companies c ON j.company_id = c.id
+        WHERE j.id = %s
+        LIMIT 1;
+    """
+
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(sql_job, [job_id])
+            row = cur.fetchone()
+            if not row:
+                return None
+
+            cur.execute(
+                """
+                SELECT location_text
+                FROM job_locations
+                WHERE job_id = %s
+                ORDER BY is_primary DESC, sort_order, id
+                """,
+                [job_id],
+            )
+            loc_rows = cur.fetchall() or []
+            locations = [r.get("location_text") for r in loc_rows if r.get("location_text")]
+
+            cur.execute(
+                """
+                SELECT section_type, text_content
+                FROM job_sections
+                WHERE job_id = %s
+                ORDER BY id
+                """,
+                [job_id],
+            )
+            sec_rows = cur.fetchall() or []
+            detail_sections: Dict[str, Any] = {}
+            for sr in sec_rows:
+                stype = sr.get("section_type")
+                text = sr.get("text_content")
+                if stype and text:
+                    detail_sections[stype] = {"text": text}
+
+    meta = {
+        "id": row.get("job_id"),
+        "title": row.get("title"),
+        "company": {"name": row.get("company_name"), "url": row.get("company_url")},
+        "url": row.get("url"),
+        "locations": locations,
+        "salary": {
+            "min": row.get("salary_min"),
+            "max": row.get("salary_max"),
+            "currency": row.get("salary_currency"),
+            "interval": row.get("salary_interval"),
+            "raw_text": row.get("salary_raw_text"),
+        },
+        "general_info": {
+            "cap_bac": row.get("cap_bac"),
+            "hinh_thuc_lam_viec": row.get("hinh_thuc_lam_viec")
+            or row.get("hinh_thuc_lam_viec_raw"),
+            "hoc_van": row.get("hoc_van"),
+            "so_luong_tuyen": row.get("so_luong_tuyen") or row.get("so_luong_tuyen_raw"),
+            "experience": row.get("experience_raw_text"),
+            "deadline": row.get("deadline"),
+        },
+        "detail_sections": detail_sections,
+    }
+
+    return {
+        "doc_id": f"job-{job_id}-full",
+        "job_id": job_id,
+        "chunk_index": 0,
+        "chunk_text": "",  # nội dung đã nằm trong detail_sections
+        "metadata": meta,
+        "score": 1.0,
+    }
+
+
 def retrieve_jobs(
     query: str,
     top_k: Optional[int] = None,

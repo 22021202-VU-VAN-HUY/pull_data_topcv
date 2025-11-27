@@ -10,10 +10,30 @@ from typing import Any, Dict, List, Optional
 import google.generativeai as genai
 
 from app.config import settings
-from app.api.rag.retriever import retrieve_jobs
+from app.api.rag.retriever import fetch_full_job_detail, retrieve_jobs
 from app.api.rag.query_parser import parse_user_query
 
 logger = logging.getLogger(__name__)
+
+SECTION_LABELS = {
+    "mo_ta_cong_viec": "Mô tả công việc",
+    "yeu_cau_ung_vien": "Yêu cầu ứng viên",
+    "thu_nhap": "Thu nhập",
+    "quyen_loi": "Quyền lợi",
+    "dia_diem_lam_viec": "Địa điểm làm việc",
+    "phuc_loi": "Phúc lợi",
+    "thong_tin_khac": "Thông tin khác",
+}
+
+SECTION_ORDER = [
+    "mo_ta_cong_viec",
+    "yeu_cau_ung_vien",
+    "thu_nhap",
+    "quyen_loi",
+    "dia_diem_lam_viec",
+    "phuc_loi",
+    "thong_tin_khac",
+]
 
 _gemini_model: Optional[genai.GenerativeModel] = None
 
@@ -109,6 +129,15 @@ def _get_detail_text(
     return text
 
 
+def _get_section_full_text(detail_sections: Dict[str, Any], key: str) -> str:
+    sec = detail_sections.get(key) or {}
+    if isinstance(sec, dict):
+        return (sec.get("text") or "").strip()
+    if isinstance(sec, str):
+        return sec.strip()
+    return ""
+
+
 def _format_one_job_context(
     idx: int,
     doc: Dict[str, Any],
@@ -201,6 +230,68 @@ def _format_one_job_context(
     return "\n".join(lines)
 
 
+def _format_full_current_job(doc: Dict[str, Any]) -> str:
+    meta = doc.get("metadata") or {}
+    job_id = meta.get("id") or doc.get("job_id")
+    title = meta.get("title") or ""
+    company = _get_company_name(meta)
+    locations = _get_locations_text(meta)
+    salary_text = _format_salary_block(meta)
+
+    general_info = meta.get("general_info") or {}
+    cap_bac = general_info.get("cap_bac")
+    hinh_thuc = general_info.get("hinh_thuc_lam_viec")
+    hoc_van = general_info.get("hoc_van")
+    so_luong = general_info.get("so_luong_tuyen")
+    experience = general_info.get("experience")
+    deadline = general_info.get("deadline")
+
+    detail_sections = meta.get("detail_sections") or {}
+
+    lines: List[str] = []
+    lines.append("[JOB ĐANG XEM - NGỮ CẢNH CHI TIẾT]")
+    lines.append(f"ID nội bộ: {job_id}")
+    if title:
+        lines.append(f"Tiêu đề: {title}")
+    if company:
+        lines.append(f"Công ty: {company}")
+    if locations:
+        lines.append(f"Địa điểm: {locations}")
+    lines.append(f"Mức lương: {salary_text}")
+    if cap_bac:
+        lines.append(f"Cấp bậc: {cap_bac}")
+    if hinh_thuc:
+        lines.append(f"Hình thức làm việc: {hinh_thuc}")
+    if hoc_van:
+        lines.append(f"Yêu cầu học vấn: {hoc_van}")
+    if so_luong:
+        lines.append(f"Số lượng tuyển: {so_luong}")
+    if experience:
+        lines.append(f"Kinh nghiệm: {experience}")
+    if deadline:
+        lines.append(f"Hạn nộp hồ sơ: {deadline}")
+
+    for stype in SECTION_ORDER:
+        label = SECTION_LABELS.get(stype, stype)
+        text = _get_section_full_text(detail_sections, stype)
+        if not text:
+            continue
+        lines.append("")
+        lines.append(f"{label}:")
+        lines.append(text)
+
+    for stype, sec in detail_sections.items():
+        if stype in SECTION_ORDER:
+            continue
+        text = _get_section_full_text(detail_sections, stype)
+        if text:
+            lines.append("")
+            lines.append(f"{stype}:")
+            lines.append(text)
+
+    return "\n".join(lines)
+
+
 # ========= PHÂN LOẠI Ý ĐỊNH CƠ BẢN =========
 
 
@@ -242,13 +333,28 @@ def _build_context_block(
     docs: List[Dict[str, Any]],
     *,
     current_job_id: Optional[int] = None,
+    current_job_doc: Optional[Dict[str, Any]] = None,
 ) -> str:
-    if not docs:
+    parts: List[str] = []
+
+    # Ưu tiên nhúng toàn bộ nội dung job hiện tại để model trả lời chi tiết.
+    full_doc = current_job_doc
+    if full_doc is None and current_job_id is not None:
+        try:
+            full_doc = fetch_full_job_detail(int(current_job_id))
+        except Exception as e:
+            logger.warning("Không lấy được full job %s: %s", current_job_id, e)
+            full_doc = None
+
+    if not docs and not full_doc:
         return (
             "Không tìm được công việc phù hợp trong dữ liệu (không có document nào từ RAG)."
         )
 
-    parts: List[str] = []
+    if full_doc:
+        parts.append(_format_full_current_job(full_doc))
+        parts.append("\n---\n")
+
     for i, d in enumerate(docs, start=1):
         is_current = False
         meta = d.get("metadata") or {}
@@ -351,6 +457,7 @@ def _build_prompt(
     *,
     query_filters: Dict[str, Any],
     current_job_id: Optional[int],
+    current_job_doc: Optional[Dict[str, Any]],
 ) -> str:
     system_prompt = (
         "Bạn là trợ lý tuyển dụng JobFinder (dữ liệu từ TopCV).\n"
@@ -360,6 +467,7 @@ def _build_prompt(
         "không khuyến khích dùng link TopCV.\n"
         "- Danh sách job trong RAG đã được hệ thống lọc sẵn. Nếu ngữ cảnh RAG KHÔNG TRỐNG, luôn ưu tiên dùng các job này để gợi ý; không được trả lời rằng 'không có công việc phù hợp'.\n"
         "- Chỉ khi phần ngữ cảnh ghi rõ 'Không tìm được công việc phù hợp trong dữ liệu' thì mới được nói là không có job phù hợp.\n"
+        "- Khi có block '[JOB ĐANG XEM - NGỮ CẢNH CHI TIẾT]', phải đọc toàn bộ mô tả/yêu cầu/quyền lợi của block đó để trả lời các câu hỏi về job hiện tại, kể cả các câu hỏi lắt léo về kỹ năng/phúc lợi.\n"
         "- Khi nói về lương, dùng min/max/currency/interval nếu có; nếu không có thì ghi 'Thoả thuận'.\n"
         "- Nếu câu hỏi nhắc tới 'công việc này', 'job hiện tại'... hãy ưu tiên job được đánh dấu (Job bạn đang xem) trong NGỮ CẢNH và trả lời trực tiếp theo dữ liệu của job đó.\n"
         "- Nếu câu hỏi mang tính tìm kiếm (ví dụ 'công việc nào cần cả A và B, lương 20tr'), hãy chọn các job trong ngữ cảnh phù hợp nhất thay vì chỉ dùng job đang xem.\n"
@@ -369,7 +477,9 @@ def _build_prompt(
         "- Câu trả lời ngắn gọn, rõ ràng, dùng bullet (-) và xuống dòng giữa các ý.\n"
     )
 
-    context_block = _build_context_block(docs, current_job_id=current_job_id)
+    context_block = _build_context_block(
+        docs, current_job_id=current_job_id, current_job_doc=current_job_doc
+    )
     history_block = _build_history_block(history)
     filters_block = _build_filters_block(query_filters)
 
@@ -525,6 +635,13 @@ def chat_with_rag(
             "context_jobs": [],
         }
 
+    current_job_doc: Optional[Dict[str, Any]] = None
+    if current_job_id is not None:
+        try:
+            current_job_doc = fetch_full_job_detail(int(current_job_id))
+        except Exception as e:
+            logger.warning("Không lấy được full job %s sau khi retrieve: %s", current_job_id, e)
+
     # 2. Build prompt
     prompt = _build_prompt(
         user_message=user_message,
@@ -532,6 +649,7 @@ def chat_with_rag(
         history=history,
         query_filters=query_filters,
         current_job_id=current_job_id,
+        current_job_doc=current_job_doc,
     )
 
     # 3. Gọi Gemini (đã tránh dùng response.text trực tiếp)
@@ -613,6 +731,24 @@ def chat_with_rag(
                 "score": d.get("score"),
             }
         )
+
+    if current_job_doc:
+        meta = current_job_doc.get("metadata") or {}
+        job_id = meta.get("id") or current_job_doc.get("job_id")
+        already_added = any(j.get("job_id") == job_id for j in context_jobs)
+        if not already_added:
+            context_jobs.insert(
+                0,
+                {
+                    "job_id": job_id,
+                    "title": meta.get("title"),
+                    "company_name": _get_company_name(meta),
+                    "locations": _get_locations_text(meta),
+                    "salary_text": _format_salary_block(meta),
+                    "url": f"/jobs/{job_id}" if job_id is not None else meta.get("url"),
+                    "score": 1.0,
+                },
+            )
 
     return {
         "answer": answer_text,
