@@ -201,6 +201,43 @@ def _format_one_job_context(
     return "\n".join(lines)
 
 
+# ========= PHÂN LOẠI Ý ĐỊNH CƠ BẢN =========
+
+
+def _is_greeting_only(message: str) -> bool:
+    text = (message or "").strip().lower()
+    if not text:
+        return False
+
+    greeting_keywords = [
+        "xin chào",
+        "chào bạn",
+        "chào anh",
+        "chào chị",
+        "hello",
+        "hi",
+        "alo",
+        "chào",
+        "hey",
+    ]
+
+    job_intent_keywords = [
+        "công việc",
+        "job",
+        "tuyển",
+        "ứng tuyển",
+        "việc làm",
+        "lương",
+        "tìm",
+    ]
+
+    if any(k in text for k in job_intent_keywords):
+        return False
+
+    # Câu chào thường ngắn, không kèm yêu cầu rõ.
+    return any(k in text for k in greeting_keywords)
+
+
 def _build_context_block(
     docs: List[Dict[str, Any]],
     *,
@@ -242,10 +279,78 @@ def _build_history_block(history: List[Dict[str, str]]) -> str:
     return "\n".join(lines)
 
 
+def _build_filters_block(query_filters: Dict[str, Any]) -> str:
+    if not query_filters:
+        return "Chưa suy ra được bộ lọc từ câu hỏi người dùng."
+
+    lines: List[str] = ["Các bộ lọc suy ra từ câu hỏi:"]
+
+    job_keywords = query_filters.get("job_keywords") or []
+    if job_keywords:
+        lines.append(f"- Từ khoá ngành/vị trí: {', '.join(job_keywords)}")
+
+    locations = query_filters.get("locations") or []
+    if locations:
+        lines.append(f"- Địa điểm ưu tiên: {', '.join(locations)}")
+
+    min_salary = query_filters.get("min_salary_vnd")
+    max_salary = query_filters.get("max_salary_vnd")
+    if min_salary or max_salary:
+        salary_parts = []
+        if min_salary:
+            salary_parts.append(f"từ {int(min_salary):,} VND")
+        if max_salary:
+            salary_parts.append(f"đến {int(max_salary):,} VND")
+        lines.append(f"- Mức lương mong muốn: {' '.join(salary_parts)}")
+
+    skills = query_filters.get("skills") or []
+    if skills:
+        lines.append(f"- Kỹ năng/yêu cầu: {', '.join(skills)}")
+
+    if len(lines) == 1:
+        lines.append("- Chưa có ràng buộc cụ thể.")
+
+    return "\n".join(lines)
+
+
+def _build_retrieval_query(user_message: str, history: List[Dict[str, str]]) -> str:
+    """
+    Ghép thêm vài lượt hội thoại gần nhất để model retrieve không bị lạc ngữ cảnh
+    (ví dụ: "công việc thứ 2", "mô tả công việc này").
+    """
+    base = (user_message or "").strip()
+    if not history:
+        return base
+
+    # Lấy tối đa 4 lượt cuối, nối thành 1 đoạn ngắn gọn để embedding.
+    tail_turns: List[str] = []
+    for turn in history[-4:]:
+        content = (turn.get("content") or "").strip()
+        if content:
+            tail_turns.append(content)
+
+    if not tail_turns:
+        return base
+
+    history_text = " | ".join(tail_turns)
+
+    # Giới hạn độ dài để tránh làm loãng embedding.
+    max_len = 800
+    if len(history_text) > max_len:
+        history_text = history_text[-max_len:]
+
+    if base:
+        return f"{base} | Ngữ cảnh trước đó: {history_text}"
+    return history_text
+
+
 def _build_prompt(
     user_message: str,
     docs: List[Dict[str, Any]],
     history: List[Dict[str, str]],
+    *,
+    query_filters: Dict[str, Any],
+    current_job_id: Optional[int],
 ) -> str:
     system_prompt = (
         "Bạn là trợ lý tuyển dụng JobFinder (dữ liệu từ TopCV).\n"
@@ -260,6 +365,7 @@ def _build_prompt(
         "- Nếu câu hỏi mang tính tìm kiếm (ví dụ 'công việc nào cần cả A và B, lương 20tr'), hãy chọn các job trong ngữ cảnh phù hợp nhất thay vì chỉ dùng job đang xem.\n"
         "- Với câu hỏi dò chi tiết (phúc lợi, trợ cấp, kỹ năng...), hãy trích đúng đoạn liên quan trong mô tả/yêu cầu/quyền lợi nếu có; nếu không thấy thông tin, nói rõ là chưa thấy ghi trong mô tả.\n"
         "- Nếu người dùng hỏi về kỹ năng, hãy trích từ mô tả / yêu cầu ứng viên của các job trong ngữ cảnh.\n"
+        "- Khi người dùng hỏi thêm thông tin về từng job, hãy đóng vai trò tư vấn: giải thích ngắn gọn, giúp họ hiểu yêu cầu, quyền lợi và cách ứng tuyển dựa trên dữ liệu có sẵn.\n"
         "- Câu trả lời ngắn gọn, rõ ràng, dùng bullet (-) và xuống dòng giữa các ý.\n"
     )
 
@@ -378,6 +484,20 @@ def chat_with_rag(
             "context_jobs": [],
         }
 
+    if _is_greeting_only(user_message):
+        intro = (
+            "Chào bạn! Mình là trợ lý JobFinder.\n"
+            "- Tìm kiếm việc làm theo từ khoá, địa điểm, mức lương bạn mong muốn.\n"
+            "- Giải đáp thắc mắc chi tiết về từng job (mô tả, yêu cầu, quyền lợi) và gửi link /jobs/<id> cho bạn xem nhanh.\n"
+            "- Bạn có thể nói mong muốn hoặc gửi mã job đang xem, mình sẽ tư vấn thêm cho bạn."
+        )
+
+        return {
+            "answer": _clean_answer(intro),
+            "context_jobs": [],
+            "query_filters": {},
+        }
+
     # 0. Phân tích câu hỏi để lấy filter có cấu trúc
     query_filters: Dict[str, Any] = {}
     try:
@@ -388,8 +508,9 @@ def chat_with_rag(
     # 1. Retrieve từ vector DB
     try:
         k = top_k or getattr(settings, "RAG_DEFAULT_TOP_K", 5)
+        retrieval_query = _build_retrieval_query(user_message, history)
         docs = retrieve_jobs(
-            query=user_message,
+            query=retrieval_query,
             top_k=k,
             filters=query_filters,
             current_job_id=current_job_id,
@@ -405,7 +526,13 @@ def chat_with_rag(
         }
 
     # 2. Build prompt
-    prompt = _build_prompt(user_message=user_message, docs=docs, history=history)
+    prompt = _build_prompt(
+        user_message=user_message,
+        docs=docs,
+        history=history,
+        query_filters=query_filters,
+        current_job_id=current_job_id,
+    )
 
     # 3. Gọi Gemini (đã tránh dùng response.text trực tiếp)
     try:
