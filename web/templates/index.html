@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="home-header flex items-center justify-between mb-4">
+    <div class="home-result-count text-gray-600 text-sm">
+      Tổng công việc: {{ total or 0 }}
+      {% if active_total is not none %}
+        - {{ active_total }} công việc còn hạn
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- LIST JOB -->
+  <div class="home-job-list grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+    {% for j in jobs %}
+      <div class="home-job-card-wrapper relative h-full">
+        <a
+          class="base-card home-job-card block bg-white p-5 h-full min-h-[180px]"
+          href="{{ url_for('jobs.job_detail', job_id=j.job_id) }}"
+        >
+          <div class="home-job-company text-xs text-gray-500">{{ j.company }}</div>
+          <div class="home-job-title font-semibold text-base mt-1 text-gray-900">
+            {{ j.title }}
+          </div>
+          <div class="home-job-location mt-1 text-xs text-gray-600">
+            <span class="font-medium">Địa điểm:</span>
+            <span>{{ j.city or '—' }}</span>
+          </div>
+          <div class="home-job-salary mt-2 text-sm text-emerald-700 font-medium">
+            {{ j.salary_text or 'Thoả thuận' }}
+          </div>
+
+          {% if j.deadline_text %}
+            <div class="home-job-deadline mt-2 text-xs text-gray-500">
+              {{ j.deadline_text }}
+            </div>
+          {% endif %}
+        </a>
+
+        <button
+          type="button"
+          class="home-bookmark-button absolute top-3 right-3 text-xl {{ 'text-yellow-400' if j.starred else 'text-gray-300' }}"
+          data-job-id="{{ j.job_id }}"
+          aria-label="Đánh dấu công việc"
+        >
+          ★
+        </button>
+      </div>
+    {% endfor %}
+  </div>
+
+  {% if total_pages and total_pages > 1 %}
+    <div class="home-pagination-wrapper mt-6 flex flex-col gap-2 text-sm">
+      <div class="home-pagination flex items-center gap-2">
+        {% if page > 1 %}
+          <a
+            class="home-pagination-link px-3 py-1 border rounded"
+            href="{{ url_for('jobs.index', q=q, page=page-1) }}"
+          >
+            « Trước
+          </a>
+        {% endif %}
+        <span class="home-pagination-info">
+          Trang {{ page }}/{{ total_pages }}
+        </span>
+        {% if page < total_pages %}
+          <a
+            class="home-pagination-link px-3 py-1 border rounded"
+            href="{{ url_for('jobs.index', q=q, page=page+1) }}"
+          >
+            Sau »
+          </a>
+        {% endif %}
+      </div>
+
+      <!-- Nhảy nhanh đến trang -->
+      <form
+        class="home-page-jump flex items-center gap-2"
+        method="get"
+        action="{{ url_for('jobs.index') }}"
+      >
+        <input type="hidden" name="q" value="{{ q or '' }}">
+        <span>Đến trang:</span>
+        <input
+          class="border rounded px-2 py-1 w-16 text-sm"
+          type="number"
+          name="page"
+          min="1"
+          max="{{ total_pages }}"
+          value="{{ page }}"
+        >
+        <button
+          type="submit"
+          class="px-3 py-1 border rounded bg-white hover:bg-gray-50 text-sm"
+        >
+          Đi
+        </button>
+      </form>
+    </div>
+  {% endif %}
+{% endblock %}

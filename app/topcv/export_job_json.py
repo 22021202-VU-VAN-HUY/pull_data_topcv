@@ -1,8 +1,3 @@
-# app/export_job_json.py
-# Xuất job mới nhất: python -m app.export_job_json
-# Xuất theo job_id: python -m app.export_job_json --job-id 1
-# Xuất theo URL: python -m app.export_job_json --url "https://www.topcv.vn/viec-lam/..."
-
 import argparse
 import json
 

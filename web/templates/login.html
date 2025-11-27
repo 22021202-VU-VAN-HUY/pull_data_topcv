@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="auth-wrapper max-w-md mx-auto">
+    <div class="base-card auth-card bg-white p-6">
+      <h2 class="auth-title text-xl font-semibold mb-4">Đăng nhập</h2>
+      <form class="auth-form space-y-3" id="login-form">
+        <div class="auth-field">
+          <label class="auth-label block text-sm text-gray-700">Email</label>
+          <input
+            id="login-email"
+            class="auth-input w-full border rounded px-3 py-2 text-sm"
+            type="email"
+            required
+          />
+        </div>
+        <div class="auth-field">
+          <label class="auth-label block text-sm text-gray-700">Mật khẩu</label>
+          <input
+            id="login-password"
+            class="auth-input w-full border rounded px-3 py-2 text-sm"
+            type="password"
+            required
+          />
+        </div>
+        <div class="auth-actions flex items-center gap-2">
+          <button
+            id="btn-login"
+            type="button"
+            class="base-button-primary px-4 py-2 rounded text-sm"
+          >
+            Đăng nhập
+          </button>
+          <a href="{{ url_for('auth.register_page') }}" class="base-link text-sm">
+            Chưa có tài khoản? Đăng ký
+          </a>
+        </div>
+        <div id="login-status" class="auth-status text-xs text-gray-600"></div>
+      </form>
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,17 @@
+/* AUTH PAGES */
+.auth-card {
+  max-width: 420px;
+  margin-top: 1.5rem;
+}
+
+.auth-title {
+  letter-spacing: -0.01em;
+}
+
+.auth-input {
+  font-size: 0.9rem;
+}
+
+.auth-status {
+  min-height: 1rem;
+}

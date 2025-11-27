@@ -1,0 +1,48 @@
+/* BASE LAYOUT */
+.base-body {
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, Helvetica, Arial, "Noto Sans", sans-serif;
+}
+
+.base-header {
+  box-shadow: 0 1px 0 rgba(15, 23, 42, 0.05);
+}
+
+.base-logo span:first-child {
+  letter-spacing: -0.02em;
+}
+
+.base-main {
+  min-height: calc(100vh - 120px);
+}
+
+/* LINKS & BUTTONS */
+.base-link {
+  color: #4b5563;
+}
+.base-link:hover {
+  color: #4f46e5;
+}
+
+.base-button-primary {
+  background-color: #4f46e5;
+  color: #ffffff;
+}
+.base-button-primary:hover {
+  background-color: #4338ca;
+}
+
+/* CARD CHUNG */
+.base-card {
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(15, 23, 42, 0.08);
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
+}
+.base-card:hover {
+  transform: translateY(-2px);
+}
+
+/* NAV USER DROPDOWN */
+.base-user-dropdown {
+  min-width: 12rem;
+}

@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{ title or 'Job Finder' }}</title>
+
+    <!-- Tailwind CDN (giống form cũ) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- CSS chung -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/job_detail.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/chat.css') }}">
+  </head>
+  <body class="base-body bg-gray-50">
+    <!-- HEADER -->
+    <header class="base-header border-b bg-white">
+      <div class="base-header-inner mx-auto max-w-6xl px-4 py-3 flex items-center justify-between gap-4">
+        <!-- Logo -->
+        <a href="{{ url_for('jobs.index') }}" class="base-logo text-xl font-bold whitespace-nowrap">
+          <span class="text-gray-800">Job</span><span class="text-indigo-600">Finder</span>
+        </a>
+
+        <!-- Search form (trang chủ sẽ dùng) -->
+        <form action="{{ url_for('jobs.index') }}" method="get" class="base-search-form w-full max-w-3xl">
+          <div class="flex gap-2">
+            <input
+              name="q"
+              value="{{ q or '' }}"
+              placeholder="Tìm theo tiêu đề, công ty..."
+              class="base-search-input flex-1 border rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
+            />
+            <button
+              class="base-button-primary px-4 py-2 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 text-sm"
+              type="submit"
+            >
+              Tìm kiếm
+            </button>
+          </div>
+        </form>
+
+        <!-- User menu -->
+        <nav class="base-user-nav flex items-center gap-3 whitespace-nowrap">
+          <!-- Khi chưa đăng nhập -->
+          <a href="{{ url_for('auth.login_page') }}" class="base-link text-sm" id="nav-login">
+            Đăng nhập
+          </a>
+          <a href="{{ url_for('auth.register_page') }}" class="base-link text-sm" id="nav-register">
+            Đăng ký
+          </a>
+
+          <!-- Khi đã đăng nhập -->
+          <div class="base-user-menu relative hidden" id="nav-user-menu">
+            <button
+              type="button"
+              class="base-user-button flex items-center gap-2 text-sm"
+              id="nav-user-button"
+            >
+              <span id="nav-user-name">Tài khoản</span>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd"
+                      d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.25 8.29a.75.75 0 01-.02-1.08z"
+                      clip-rule="evenodd" />
+              </svg>
+            </button>
+            <div
+              id="nav-user-dropdown"
+              class="base-user-dropdown hidden absolute right-0 mt-2 w-52 bg-white border border-gray-200 rounded-xl shadow-lg py-2 text-sm z-20"
+            >
+              <a href="{{ url_for('auth.profile_page') }}" class="block px-4 py-2 hover:bg-gray-50">
+                Công việc đã lưu & thông tin
+              </a>
+              <button
+                type="button"
+                id="nav-logout"
+                class="w-full text-left px-4 py-2 hover:bg-gray-50"
+              >
+                Đăng xuất
+              </button>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <!-- MAIN -->
+    <main class="base-main mx-auto max-w-6xl px-4 py-6">
+      {% block content %}{% endblock %}
+    </main>
+
+    <!-- CHATBOT -->
+    <div id="chat-widget" class="chat-widget">
+      <div id="chat-panel" class="chat-panel hidden">
+        <div class="chat-header">
+          <div>
+            <p class="chat-header-title">Chatbot JobFinder</p>
+            <p class="chat-header-sub">
+              Chatbot thử nghiệm, hỗ trợ tìm & so sánh công việc.
+            </p>
+          </div>
+          <button
+            id="chat-close"
+            class="chat-close"
+            type="button"
+            aria-label="Đóng chat"
+          >
+            ✕
+          </button>
+        </div>
+
+        <div id="chat-messages" class="chat-messages"></div>
+
+        <div class="chat-status" id="chat-status"></div>
+
+        <form id="chat-form" class="chat-form">
+          <input
+            id="chat-input"
+            autocomplete="off"
+            placeholder="Nhập câu hỏi về công việc, lương, kỹ năng..."
+            class="chat-input"
+          />
+          <button
+            id="chat-send"
+            type="submit"
+            class="chat-send"
+          >
+            Gửi
+          </button>
+        </form>
+      </div>
+
+      <button
+        id="chat-toggle"
+        type="button"
+        class="chat-toggle"
+        title="Mở chat"
+      >
+        Chat
+      </button>
+    </div>
+
+    <footer class="base-footer py-10 text-center text-gray-500 text-sm">
+      JobFinder by Huyvu
+    </footer>
+
+    <!-- JS -->
+    <script src="{{ url_for('static', filename='js/api_client.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/layout.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/index.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/profile.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/chat_widget.js') }}"></script>
+  </body>
+</html>

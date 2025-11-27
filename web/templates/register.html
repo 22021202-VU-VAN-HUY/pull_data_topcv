@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="auth-wrapper max-w-md mx-auto">
+    <div class="base-card auth-card bg-white p-6">
+      <h2 class="auth-title text-xl font-semibold mb-4">Đăng ký</h2>
+      <form class="auth-form space-y-3" id="register-form">
+        <div class="auth-field">
+          <label class="auth-label block text-sm text-gray-700">Họ và tên</label>
+          <input
+            id="reg-fullname"
+            class="auth-input w-full border rounded px-3 py-2 text-sm"
+            type="text"
+            required
+          />
+        </div>
+        <div class="auth-field">
+          <label class="auth-label block text-sm text-gray-700">Email</label>
+          <input
+            id="reg-email"
+            class="auth-input w-full border rounded px-3 py-2 text-sm"
+            type="email"
+            required
+          />
+        </div>
+        <div class="auth-field">
+          <label class="auth-label block text-sm text-gray-700">Số điện thoại</label>
+          <input
+            id="reg-phone"
+            class="auth-input w-full border rounded px-3 py-2 text-sm"
+            type="text"
+          />
+        </div>
+        <div class="auth-field">
+          <label class="auth-label block text-sm text-gray-700">Mật khẩu</label>
+          <input
+            id="reg-password"
+            class="auth-input w-full border rounded px-3 py-2 text-sm"
+            type="password"
+            required
+          />
+        </div>
+        <div class="auth-field">
+          <label class="auth-label block text-sm text-gray-700">Nhập lại mật khẩu</label>
+          <input
+            id="reg-password2"
+            class="auth-input w-full border rounded px-3 py-2 text-sm"
+            type="password"
+            required
+          />
+        </div>
+        <div class="auth-actions flex items-center gap-2">
+          <button
+            id="btn-register"
+            type="button"
+            class="base-button-primary px-4 py-2 rounded text-sm"
+          >
+            Đăng ký
+          </button>
+          <a href="{{ url_for('auth.login_page') }}" class="base-link text-sm">
+            Đã có tài khoản? Đăng nhập
+          </a>
+        </div>
+        <div id="reg-status" class="auth-status text-xs text-gray-600"></div>
+      </form>
+    </div>
+  </div>
+{% endblock %}

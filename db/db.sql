@@ -94,8 +94,8 @@ CREATE TABLE IF NOT EXISTS rag_job_documents (
     content         TEXT NOT NULL,          -- text đã gộp đầy đủ thông tin cho RAG (1 chunk)
     metadata        JSONB,                  -- snapshot đủ thông tin (job_title, company_name, locations, salary_text, deadline,...)
 
-    -- vector embedding (dimension tuỳ model, ví dụ 768 / 1024 / 1536 / 3072)
-    embedding_vec   vector(1536),
+    -- vector embedding (dimension tuỳ model)
+    embedding_vec   vector(384),
 
     created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()

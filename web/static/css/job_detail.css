@@ -1,0 +1,20 @@
+/* JOB DETAIL PAGE */
+.detail-title {
+  letter-spacing: -0.01em;
+}
+
+.detail-section-title {
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 0.5rem;
+}
+
+.detail-description {
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.detail-sidebar-title {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.7rem;
+}

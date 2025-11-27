@@ -1,0 +1,169 @@
+/* CHAT WIDGET - LAYOUT CHUNG */
+.chat-widget {
+  position: relative;
+  z-index: 50;
+}
+
+/* Panel chính */
+.chat-panel {
+  position: fixed;
+  bottom: 6rem;         /* tương đương bottom-24 */
+  right: 1.5rem;        /* tương đương right-6 */
+  width: 20rem;         /* gần w-80 */
+  max-width: calc(100% - 2rem);
+  height: 70vh;
+  background-color: #ffffff;
+  border-radius: 1rem;  /* ~ rounded-2xl */
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.2); /* shadow-2xl */
+  border: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+@media (min-width: 640px) {
+  .chat-panel {
+    width: 24rem;       /* gần w-96 */
+  }
+}
+
+/* Trạng thái disabled (nếu cần) */
+.chat-panel.disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* HEADER */
+.chat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;  /* px-4 py-3 */
+  background-color: #4f46e5; /* bg-indigo-600 */
+  color: #ffffff;
+}
+
+.chat-header-title {
+  font-weight: 600;
+  font-size: 0.875rem; /* text-sm */
+}
+
+.chat-header-sub {
+  font-size: 0.75rem;   /* text-xs */
+  color: #e0e7ff;       /* text-indigo-100 */
+  margin-top: 0.15rem;
+}
+
+/* nút đóng */
+.chat-close {
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.chat-close:hover {
+  color: #ffffff;
+}
+
+/* VÙNG MESSAGE */
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.75rem 1rem; /* px-4 py-3 */
+  background-color: #f8fafc; /* bg-slate-50 */
+}
+
+/* message item (được JS tạo) */
+.chat-msg {
+  margin-bottom: 0.5rem;
+  display: flex;
+}
+
+/* bubble – nếu JS dùng class chat-bubble */
+.chat-messages .chat-bubble {
+  white-space: pre-wrap;
+  font-size: 0.85rem;
+}
+
+/* STATUS BAR */
+.chat-status {
+  padding: 0.5rem 1rem;   /* px-4 py-2 */
+  font-size: 0.75rem;     /* text-xs */
+  color: #6b7280;         /* text-gray-500/600 */
+}
+
+/* FORM GỬI TIN NHẮN */
+.chat-form {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0 0.75rem 0.75rem; /* px-3 pb-3 */
+}
+
+.chat-input {
+  flex: 1;
+  border-radius: 0.75rem;        /* rounded-xl */
+  border: 1px solid #e5e7eb;     /* border-gray-200 */
+  padding: 0.5rem 0.75rem;       /* px-3 py-2 */
+  font-size: 0.875rem;           /* text-sm */
+  background-color: #ffffff;
+  color: #111827;
+}
+
+.chat-input::placeholder {
+  color: #9ca3af;                /* text-gray-400 */
+}
+
+.chat-input:focus {
+  outline: none;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 1px #4f46e5;
+}
+
+.chat-send {
+  border-radius: 0.75rem;        /* rounded-xl */
+  border: none;
+  padding: 0.5rem 0.75rem;       /* px-3 py-2 */
+  font-size: 0.875rem;
+  background-color: #4f46e5;     /* bg-indigo-600 */
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.chat-send:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.chat-send:hover:not(:disabled) {
+  background-color: #4338ca;     /* hover:bg-indigo-700 */
+}
+
+/* NÚT BẬT TẮT CHAT */
+.chat-toggle {
+  position: fixed;
+  bottom: 1.5rem;     /* bottom-6 */
+  right: 1.5rem;      /* right-6 */
+  border: none;
+  border-radius: 999px; /* rounded-full */
+  padding: 0.75rem 1rem; /* px-4 py-3 */
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.3); /* shadow-lg */
+  background-color: #4f46e5; /* bg-indigo-600 */
+  color: #ffffff;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.chat-toggle:hover {
+  background-color: #4338ca;
+}
+
+/* Kích thước chữ chung cho toggle (giữ rule cũ) */
+.chat-toggle {
+  font-size: 0.85rem;
+}
+
+/* Fallback .hidden nếu Tailwind không hoạt động */
+.hidden {
+  display: none !important;
+}
