@@ -2,7 +2,6 @@
 
 (function () {
   const CHAT_STORAGE_KEY = "jf_chat_history_v1";
-  const HISTORY_MAX_TURNS = 20; // chỉ gửi tối đa 20 message gần nhất lên server
 
   let chatOpen = false;
   let chatHistory = [];
@@ -52,6 +51,34 @@
     }, 10);
   }
 
+  function escapeHtml(str) {
+    return (str || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+  }
+
+  /**
+   * Format nội dung trợ lý:
+   * - escape HTML
+   * - convert markdown [text](url) => <a href="url">text</a>
+   * - convert \n => <br>
+   */
+  function formatAssistantMessageHtml(raw) {
+    let text = escapeHtml(raw || "");
+
+    // markdown link: [label](url) với url có thể là http... hoặc /jobs/123
+    text = text.replace(
+      /\[([^\]]+)\]\((https?:\/\/[^\s)]+|\/[^\s)]+)\)/g,
+      '<a href="$2" target="_blank" class="chat-link">$1</a>'
+    );
+
+    // xuống dòng
+    text = text.replace(/\n/g, "<br>");
+
+    return text;
+  }
+
   function renderHistory() {
     messagesEl.innerHTML = "";
 
@@ -69,9 +96,7 @@
           : "bg-white border border-gray-200 text-gray-800");
 
       if (m.role === "assistant") {
-        // cho phép HTML (đáp án từ server có thể chứa link, xuống dòng)
-        bubble.innerHTML = m.content;
-        // đảm bảo CSS .chat-msg-bot dùng white-space: pre-wrap để giữ \n
+        bubble.innerHTML = formatAssistantMessageHtml(m.content);
       } else {
         bubble.textContent = m.content;
       }
@@ -87,7 +112,7 @@
     if (isSending) {
       sendBtn.disabled = true;
       input.disabled = true;
-      statusEl.textContent = "Đang xử lý câu trả lời...";
+      statusEl.textContent = "Đang gửi...";
     } else {
       sendBtn.disabled = false;
       input.disabled = false;
@@ -111,7 +136,6 @@
   input.disabled = false;
   sendBtn.disabled = false;
   input.placeholder = "Nhập câu hỏi về công việc, lương, kỹ năng...";
-  // status mặc định rỗng, dùng để báo đang gửi / lỗi
   statusEl.textContent = "";
 
   if (toggleBtn) {
@@ -144,10 +168,8 @@
     const text = (input.value || "").trim();
     if (!text) return;
 
-    // lấy history hiện tại (chỉ N turn gần nhất) để gửi lên server
-    const historyToSend = chatHistory.slice(-HISTORY_MAX_TURNS);
+    const historyToSend = chatHistory.slice();
 
-    // thêm message user vào UI ngay (local)
     chatHistory.push({ role: "user", content: text });
     renderHistory();
     saveHistoryToStorage();
@@ -155,8 +177,6 @@
     input.value = "";
     setSendingState(true);
 
-    // Nếu đang ở trang chi tiết job, bạn có thể set biến global:
-    // window.JF_CURRENT_JOB_ID = {{ job.job_id }}
     const currentJobId =
       typeof window.JF_CURRENT_JOB_ID !== "undefined"
         ? window.JF_CURRENT_JOB_ID
@@ -180,14 +200,19 @@
         return res.json();
       })
       .then((data) => {
-        const answer = data.answer || "Hiện tại mình chưa có câu trả lời phù hợp.";
-        // Server có thể trả thêm data.context_jobs nếu cần dùng sau này
+        const answer = data.answer || "(Không có câu trả lời)";
+        const newHistory = Array.isArray(data.history) ? data.history : null;
 
-        // Lịch sử chat được quản lý ở FE → luôn append assistant message
-        chatHistory.push({ role: "assistant", content: answer });
+        if (newHistory) {
+          chatHistory = newHistory;
+        } else {
+          chatHistory.push({ role: "assistant", content: answer });
+        }
 
         renderHistory();
         saveHistoryToStorage();
+
+        // data.context_jobs có thể dùng để hiển thị list job gợi ý riêng nếu muốn.
       })
       .catch((err) => {
         console.error("Chat error", err);

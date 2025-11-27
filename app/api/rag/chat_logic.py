@@ -10,6 +10,8 @@ import google.generativeai as genai
 
 from app.config import settings
 from app.api.rag.retriever import retrieve_jobs
+# parse_user_query hiện chưa dùng nữa, nên bỏ import cho sạch.
+# from app.api.rag.query_parser import parse_user_query
 
 logger = logging.getLogger(__name__)
 
@@ -25,7 +27,7 @@ def get_gemini_model() -> genai.GenerativeModel:
         return _gemini_model
 
     api_key = getattr(settings, "GEMINI_API_KEY", "") or ""
-    model_name = getattr(settings, "GEMINI_MODEL", "gemini-1.5-flash")
+    model_name = getattr(settings, "GEMINI_MODEL", "gemini-2.0-flash")
 
     if not api_key:
         raise RuntimeError("GEMINI_API_KEY chưa được cấu hình trong .env / Settings.")
@@ -37,6 +39,7 @@ def get_gemini_model() -> genai.GenerativeModel:
 
 
 # ========= FORMAT LƯƠNG / CONTEXT =========
+
 
 def _format_salary_block(meta: Dict[str, Any]) -> str:
     salary = meta.get("salary") or {}
@@ -83,21 +86,43 @@ def _get_locations_text(meta: Dict[str, Any]) -> str:
     return str(locs) if locs else ""
 
 
-def _get_detail_text(detail_sections: Dict[str, Any], key: str) -> str:
+def _get_detail_text(
+    detail_sections: Dict[str, Any],
+    key: str,
+    *,
+    max_len: int = 400,
+) -> str:
     sec = detail_sections.get(key) or {}
     if isinstance(sec, dict):
-        return sec.get("text") or ""
-    if isinstance(sec, str):
-        return sec
-    return ""
+        text = sec.get("text") or ""
+    elif isinstance(sec, str):
+        text = sec
+    else:
+        text = ""
+
+    text = (text or "").strip()
+    if not text:
+        return ""
+
+    if len(text) > max_len:
+        return text[: max_len - 3] + "..."
+    return text
 
 
 def _format_one_job_context(idx: int, doc: Dict[str, Any]) -> str:
+    """
+    Format 1 job trong context RAG, đã rút gọn để tiết kiệm token.
+    """
     meta = doc.get("metadata") or {}
     job_id = meta.get("id") or doc.get("job_id")
-    title = meta.get("title") or ""
-    url = meta.get("url") or f"/jobs/{job_id}"
 
+    # URL nội bộ trong hệ thống Flask (ưu tiên dùng cho chatbot)
+    app_url = f"/jobs/{job_id}" if job_id is not None else ""
+
+    # URL gốc TopCV (vẫn giữ nếu bạn cần dùng sau này)
+    source_url = meta.get("url") or ""
+
+    title = meta.get("title") or ""
     company = _get_company_name(meta)
     locations = _get_locations_text(meta)
     salary_text = _format_salary_block(meta)
@@ -107,11 +132,16 @@ def _format_one_job_context(idx: int, doc: Dict[str, Any]) -> str:
     hinh_thuc = general_info.get("hinh_thuc_lam_viec")
 
     detail_sections = meta.get("detail_sections") or {}
-    mo_ta = _get_detail_text(detail_sections, "mo_ta_cong_viec")
-    yeu_cau = _get_detail_text(detail_sections, "yeu_cau_ung_vien")
-    quyen_loi = _get_detail_text(detail_sections, "quyen_loi")
+    mo_ta = _get_detail_text(detail_sections, "mo_ta_cong_viec", max_len=350)
+    yeu_cau = _get_detail_text(detail_sections, "yeu_cau_ung_vien", max_len=350)
+    quyen_loi = _get_detail_text(detail_sections, "quyen_loi", max_len=350)
 
-    chunk_text = doc.get("chunk_text") or ""
+    chunk_text = (doc.get("chunk_text") or "").strip()
+    if chunk_text:
+        max_chunk_len = 300
+        if len(chunk_text) > max_chunk_len:
+            chunk_text = chunk_text[: max_chunk_len - 3] + "..."
+
     score = doc.get("score")
 
     lines: List[str] = []
@@ -127,7 +157,17 @@ def _format_one_job_context(idx: int, doc: Dict[str, Any]) -> str:
     if hinh_thuc:
         lines.append(f"Hình thức: {hinh_thuc}")
     lines.append(f"Mức lương: {salary_text}")
-    lines.append(f"Link chi tiết (nếu cần hiển thị cho người dùng): {url}")
+
+    # 👉 Link ưu tiên cho chatbot: URL nội bộ JobFinder
+    if app_url:
+        lines.append(
+            f"Link chi tiết trên JobFinder (nên dùng cho người dùng): {app_url}"
+        )
+
+    # Link TopCV chỉ dùng làm tham khảo cho model
+    if source_url:
+        lines.append(f"Link TopCV gốc (tham khảo): {source_url}")
+
     if score is not None:
         lines.append(f"(Độ liên quan nội bộ: {score:.3f})")
 
@@ -146,7 +186,7 @@ def _format_one_job_context(idx: int, doc: Dict[str, Any]) -> str:
 
     if chunk_text:
         lines.append("")
-        lines.append("Đoạn thông tin nổi bật từ chỉ mục:")
+        lines.append("Đoạn thông tin nổi bật từ chỉ mục (rút gọn):")
         lines.append(chunk_text)
 
     return "\n".join(lines)
@@ -155,8 +195,7 @@ def _format_one_job_context(idx: int, doc: Dict[str, Any]) -> str:
 def _build_context_block(docs: List[Dict[str, Any]]) -> str:
     if not docs:
         return (
-            "Không tìm được công việc phù hợp trong dữ liệu (theo embedding). "
-            "Nếu cần, hãy trả lời là KHÔNG CÓ job phù hợp."
+            "Không tìm được công việc phù hợp trong dữ liệu (không có document nào từ RAG)."
         )
 
     parts: List[str] = []
@@ -187,16 +226,16 @@ def _build_prompt(
     history: List[Dict[str, str]],
 ) -> str:
     system_prompt = (
-        "Bạn là trợ lý tuyển dụng cho nền tảng JobFinder (dữ liệu lấy từ TopCV).\n"
-        "- Luôn trả lời bằng tiếng Việt, giọng thân thiện, dễ hiểu.\n"
-        "- CHỈ ĐƯỢC sử dụng thông tin từ phần 'NGỮ CẢNH CÔNG VIỆC (RAG)' bên dưới.\n"
-        "- TUYỆT ĐỐI KHÔNG được tự bịa thêm công việc, công ty, mức lương hoặc đường link "
-        "nếu chúng không xuất hiện trong ngữ cảnh.\n"
-        "- Nếu trong ngữ cảnh KHÔNG có công việc nào phù hợp với yêu cầu (ví dụ không có job IT ở Hà Nội), "
-        "hãy nói rõ: hiện không tìm thấy công việc phù hợp trong dữ liệu, và gợi ý người dùng tìm kiếm lại.\n"
-        "- Khi nói về lương, hãy sử dụng min/max/currency/interval nếu có; nếu không có thì nói 'Thoả thuận'.\n"
+        "Bạn là trợ lý tuyển dụng JobFinder (dữ liệu từ TopCV).\n"
+        "- Trả lời bằng TIẾNG VIỆT, thân thiện, dễ hiểu.\n"
+        "- CHỈ dùng thông tin trong phần 'NGỮ CẢNH CÔNG VIỆC (RAG)'; không bịa thêm job/công ty/lương/link ngoài ngữ cảnh.\n"
+        "- ƯU TIÊN dùng URL nội bộ JobFinder (bắt đầu bằng /jobs/...) khi đưa link cho người dùng, "
+        "không khuyến khích dùng link TopCV.\n"
+        "- Danh sách job trong RAG đã được hệ thống lọc sẵn. Nếu ngữ cảnh RAG KHÔNG TRỐNG, luôn ưu tiên dùng các job này để gợi ý; không được trả lời rằng 'không có công việc phù hợp'.\n"
+        "- Chỉ khi phần ngữ cảnh ghi rõ 'Không tìm được công việc phù hợp trong dữ liệu' thì mới được nói là không có job phù hợp.\n"
+        "- Khi nói về lương, dùng min/max/currency/interval nếu có; nếu không có thì ghi 'Thoả thuận'.\n"
         "- Nếu người dùng hỏi về kỹ năng, hãy trích từ mô tả / yêu cầu ứng viên của các job trong ngữ cảnh.\n"
-        "- Câu trả lời gọn, rõ ràng, ưu tiên dùng bullet (-) và chia đoạn bằng dòng trống.\n"
+        "- Câu trả lời ngắn gọn, rõ ràng, dùng bullet (-) và xuống dòng giữa các ý.\n"
     )
 
     context_block = _build_context_block(docs)
@@ -214,37 +253,66 @@ def _build_prompt(
 {user_message}
 
 ================= YÊU CẦU TRẢ LỜI =================
-- Trả lời ngắn gọn, rõ ý, dùng bullet (-) khi liệt kê nhiều công việc.
-- Nếu có 3–5 công việc phù hợp nhất, hãy liệt kê:
-  + Tiêu đề, công ty, mức lương (text), địa điểm.
-  + Link chi tiết (dùng đúng link trong ngữ cảnh).
-- Nếu không có công việc phù hợp, phải nói rõ là không tìm thấy trong dữ liệu.
+- Trả lời ngắn gọn, ưu tiên 2–4 bullet; mỗi bullet ≤ 2 câu.
+- Mẫu bullet: "- <tiêu đề> – <công ty>; lương: <text>; địa điểm: <text>. [link](/jobs/<id>)"
+- Ưu tiên dùng URL dạng /jobs/<id> khi gắn link cho người dùng.
+- Nếu phần RAG ghi 'Không tìm được công việc phù hợp trong dữ liệu', hãy nói rõ là không tìm thấy job phù hợp và gợi ý người dùng tìm lại.
 - Không tự tạo thêm job hoặc link ngoài danh sách trong NGỮ CẢNH.
 """
     return prompt
 
 
-def _clean_answer(text: str) -> str:
+# ========= CLEAN + HTML HOÁ CÂU TRẢ LỜI =========
+
+
+def _markdown_links_to_html(text: str) -> str:
     """
-    Dọn các ký tự lạ / xuống dòng cho dễ đọc.
+    - [link](/jobs/123) -> <a href="/jobs/123">link</a>
+    - /jobs/123 -> <a href="/jobs/123">Xem chi tiết</a>
+    (Không động tới link TopCV để tránh user bị dẫn ra ngoài nếu không cần.)
     """
     if not text:
         return ""
 
-    # thay bullet unicode bằng '- '
+    # Chỉ convert markdown có URL nội bộ /jobs/xxx
+    md_pattern = re.compile(r"\[([^\]]+)\]\((/jobs/\d+)\)")
+    text = md_pattern.sub(r'<a href="\2">\1</a>', text)
+
+    # Convert đường dẫn /jobs/123 trần thành link
+    url_pattern = re.compile(r"(/jobs/\d+)")
+    text = url_pattern.sub(r'<a href="\1">Xem chi tiết</a>', text)
+
+    return text
+
+
+def _clean_answer(text: str) -> str:
+    """
+    Dọn các ký tự lạ / xuống dòng cho dễ đọc.
+    Trả về HTML (dùng cho bubble.innerHTML ở frontend).
+    """
+    if not text:
+        return ""
+
+    # bullet unicode → "- "
     text = text.replace("\u2022", "- ").replace("•", "- ")
 
-    # bỏ &nbsp và các khoảng trắng lạ
+    # loại bỏ &nbsp và khoảng trắng lạ
     text = text.replace("\xa0", " ")
     text = re.sub(r"[ \t]+", " ", text)
 
     # gọn bớt nhiều dòng trống liên tiếp
     text = re.sub(r"\n{3,}", "\n\n", text)
 
-    return text.strip()
+    text = text.strip()
 
+    # chuyển markdown /jobs link → <a>
+    text = _markdown_links_to_html(text)
 
-# ========= HÀM PUBLIC: chat_with_rag =========
+    # cuối cùng: đổi \n thành <br> để xuống dòng trong HTML
+    text = text.replace("\n", "<br>")
+
+    return text
+
 
 def chat_with_rag(
     user_message: str,
@@ -254,6 +322,12 @@ def chat_with_rag(
 ) -> Dict[str, Any]:
     """
     Hàm chính: nhận câu hỏi + history → RAG retrieve → Gemini generate.
+
+    Trả về:
+    {
+      "answer": "<HTML>",       # đã có <br>, <a>...
+      "context_jobs": [ ... ]   # dùng cho gợi ý job ở UI
+    }
     """
     history = history or []
     user_message = (user_message or "").strip()
@@ -280,11 +354,11 @@ def chat_with_rag(
     # 2. Build prompt
     prompt = _build_prompt(user_message=user_message, docs=docs, history=history)
 
-    # 3. Gọi Gemini
+    # 3. Gọi Gemini (đã tránh dùng response.text trực tiếp)
     try:
         model = get_gemini_model()
-        # nhiệt độ thấp để hạn chế bịa
         temperature = getattr(settings, "GEMINI_TEMPERATURE", 0.2) or 0.2
+        max_tokens = getattr(settings, "GEMINI_MAX_OUTPUT_TOKENS", 2048) or 2048
 
         response = model.generate_content(
             prompt,
@@ -292,10 +366,36 @@ def chat_with_rag(
                 "temperature": float(temperature),
                 "top_p": 0.9,
                 "top_k": 32,
-                "max_output_tokens": 1024,
+                "max_output_tokens": int(max_tokens),
             },
         )
-        answer_text = (getattr(response, "text", None) or "").strip()
+
+        answer_text = ""
+        try:
+            candidates = getattr(response, "candidates", None) or []
+            if not candidates:
+                logger.warning("Gemini trả về không có candidate nào.")
+            else:
+                cand0 = candidates[0]
+                content = getattr(cand0, "content", None)
+                parts = getattr(content, "parts", None) if content is not None else None
+
+                if not parts:
+                    logger.warning(
+                        "Gemini candidate không có parts, finish_reason=%s",
+                        getattr(cand0, "finish_reason", None),
+                    )
+                else:
+                    chunks: List[str] = []
+                    for p in parts:
+                        t = getattr(p, "text", None)
+                        if t:
+                            chunks.append(t)
+                    answer_text = "\n".join(chunks).strip()
+        except Exception as inner:
+            logger.warning("Không trích được text từ response Gemini: %s", inner)
+            answer_text = ""
+
         answer_text = _clean_answer(answer_text)
     except Exception as e:
         logger.exception("Lỗi khi gọi Gemini: %s", e)
@@ -308,7 +408,8 @@ def chat_with_rag(
         }
 
     if not answer_text:
-        answer_text = (
+        # fallback, cũng convert sang HTML cho thống nhất
+        answer_text = _clean_answer(
             "Mình chưa nhận được phản hồi rõ ràng từ mô hình. "
             "Bạn thử hỏi lại một cách cụ thể hơn nhé."
         )
@@ -318,14 +419,17 @@ def chat_with_rag(
     for d in docs:
         meta = d.get("metadata") or {}
         salary_text = _format_salary_block(meta)
+        job_id = meta.get("id") or d.get("job_id")
+        app_url = f"/jobs/{job_id}" if job_id is not None else meta.get("url")
+
         context_jobs.append(
             {
-                "job_id": meta.get("id") or d.get("job_id"),
+                "job_id": job_id,
                 "title": meta.get("title"),
                 "company_name": _get_company_name(meta),
                 "locations": _get_locations_text(meta),
                 "salary_text": salary_text,
-                "url": meta.get("url"),
+                "url": app_url,
                 "score": d.get("score"),
             }
         )

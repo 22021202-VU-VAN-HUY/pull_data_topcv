@@ -167,3 +167,12 @@
 .hidden {
   display: none !important;
 }
+/* Link trong bong bóng chat assistant */
+.chat-msg a.chat-link {
+  color: #4f46e5;
+  text-decoration: underline;
+}
+
+.chat-msg a.chat-link:hover {
+  text-decoration: none;
+}
