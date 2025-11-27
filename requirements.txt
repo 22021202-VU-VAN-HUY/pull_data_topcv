@@ -15,3 +15,5 @@ playwright
 sentence-transformers>=2.7.0
 torch>=2.0.0
 google-generativeai
+pgvector
+google-genai

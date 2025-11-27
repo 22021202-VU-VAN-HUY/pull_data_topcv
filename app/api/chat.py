@@ -1,48 +1,36 @@
 # app/api/chat.py
-# -*- coding: utf-8 -*-
 
 from __future__ import annotations
 
-import logging
+from flask import Blueprint, jsonify, request
 
-from flask import Blueprint, request, jsonify
+from app.api.rag.chat_logic import chat_with_rag
 
-from app.api.rag.chat_logic import handle_chat_turn
-
-logger = logging.getLogger(__name__)
-
-bp = Blueprint("chat", __name__, url_prefix="/api")
+chat_bp = Blueprint("chat", __name__)
 
 
-@bp.route("/chat", methods=["POST"])
-def chat_endpoint():
+@chat_bp.route("/api/chat", methods=["POST"])
+def api_chat():
     """
-    Endpoint chính cho chatbot RAG.
+    Endpoint chính cho chatbot.
 
-    Request JSON:
-      {
-        "message": "...",              # bắt buộc
-        "history": [ {role, content} ],# optional
-        "current_job_id": 123          # optional
-      }
-
-    Response JSON:
-      {
-        "answer": "...",
-        "history": [...],
-        "jobs": [ {...}, ... ]
-      }
+    Body (JSON) dự kiến:
+    {
+      "message": "câu hỏi hiện tại",
+      "history": [
+        {"role": "user", "content": "..."},
+        {"role": "assistant", "content": "..."}
+      ]
+    }
     """
     data = request.get_json(silent=True) or {}
-
     message = (data.get("message") or "").strip()
-    if not message:
-        return jsonify({"error": "message is required"}), 400
+    history = data.get("history") or []
 
-    try:
-        result = handle_chat_turn(data)
-    except Exception as e:
-        logger.exception("Chat error: %s", e)
-        return jsonify({"error": "internal_error"}), 500
+    result = chat_with_rag(
+        user_message=message,
+        history=history,
+        top_k=5,
+    )
 
-    return jsonify(result)
+    return jsonify(result), 200

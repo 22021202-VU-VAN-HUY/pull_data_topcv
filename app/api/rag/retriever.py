@@ -1,106 +1,157 @@
 # app/api/rag/retriever.py
-# -*- coding: utf-8 -*-
 
 from __future__ import annotations
 
+import json
 import logging
-from typing import List, Dict, Any, Optional
+from typing import Any, Dict, List, Optional
 
-from app.config import settings
+from sentence_transformers import SentenceTransformer
+
 from app.db import get_connection
-from app.api.rag.embeddings import embed_texts
+from app.config import settings
 
 logger = logging.getLogger(__name__)
 
+# =========================
+#  EMBEDDING MODEL
+# =========================
 
-def _vector_to_literal(vec: List[float]) -> str:
+_embedding_model: Optional[SentenceTransformer] = None
+
+
+def get_query_embedding_model() -> SentenceTransformer:
     """
-    Chuyển list float -> chuỗi literal Postgres vector: '[0.1,0.2,...]'.
+    Model dùng cho query (phải trùng với model lúc index).
     """
-    return "[" + ",".join(f"{x:.6f}" for x in vec) + "]"
+    global _embedding_model
+    if _embedding_model is None:
+        logger.info(
+            "Loading query embedding model: %s",
+            settings.RAG_EMBEDDING_MODEL_NAME,
+        )
+        model = SentenceTransformer(settings.RAG_EMBEDDING_MODEL_NAME)
+        # hạn chế độ dài cho chắc
+        model.max_seq_length = 512
+        _embedding_model = model
+    return _embedding_model
 
 
-def retrieve_relevant_chunks(
+def embed_query(text: str) -> List[float]:
+    model = get_query_embedding_model()
+    vec = model.encode(text, show_progress_bar=False, normalize_embeddings=True)
+    return vec.tolist()
+
+
+# =========================
+#  RETRIEVE
+# =========================
+
+def retrieve_jobs(
     query: str,
-    current_job_id: Optional[int] = None,
     top_k: Optional[int] = None,
+    only_active: bool = True,
 ) -> List[Dict[str, Any]]:
     """
-    Lấy các chunk liên quan nhất đến câu hỏi.
-    Ưu tiên:
-      - job_id = current_job_id (nếu có)
-      - job đang còn hạn (metadata->>'is_active' = true)
-      - khoảng cách vector nhỏ (embedding_vec <-> query_vec)
+    Truy vấn rag_job_documents theo embedding + ưu tiên job còn hạn.
+
+    Trả về list doc:
+    [
+      {
+        "doc_id": ...,
+        "job_id": ...,
+        "chunk_index": ...,
+        "chunk_text": "...",   # lấy từ cột content
+        "score": 0.87,
+        "metadata": {...},     # snapshot full job
+      },
+      ...
+    ]
     """
     query = (query or "").strip()
     if not query:
         return []
 
-    k = top_k or settings.RAG_DEFAULT_TOP_K
+    top_k = top_k or settings.RAG_DEFAULT_TOP_K
 
-    logger.info("RAG retriever: query='%s', current_job_id=%s, top_k=%s", query, current_job_id, k)
+    # 1. Tạo embedding cho câu hỏi
+    query_vec = embed_query(query)
 
-    q_vec = embed_texts([query])[0]
-    q_vec_lit = _vector_to_literal(q_vec)
+    # Bảng rag_job_documents hiện có:
+    #   - id BIGSERIAL
+    #   - job_id BIGINT
+    #   - doc_type VARCHAR
+    #   - section_type VARCHAR
+    #   - chunk_index INT
+    #   - content TEXT
+    #   - metadata JSONB
+    #   - embedding_vec vector(384)
+    sql = """
+        WITH q AS (
+            SELECT %s::vector AS embedding_vec
+        )
+        SELECT
+            d.id          AS doc_id,
+            d.job_id      AS job_id,
+            d.chunk_index AS chunk_index,
+            d.content     AS content,
+            d.metadata    AS metadata,
+            1 - (d.embedding_vec <=> q.embedding_vec) AS score
+        FROM rag_job_documents d, q
+        WHERE
+            (%s = FALSE
+             OR (d.metadata->>'deadline') IS NULL
+             OR (d.metadata->>'deadline')::timestamptz >= NOW())
+        ORDER BY d.embedding_vec <-> q.embedding_vec
+        LIMIT %s;
+    """
+
+    docs: List[Dict[str, Any]] = []
 
     with get_connection() as conn:
+        # get_connection dùng RealDictCursor → row là dict
         with conn.cursor() as cur:
-            base_sql = """
-                SELECT
-                    id,
-                    job_id,
-                    doc_type,
-                    section_type,
-                    chunk_index,
-                    content,
-                    metadata,
-                    (embedding_vec <-> %(q_vec)s::vector) AS dist,
-                    (metadata->>'is_active')::boolean AS is_active
-                FROM rag_job_documents
-            """
+            cur.execute(sql, [query_vec, only_active, top_k])
+            rows = cur.fetchall()
 
-            if current_job_id is not None:
-                sql = base_sql + """
-                    ORDER BY
-                        (CASE WHEN job_id = %(current_job_id)s THEN 0 ELSE 1 END),
-                        (CASE WHEN (metadata->>'is_active')::boolean THEN 0 ELSE 1 END),
-                        dist
-                    LIMIT %(limit)s
-                """
-                params = {
-                    "q_vec": q_vec_lit,
-                    "current_job_id": current_job_id,
-                    "limit": k,
-                }
-            else:
-                sql = base_sql + """
-                    ORDER BY
-                        (CASE WHEN (metadata->>'is_active')::boolean THEN 0 ELSE 1 END),
-                        dist
-                    LIMIT %(limit)s
-                """
-                params = {
-                    "q_vec": q_vec_lit,
-                    "limit": k,
-                }
+    for row in rows:
+        # row: RealDictCursor → dict với key đúng theo alias trong SELECT
+        #   row["doc_id"], row["job_id"], row["chunk_index"], row["content"], row["metadata"], row["score"]
+        metadata_raw = row.get("metadata")
 
-            cur.execute(sql, params)
-            rows = cur.fetchall() or []
+        if isinstance(metadata_raw, str):
+            try:
+                metadata = json.loads(metadata_raw)
+            except Exception:
+                metadata = {"raw": metadata_raw}
+        else:
+            metadata = metadata_raw or {}
 
-    results: List[Dict[str, Any]] = []
-    for r in rows:
-        results.append(
+        score_val = row.get("score")
+        try:
+            score_float = float(score_val) if score_val is not None else None
+        except (TypeError, ValueError):
+            # phòng hờ trường hợp score bị kiểu lạ
+            logger.warning("Không convert được score='%s' sang float", score_val)
+            score_float = None
+
+        docs.append(
             {
-                "id": r["id"],
-                "job_id": r["job_id"],
-                "doc_type": r["doc_type"],
-                "section_type": r["section_type"],
-                "chunk_index": r["chunk_index"],
-                "content": r["content"],
-                "metadata": r["metadata"],
-                "distance": float(r["dist"]),
-                "is_active": bool(r["is_active"]),
+                "doc_id": row.get("doc_id"),
+                "job_id": row.get("job_id"),
+                "chunk_index": row.get("chunk_index"),
+                "chunk_text": row.get("content"),
+                "metadata": metadata,
+                "score": score_float,
             }
         )
 
-    return results
+    logger.info(
+        "retrieve_jobs: query='%s', top_k=%s, only_active=%s, got %d docs",
+        query,
+        top_k,
+        only_active,
+        len(docs),
+    )
+
+    return docs

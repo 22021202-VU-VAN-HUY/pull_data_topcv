@@ -2,6 +2,7 @@
 
 (function () {
   const CHAT_STORAGE_KEY = "jf_chat_history_v1";
+  const HISTORY_MAX_TURNS = 20; // chỉ gửi tối đa 20 message gần nhất lên server
 
   let chatOpen = false;
   let chatHistory = [];
@@ -68,8 +69,9 @@
           : "bg-white border border-gray-200 text-gray-800");
 
       if (m.role === "assistant") {
-        // cho phép HTML (đáp án từ server có thể chứa link)
+        // cho phép HTML (đáp án từ server có thể chứa link, xuống dòng)
         bubble.innerHTML = m.content;
+        // đảm bảo CSS .chat-msg-bot dùng white-space: pre-wrap để giữ \n
       } else {
         bubble.textContent = m.content;
       }
@@ -85,7 +87,7 @@
     if (isSending) {
       sendBtn.disabled = true;
       input.disabled = true;
-      statusEl.textContent = "Đang gửi...";
+      statusEl.textContent = "Đang xử lý câu trả lời...";
     } else {
       sendBtn.disabled = false;
       input.disabled = false;
@@ -109,6 +111,7 @@
   input.disabled = false;
   sendBtn.disabled = false;
   input.placeholder = "Nhập câu hỏi về công việc, lương, kỹ năng...";
+  // status mặc định rỗng, dùng để báo đang gửi / lỗi
   statusEl.textContent = "";
 
   if (toggleBtn) {
@@ -141,8 +144,8 @@
     const text = (input.value || "").trim();
     if (!text) return;
 
-    // lấy history hiện tại để gửi lên server
-    const historyToSend = chatHistory.slice();
+    // lấy history hiện tại (chỉ N turn gần nhất) để gửi lên server
+    const historyToSend = chatHistory.slice(-HISTORY_MAX_TURNS);
 
     // thêm message user vào UI ngay (local)
     chatHistory.push({ role: "user", content: text });
@@ -177,21 +180,14 @@
         return res.json();
       })
       .then((data) => {
-        const answer = data.answer || "(Không có câu trả lời)";
-        const newHistory = Array.isArray(data.history) ? data.history : null;
+        const answer = data.answer || "Hiện tại mình chưa có câu trả lời phù hợp.";
+        // Server có thể trả thêm data.context_jobs nếu cần dùng sau này
 
-        if (newHistory) {
-          chatHistory = newHistory;
-        } else {
-          // fallback: append assistant message
-          chatHistory.push({ role: "assistant", content: answer });
-        }
+        // Lịch sử chat được quản lý ở FE → luôn append assistant message
+        chatHistory.push({ role: "assistant", content: answer });
 
         renderHistory();
         saveHistoryToStorage();
-
-        // TODO: nếu muốn hiển thị danh sách job gợi ý riêng trong chat,
-        // có thể dùng data.jobs ở đây.
       })
       .catch((err) => {
         console.error("Chat error", err);
