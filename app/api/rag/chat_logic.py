@@ -4,14 +4,14 @@ from __future__ import annotations
 
 import logging
 import re
+import html
 from typing import Any, Dict, List, Optional
 
 import google.generativeai as genai
 
 from app.config import settings
 from app.api.rag.retriever import retrieve_jobs
-# parse_user_query hiện chưa dùng nữa, nên bỏ import cho sạch.
-# from app.api.rag.query_parser import parse_user_query
+from app.api.rag.query_parser import parse_user_query
 
 logger = logging.getLogger(__name__)
 
@@ -109,7 +109,12 @@ def _get_detail_text(
     return text
 
 
-def _format_one_job_context(idx: int, doc: Dict[str, Any]) -> str:
+def _format_one_job_context(
+    idx: int,
+    doc: Dict[str, Any],
+    *,
+    is_current: bool = False,
+) -> str:
     """
     Format 1 job trong context RAG, đã rút gọn để tiết kiệm token.
     """
@@ -145,7 +150,11 @@ def _format_one_job_context(idx: int, doc: Dict[str, Any]) -> str:
     score = doc.get("score")
 
     lines: List[str] = []
-    lines.append(f"[JOB {idx}] ID nội bộ: {job_id}")
+    prefix = f"[JOB {idx}]"
+    if is_current:
+        prefix += " (Job bạn đang xem)"
+
+    lines.append(f"{prefix} ID nội bộ: {job_id}")
     if title:
         lines.append(f"Tiêu đề: {title}")
     if company:
@@ -192,7 +201,11 @@ def _format_one_job_context(idx: int, doc: Dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
-def _build_context_block(docs: List[Dict[str, Any]]) -> str:
+def _build_context_block(
+    docs: List[Dict[str, Any]],
+    *,
+    current_job_id: Optional[int] = None,
+) -> str:
     if not docs:
         return (
             "Không tìm được công việc phù hợp trong dữ liệu (không có document nào từ RAG)."
@@ -200,7 +213,16 @@ def _build_context_block(docs: List[Dict[str, Any]]) -> str:
 
     parts: List[str] = []
     for i, d in enumerate(docs, start=1):
-        parts.append(_format_one_job_context(i, d))
+        is_current = False
+        meta = d.get("metadata") or {}
+        job_id = meta.get("id") or d.get("job_id")
+        if current_job_id is not None:
+            try:
+                is_current = int(job_id) == int(current_job_id)
+            except Exception:
+                is_current = job_id == current_job_id
+
+        parts.append(_format_one_job_context(i, d, is_current=is_current))
         parts.append("\n---\n")
     return "\n".join(parts)
 
@@ -227,24 +249,31 @@ def _build_prompt(
 ) -> str:
     system_prompt = (
         "Bạn là trợ lý tuyển dụng JobFinder (dữ liệu từ TopCV).\n"
-        "- Trả lời bằng TIẾNG VIỆT, thân thiện, dễ hiểu.\n"
+        "- Trả lời bằng TIẾNG VIỆT, thân thiện, gần gũi như người thật đang trò chuyện.\n"
         "- CHỈ dùng thông tin trong phần 'NGỮ CẢNH CÔNG VIỆC (RAG)'; không bịa thêm job/công ty/lương/link ngoài ngữ cảnh.\n"
         "- ƯU TIÊN dùng URL nội bộ JobFinder (bắt đầu bằng /jobs/...) khi đưa link cho người dùng, "
         "không khuyến khích dùng link TopCV.\n"
         "- Danh sách job trong RAG đã được hệ thống lọc sẵn. Nếu ngữ cảnh RAG KHÔNG TRỐNG, luôn ưu tiên dùng các job này để gợi ý; không được trả lời rằng 'không có công việc phù hợp'.\n"
         "- Chỉ khi phần ngữ cảnh ghi rõ 'Không tìm được công việc phù hợp trong dữ liệu' thì mới được nói là không có job phù hợp.\n"
         "- Khi nói về lương, dùng min/max/currency/interval nếu có; nếu không có thì ghi 'Thoả thuận'.\n"
+        "- Nếu câu hỏi nhắc tới 'công việc này', 'job hiện tại'... hãy ưu tiên job được đánh dấu (Job bạn đang xem) trong NGỮ CẢNH và trả lời trực tiếp theo dữ liệu của job đó.\n"
+        "- Nếu câu hỏi mang tính tìm kiếm (ví dụ 'công việc nào cần cả A và B, lương 20tr'), hãy chọn các job trong ngữ cảnh phù hợp nhất thay vì chỉ dùng job đang xem.\n"
+        "- Với câu hỏi dò chi tiết (phúc lợi, trợ cấp, kỹ năng...), hãy trích đúng đoạn liên quan trong mô tả/yêu cầu/quyền lợi nếu có; nếu không thấy thông tin, nói rõ là chưa thấy ghi trong mô tả.\n"
         "- Nếu người dùng hỏi về kỹ năng, hãy trích từ mô tả / yêu cầu ứng viên của các job trong ngữ cảnh.\n"
         "- Câu trả lời ngắn gọn, rõ ràng, dùng bullet (-) và xuống dòng giữa các ý.\n"
     )
 
-    context_block = _build_context_block(docs)
+    context_block = _build_context_block(docs, current_job_id=current_job_id)
     history_block = _build_history_block(history)
+    filters_block = _build_filters_block(query_filters)
 
     prompt = f"""{system_prompt}
 
 ================= NGỮ CẢNH CÔNG VIỆC (RAG) =================
 {context_block}
+
+================= PHÂN TÍCH YÊU CẦU NGƯỜI DÙNG =================
+{filters_block}
 
 ================= LỊCH SỬ HỘI THOẠI =================
 {history_block}
@@ -256,6 +285,9 @@ def _build_prompt(
 - Trả lời ngắn gọn, ưu tiên 2–4 bullet; mỗi bullet ≤ 2 câu.
 - Mẫu bullet: "- <tiêu đề> – <công ty>; lương: <text>; địa điểm: <text>. [link](/jobs/<id>)"
 - Ưu tiên dùng URL dạng /jobs/<id> khi gắn link cho người dùng.
+- Giữ mỗi bullet trên một dòng, có khoảng trắng giữa các bullet để dễ đọc.
+- Nếu có link, hãy đặt trong dấu [](...) để người dùng bấm được (hoặc chèn URL /jobs/<id> trực tiếp vào cuối bullet).
+- Có thể mở đầu 1 câu chào hoặc đồng cảm ngắn để tăng tự nhiên, sau đó dùng bullet để tổng hợp. Giữ giọng điệu mạch lạc, tôn trọng người hỏi.
 - Nếu phần RAG ghi 'Không tìm được công việc phù hợp trong dữ liệu', hãy nói rõ là không tìm thấy job phù hợp và gợi ý người dùng tìm lại.
 - Không tự tạo thêm job hoặc link ngoài danh sách trong NGỮ CẢNH.
 """
@@ -276,11 +308,11 @@ def _markdown_links_to_html(text: str) -> str:
 
     # Chỉ convert markdown có URL nội bộ /jobs/xxx
     md_pattern = re.compile(r"\[([^\]]+)\]\((/jobs/\d+)\)")
-    text = md_pattern.sub(r'<a href="\2">\1</a>', text)
+    text = md_pattern.sub(r'<a href="\2" class="chat-link">\1</a>', text)
 
     # Convert đường dẫn /jobs/123 trần thành link
     url_pattern = re.compile(r"(/jobs/\d+)")
-    text = url_pattern.sub(r'<a href="\1">Xem chi tiết</a>', text)
+    text = url_pattern.sub(r'<a href="\1" class="chat-link">Xem chi tiết</a>', text)
 
     return text
 
@@ -300,15 +332,22 @@ def _clean_answer(text: str) -> str:
     text = text.replace("\xa0", " ")
     text = re.sub(r"[ \t]+", " ", text)
 
+    # ép các bullet đứng trên dòng riêng nếu model trả về liền mạch
+    text = re.sub(r"(?<!^)(?<!\n)\s*-\s+", "\n- ", text)
+
     # gọn bớt nhiều dòng trống liên tiếp
     text = re.sub(r"\n{3,}", "\n\n", text)
 
     text = text.strip()
 
+    # escape HTML để tránh injection trước khi tự thêm anchor/BR
+    text = html.escape(text)
+
     # chuyển markdown /jobs link → <a>
     text = _markdown_links_to_html(text)
 
-    # cuối cùng: đổi \n thành <br> để xuống dòng trong HTML
+    # cuối cùng: đổi \n thành <br> để xuống dòng trong HTML (giữ khoảng trắng giữa bullet)
+    text = text.replace("\n\n", "<br><br>")
     text = text.replace("\n", "<br>")
 
     return text
@@ -318,15 +357,17 @@ def chat_with_rag(
     user_message: str,
     history: Optional[List[Dict[str, str]]] = None,
     *,
+    current_job_id: Optional[int] = None,
     top_k: Optional[int] = None,
 ) -> Dict[str, Any]:
     """
-    Hàm chính: nhận câu hỏi + history → RAG retrieve → Gemini generate.
+    Hàm chính: nhận câu hỏi + history (+ job_id đang xem) → RAG retrieve → Gemini generate.
 
     Trả về:
     {
       "answer": "<HTML>",       # đã có <br>, <a>...
-      "context_jobs": [ ... ]   # dùng cho gợi ý job ở UI
+      "context_jobs": [ ... ],  # dùng cho gợi ý job ở UI
+      "query_filters": { ... }  # phân tích cấu trúc từ câu hỏi người dùng
     }
     """
     history = history or []
@@ -337,10 +378,22 @@ def chat_with_rag(
             "context_jobs": [],
         }
 
+    # 0. Phân tích câu hỏi để lấy filter có cấu trúc
+    query_filters: Dict[str, Any] = {}
+    try:
+        query_filters = parse_user_query(user_message)
+    except Exception as e:
+        logger.warning("Không phân tích được câu hỏi thành bộ lọc: %s", e)
+
     # 1. Retrieve từ vector DB
     try:
         k = top_k or getattr(settings, "RAG_DEFAULT_TOP_K", 5)
-        docs = retrieve_jobs(query=user_message, top_k=k)
+        docs = retrieve_jobs(
+            query=user_message,
+            top_k=k,
+            filters=query_filters,
+            current_job_id=current_job_id,
+        )
     except Exception as e:
         logger.exception("Lỗi retrieve_jobs: %s", e)
         return {
@@ -437,4 +490,5 @@ def chat_with_rag(
     return {
         "answer": answer_text,
         "context_jobs": context_jobs,
+        "query_filters": query_filters,
     }

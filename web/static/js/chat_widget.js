@@ -65,18 +65,21 @@
    * - convert \n => <br>
    */
   function formatAssistantMessageHtml(raw) {
-    let text = escapeHtml(raw || "");
+    const text = raw || "";
+    const containsHtml = /<a\s|<br\s*\/?|&lt;/.test(text);
 
-    // markdown link: [label](url) với url có thể là http... hoặc /jobs/123
-    text = text.replace(
+    if (containsHtml) {
+      return text;
+    }
+
+    // fallback cho trường hợp server trả plain-text
+    let safe = escapeHtml(text);
+    safe = safe.replace(
       /\[([^\]]+)\]\((https?:\/\/[^\s)]+|\/[^\s)]+)\)/g,
       '<a href="$2" target="_blank" class="chat-link">$1</a>'
     );
-
-    // xuống dòng
-    text = text.replace(/\n/g, "<br>");
-
-    return text;
+    safe = safe.replace(/\n/g, "<br>");
+    return safe;
   }
 
   function renderHistory() {

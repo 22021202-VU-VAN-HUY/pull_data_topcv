@@ -55,6 +55,36 @@ def _normalize_text(s: str) -> str:
     return (s or "").strip().lower()
 
 
+def _augment_query_with_filters(query: str, filters: Dict[str, Any]) -> str:
+    """
+    Ghép thêm từ khoá / địa điểm đã parse vào câu truy vấn để tăng độ khớp embedding.
+    """
+    query = (query or "").strip()
+    parts: List[str] = [query] if query else []
+
+    job_keywords = filters.get("job_keywords") or []
+    locations = filters.get("locations") or []
+    skills = filters.get("skills") or []
+    min_salary = filters.get("min_salary_vnd")
+    max_salary = filters.get("max_salary_vnd")
+
+    if job_keywords:
+        parts.append("Từ khoá: " + ", ".join(job_keywords))
+    if locations:
+        parts.append("Địa điểm: " + ", ".join(locations))
+    if skills:
+        parts.append("Kỹ năng: " + ", ".join(skills))
+    if min_salary is not None or max_salary is not None:
+        parts.append(
+            "Lương: "
+            + (f">= {min_salary:,} VND" if min_salary is not None else "")
+            + (" – " if min_salary is not None and max_salary is not None else "")
+            + (f"<= {max_salary:,} VND" if max_salary is not None else "")
+        )
+
+    return " | ".join(parts)
+
+
 def _location_pass(
     meta: Dict[str, Any],
     filter_locations: List[str],
@@ -146,9 +176,99 @@ def _skills_pass(
     return False
 
 
+def _keyword_pass(meta: Dict[str, Any], job_keywords: List[str], chunk_text: str) -> bool:
+    """
+    Lọc theo chức danh / từ khoá nghề nghiệp để tránh drift sang ngành khác.
+    """
+    if not job_keywords:
+        return True
+
+    title = _normalize_text(meta.get("title"))
+    company = _normalize_text(_get_company(meta))
+    haystack = " ".join(
+        [
+            title,
+            company,
+            _normalize_text(chunk_text),
+        ]
+    )
+
+    for kw in job_keywords:
+        k_norm = _normalize_text(kw)
+        if k_norm and k_norm in haystack:
+            return True
+    return False
+
+
+def _get_company(meta: Dict[str, Any]) -> str:
+    company = meta.get("company")
+    if isinstance(company, dict):
+        return company.get("name") or ""
+    if isinstance(company, str):
+        return company
+    return ""
+
+
 # =========================
 #  RETRIEVE
 # =========================
+
+
+def _fetch_job_docs(job_id: int, limit: int = 6) -> List[Dict[str, Any]]:
+    """
+    Lấy nhanh các chunk thuộc 1 job cụ thể (ưu tiên job_overview, sau đó section)."""
+
+    sql = """
+        SELECT
+            d.id          AS doc_id,
+            d.job_id      AS job_id,
+            d.chunk_index AS chunk_index,
+            d.content     AS chunk_text,
+            d.metadata    AS metadata,
+            1.0           AS score
+        FROM rag_job_documents d
+        WHERE d.job_id = %s
+        ORDER BY (d.doc_type = 'job_overview') DESC, d.section_type NULLS LAST, d.chunk_index ASC
+        LIMIT %s;
+    """
+
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(sql, [job_id, limit])
+            rows = cur.fetchall() or []
+
+    results: List[Dict[str, Any]] = []
+    for row in rows:
+        if isinstance(row, dict):
+            doc_id = row.get("doc_id")
+            job_id = row.get("job_id")
+            chunk_index = row.get("chunk_index")
+            chunk_text = row.get("chunk_text")
+            metadata_raw = row.get("metadata")
+            score = row.get("score")
+        else:
+            doc_id, job_id, chunk_index, chunk_text, metadata_raw, score = row
+
+        if isinstance(metadata_raw, str):
+            try:
+                metadata = json.loads(metadata_raw)
+            except Exception:
+                metadata = {"raw": metadata_raw}
+        else:
+            metadata = metadata_raw or {}
+
+        results.append(
+            {
+                "doc_id": doc_id,
+                "job_id": job_id,
+                "chunk_index": chunk_index,
+                "chunk_text": chunk_text,
+                "metadata": metadata,
+                "score": float(score) if score is not None else None,
+            }
+        )
+
+    return results
 
 
 def retrieve_jobs(
@@ -156,9 +276,12 @@ def retrieve_jobs(
     top_k: Optional[int] = None,
     only_active: bool = True,
     filters: Optional[Dict[str, Any]] = None,
+    *,
+    current_job_id: Optional[int] = None,
 ) -> List[Dict[str, Any]]:
     """
-    Truy vấn rag_job_documents theo embedding + lọc hybrid (địa điểm, lương, kỹ năng).
+    Truy vấn rag_job_documents theo embedding + lọc hybrid (địa điểm, lương, kỹ năng),
+    đồng thời ghim job hiện tại (nếu truyền current_job_id).
 
     Trả về list doc dạng:
     {
@@ -180,9 +303,18 @@ def retrieve_jobs(
     f_min_salary: Optional[int] = filters.get("min_salary_vnd")
     f_max_salary: Optional[int] = filters.get("max_salary_vnd")
     f_skills: List[str] = filters.get("skills") or []
+    f_job_keywords: List[str] = filters.get("job_keywords") or []
+    pinned_docs: List[Dict[str, Any]] = []
+
+    if current_job_id:
+        try:
+            pinned_docs = _fetch_job_docs(current_job_id, limit=max(6, top_k or 0))
+        except Exception as e:
+            logger.warning("Không lấy được doc cho job hiện tại %s: %s", current_job_id, e)
 
     # ------------ 1. embedding cho query ------------
-    query_vec = embed_query(query)
+    augmented_query = _augment_query_with_filters(query, filters)
+    query_vec = embed_query(augmented_query)
 
     # Lấy pool lớn hơn top_k để còn lọc
     candidate_k = max(top_k * 5, 30)
@@ -266,6 +398,8 @@ def retrieve_jobs(
             continue
         if not _skills_pass(meta, f_skills, chunk_text):
             continue
+        if not _keyword_pass(meta, f_job_keywords, chunk_text):
+            continue
 
         filtered.append(d)
 
@@ -279,13 +413,22 @@ def retrieve_jobs(
         reverse=True,
     )[:top_k]
 
+    # Luôn ghim doc của job hiện tại (nếu có) lên đầu, tránh trùng doc_id
+    if pinned_docs:
+        seen_ids = {d.get("doc_id") for d in pinned_docs}
+        dedup_tail = [d for d in final_docs if d.get("doc_id") not in seen_ids]
+        final_docs = pinned_docs + dedup_tail
+
     logger.info(
-        "retrieve_jobs final: query=%r, top_k=%s, filters=%s, return %d docs (filtered=%d)",
+        "retrieve_jobs final: query=%r, augmented=%r, top_k=%s, filters=%s, current_job_id=%s, return %d docs (filtered=%d, pinned=%d)",
         query,
+        augmented_query,
         top_k,
         filters,
+        current_job_id,
         len(final_docs),
         len(filtered),
+        len(pinned_docs),
     )
 
     return final_docs

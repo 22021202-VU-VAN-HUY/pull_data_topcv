@@ -20,16 +20,24 @@ def api_chat():
       "history": [
         {"role": "user", "content": "..."},
         {"role": "assistant", "content": "..."}
-      ]
+      ],
+      "current_job_id": 123  # optional, nếu user đang ở trang chi tiết job
     }
     """
     data = request.get_json(silent=True) or {}
     message = (data.get("message") or "").strip()
     history = data.get("history") or []
+    current_job_id = data.get("current_job_id")
+
+    try:
+        current_job_id = int(current_job_id) if current_job_id is not None else None
+    except (TypeError, ValueError):
+        current_job_id = None
 
     result = chat_with_rag(
         user_message=message,
         history=history,
+        current_job_id=current_job_id,
         top_k=5,
     )
 
