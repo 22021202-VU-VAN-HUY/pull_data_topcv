@@ -106,6 +106,13 @@ def _get_locations_text(meta: Dict[str, Any]) -> str:
     return str(locs) if locs else ""
 
 
+def _get_title_upper(meta: Dict[str, Any]) -> str:
+    """Lấy tiêu đề và chuyển thành chữ in hoa để đồng nhất hiển thị."""
+
+    title = meta.get("title") or ""
+    return title.upper()
+
+
 def _get_detail_text(
     detail_sections: Dict[str, Any],
     key: str,
@@ -156,7 +163,7 @@ def _format_one_job_context(
     # URL gốc TopCV (vẫn giữ nếu bạn cần dùng sau này)
     source_url = meta.get("url") or ""
 
-    title = meta.get("title") or ""
+    title = _get_title_upper(meta)
     company = _get_company_name(meta)
     locations = _get_locations_text(meta)
     salary_text = _format_salary_block(meta)
@@ -233,7 +240,7 @@ def _format_one_job_context(
 def _format_full_current_job(doc: Dict[str, Any]) -> str:
     meta = doc.get("metadata") or {}
     job_id = meta.get("id") or doc.get("job_id")
-    title = meta.get("title") or ""
+    title = _get_title_upper(meta)
     company = _get_company_name(meta)
     locations = _get_locations_text(meta)
     salary_text = _format_salary_block(meta)
@@ -516,19 +523,24 @@ def _build_prompt(
 def _markdown_links_to_html(text: str) -> str:
     """
     - [link](/jobs/123) -> <a href="/jobs/123">link</a>
-    - /jobs/123 -> <a href="/jobs/123">Xem chi tiết</a>
+    - /jobs/123 hoặc jobs/123 -> <a href="/jobs/123">Xem chi tiết</a>
     (Không động tới link TopCV để tránh user bị dẫn ra ngoài nếu không cần.)
     """
     if not text:
         return ""
 
-    # Chỉ convert markdown có URL nội bộ /jobs/xxx
-    md_pattern = re.compile(r"\[([^\]]+)\]\((/jobs/\d+)\)")
-    text = md_pattern.sub(r'<a href="\2" class="chat-link">\1</a>', text)
+    # Chỉ convert markdown có URL nội bộ /jobs/xxx (cho phép thiếu dấu "/" ở đầu)
+    md_pattern = re.compile(r"\[([^\]]+)\]\((/?jobs/\d+)\)")
+    text = md_pattern.sub(
+        lambda m: (
+            f'<a href="/{m.group(2).lstrip("/")}" class="chat-link">{m.group(1)}</a>'
+        ),
+        text,
+    )
 
-    # Convert đường dẫn /jobs/123 trần thành link
-    url_pattern = re.compile(r"(/jobs/\d+)")
-    text = url_pattern.sub(r'<a href="\1" class="chat-link">Xem chi tiết</a>', text)
+    # Convert đường dẫn /jobs/123 hoặc jobs/123 trần thành link có anchor "Xem chi tiết"
+    url_pattern = re.compile(r"/?jobs/\d+")
+    text = url_pattern.sub(lambda m: f'<a href="/{m.group(0).lstrip("/")}" class="chat-link">Xem chi tiết</a>', text)
 
     return text
 
@@ -723,7 +735,7 @@ def chat_with_rag(
         context_jobs.append(
             {
                 "job_id": job_id,
-                "title": meta.get("title"),
+                "title": _get_title_upper(meta),
                 "company_name": _get_company_name(meta),
                 "locations": _get_locations_text(meta),
                 "salary_text": salary_text,
@@ -741,7 +753,7 @@ def chat_with_rag(
                 0,
                 {
                     "job_id": job_id,
-                    "title": meta.get("title"),
+                    "title": _get_title_upper(meta),
                     "company_name": _get_company_name(meta),
                     "locations": _get_locations_text(meta),
                     "salary_text": _format_salary_block(meta),
