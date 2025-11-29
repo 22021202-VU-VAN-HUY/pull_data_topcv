@@ -1,11 +1,7 @@
-# app/api/rag/embeddings.py
-# -*- coding: utf-8 -*-
-
 from __future__ import annotations
-
 import json
 import logging
-import os  # vẫn import nếu bạn cần sau này
+import os  
 import re
 from datetime import datetime, timezone
 from decimal import Decimal
@@ -18,10 +14,6 @@ from app.db import get_connection
 from app.api.jobs import SECTION_LABELS  # dùng lại label section từ jobs.py
 
 logger = logging.getLogger(__name__)
-
-# ==========================
-#  CẤU HÌNH EMBEDDING / CHUNK TỪ settings
-# ==========================
 
 EMBEDDING_MODEL_NAME = settings.RAG_EMBEDDING_MODEL_NAME
 EMBEDDING_BATCH_SIZE = settings.RAG_EMBEDDING_BATCH_SIZE
@@ -37,11 +29,8 @@ def get_embedding_model() -> SentenceTransformer:
         _embedding_model = SentenceTransformer(EMBEDDING_MODEL_NAME)
     return _embedding_model
 
-
+# Encode list text -> list vector (list[float]), dùng cho cả doc & query.
 def embed_texts(texts: List[str]) -> List[List[float]]:
-    """
-    Encode list text -> list vector (list[float]), dùng cho cả doc & query.
-    """
     if not texts:
         return []
     model = get_embedding_model()
@@ -53,25 +42,12 @@ def embed_texts(texts: List[str]) -> List[List[float]]:
     )
     return [v.tolist() for v in vectors]
 
-
+# Chuyển list float -> chuỗi literal Postgres vector: '[0.1,0.2,...]'.
+# Dùng với embedding_vec::vector.
 def _vector_to_literal(vec: List[float]) -> str:
-    """
-    Chuyển list float -> chuỗi literal Postgres vector: '[0.1,0.2,...]'.
-    Dùng với embedding_vec::vector.
-    """
     return "[" + ",".join(f"{x:.6f}" for x in vec) + "]"
 
-
-# ==========================
-#  HELPER: JSON-ABLE
-# ==========================
-
 def _to_jsonable(obj):
-    """
-    Convert mọi thứ sang dạng JSON-serializable (đặc biệt là Decimal).
-    - Decimal (vd: salary_min/max) -> int nếu số nguyên, ngược lại float.
-    - Duyệt đệ quy dict/list.
-    """
     if isinstance(obj, Decimal):
         if obj == obj.to_integral_value():
             return int(obj)
@@ -82,15 +58,8 @@ def _to_jsonable(obj):
         return [_to_jsonable(v) for v in obj]
     return obj
 
-
-# ==========================
-#  LẤY DỮ LIỆU JOB TỪ DB
-# ==========================
-
+#  kết nối db -> lấy job cho snapshot
 def _fetch_job_full(cur, job_id: int) -> Dict[str, Any]:
-    """
-    Lấy job + company + các field cần thiết cho snapshot.
-    """
     cur.execute(
         """
         SELECT
@@ -130,7 +99,6 @@ def _fetch_job_full(cur, job_id: int) -> Dict[str, Any]:
         raise ValueError(f"Job {job_id} không tồn tại")
     return row
 
-
 def _fetch_job_locations(cur, job_id: int) -> List[str]:
     cur.execute(
         """
@@ -144,12 +112,8 @@ def _fetch_job_locations(cur, job_id: int) -> List[str]:
     rows = cur.fetchall() or []
     return [r["location_text"] for r in rows]
 
-
+# Trả về dict: section_type -> {html, text}
 def _fetch_job_sections_raw(cur, job_id: int) -> Dict[str, Dict[str, Any]]:
-    """
-    Trả về dict: section_type -> {html, text}
-    (ví dụ: 'mo_ta_cong_viec', 'yeu_cau_ung_vien', 'thu_nhap', ...)
-    """
     cur.execute(
         """
         SELECT section_type, text_content, html_content, id
@@ -172,11 +136,7 @@ def _fetch_job_sections_raw(cur, job_id: int) -> Dict[str, Dict[str, Any]]:
         }
     return result
 
-
-# ==========================
-#  SNAPSHOT JOB / META
-# ==========================
-
+#  snapshot job / meta
 def _build_salary(job_row: Dict[str, Any]) -> Dict[str, Any]:
     """
     Chuẩn hoá thông tin lương theo các dạng TopCV:
@@ -190,7 +150,6 @@ def _build_salary(job_row: Dict[str, Any]) -> Dict[str, Any]:
     currency = job_row.get("salary_currency") or "VND"
     interval = job_row.get("salary_interval") or "MONTH"
     raw_text = job_row.get("salary_raw_text")
-
     salary = {
         "min": salary_min,
         "max": salary_max,
@@ -201,13 +160,11 @@ def _build_salary(job_row: Dict[str, Any]) -> Dict[str, Any]:
 
     return salary
 
-
 def _build_experience(job_row: Dict[str, Any]) -> Dict[str, Any]:
     return {
         "months": job_row.get("experience_months"),
         "raw_text": job_row.get("experience_raw_text"),
     }
-
 
 def _build_company(job_row: Dict[str, Any]) -> Dict[str, Any]:
     return {
@@ -219,7 +176,6 @@ def _build_company(job_row: Dict[str, Any]) -> Dict[str, Any]:
         "address": job_row.get("company_address"),
     }
 
-
 def _build_general_info(job_row: Dict[str, Any]) -> Dict[str, Any]:
     return {
         "cap_bac": job_row.get("cap_bac"),
@@ -230,17 +186,13 @@ def _build_general_info(job_row: Dict[str, Any]) -> Dict[str, Any]:
         "so_luong_tuyen_raw": job_row.get("so_luong_tuyen_raw"),
     }
 
-
+# form chung cho mọi chunk của 1 job
 def build_job_meta(job_row: Dict[str, Any], locations: List[str]) -> Dict[str, Any]:
-    """
-    Meta chung cho mọi chunk của 1 job (không include nội dung từng section).
-    """
     deadline = job_row.get("deadline")
     crawled_at = job_row.get("crawled_at")
 
     now_utc = datetime.now(timezone.utc)
     is_active = bool(deadline and deadline >= now_utc)
-
     meta = {
         "id": job_row["job_id"],
         "url": job_row["url"],
@@ -257,11 +209,7 @@ def build_job_meta(job_row: Dict[str, Any], locations: List[str]) -> Dict[str, A
     }
     return meta
 
-
-# ==========================
-#  FORMAT TEXT TỪ META
-# ==========================
-
+#  format text từ meta
 def _format_currency_amount(value: Optional[float | int], currency: Optional[str]) -> str:
     if value is None:
         return ""
@@ -272,56 +220,38 @@ def _format_currency_amount(value: Optional[float | int], currency: Optional[str
     except Exception:
         return f"{value} {cur}"
 
-
+# mô tả lương
 def _format_salary_line(salary: Dict[str, Any]) -> Optional[str]:
-    """
-    Tạo 1 dòng mô tả lương để dùng trong content text.
-    Ưu tiên dùng raw_text nếu có (vd: 'Thoả thuận', 'Từ 4-10 triệu', ...).
-    Nếu không có raw_text, build theo min/max:
-      - min & max: "Thu nhập từ X đến Y (theo interval)"
-      - chỉ min:   "Thu nhập từ X (theo interval)"
-      - chỉ max:   "Thu nhập đến Y (theo interval)"
-    """
     raw_text = salary.get("raw_text")
     if raw_text:
         return f"Thu nhập: {raw_text}"
-
     min_v = salary.get("min")
     max_v = salary.get("max")
     currency = salary.get("currency") or "VND"
     interval = salary.get("interval") or "MONTH"
-
     if min_v is None and max_v is None:
         return None
-
     suffix = ""
     if interval.upper() == "MONTH":
         suffix = "/tháng"
     elif interval.upper() == "YEAR":
         suffix = "/năm"
-
     if min_v is not None and max_v is not None:
         min_str = _format_currency_amount(min_v, currency)
         max_str = _format_currency_amount(max_v, currency)
         return f"Thu nhập: từ {min_str} đến {max_str} {suffix}".strip()
-
     if min_v is not None:
         min_str = _format_currency_amount(min_v, currency)
         return f"Thu nhập: từ {min_str} {suffix}".strip()
-
     if max_v is not None:
         max_str = _format_currency_amount(max_v, currency)
         return f"Thu nhập: đến {max_str} {suffix}".strip()
-
     return None
-
 
 def overview_meta_to_text(meta: Dict[str, Any]) -> str:
     lines: List[str] = []
-
     title = meta.get("title") or ""
     lines.append(f"Tiêu đề: {title}")
-
     company = meta.get("company") or {}
     if company.get("name"):
         lines.append(f"Công ty: {company['name']}")
@@ -352,19 +282,13 @@ def overview_meta_to_text(meta: Dict[str, Any]) -> str:
 
     if meta.get("deadline"):
         lines.append(f"Hạn nộp: {meta['deadline']}")
-
     return "\n".join(lines)
 
-
+# text cho 1 chunk section
 def section_meta_to_text(meta: Dict[str, Any], section_type: str, chunk_text: str) -> str:
-    """
-    Text cho 1 chunk section: include overview ngắn + tên mục + nội dung chunk.
-    """
     lines: List[str] = []
-
     title = meta.get("title") or ""
     lines.append(f"Công việc: {title}")
-
     company = meta.get("company") or {}
     if company.get("name"):
         lines.append(f"Công ty: {company['name']}")
@@ -382,29 +306,17 @@ def section_meta_to_text(meta: Dict[str, Any], section_type: str, chunk_text: st
 
     if meta.get("deadline"):
         lines.append(f"Hạn nộp: {meta['deadline']}")
-
     lines.append(f"Nội dung: {chunk_text}")
-
     return "\n".join(lines)
 
-
-# ==========================
-#  CHUNK HOÁ SECTION TEXT
-# ==========================
-
+#  chunk text
 def split_text_into_chunks(text: str, max_chars: int = CHUNK_MAX_CHARS) -> List[str]:
-    """
-    Chia text dài thành các chunk nhỏ (~max_chars). Đơn giản: tách theo câu.
-    Dùng cho job_sections để RAG trả lời chính xác hơn theo từng đoạn.
-    """
     clean = (text or "").strip()
     if not clean:
         return []
 
     if len(clean) <= max_chars:
         return [clean]
-
-    # Tách câu theo ., !, ? (đơn giản, đủ dùng cho TV)
     sentences = re.split(r"(?<=[\.!?])\s+", clean)
     chunks: List[str] = []
     current = ""
@@ -427,11 +339,7 @@ def split_text_into_chunks(text: str, max_chars: int = CHUNK_MAX_CHARS) -> List[
 
     return chunks
 
-
-# ==========================
-#  INDEX 1 JOB → N DOC
-# ==========================
-
+#  index 1 job thành N docs
 def upsert_rag_doc_for_job(job_id: int) -> int:
     """
     Index 1 job thành nhiều document:
@@ -500,7 +408,6 @@ def upsert_rag_doc_for_job(job_id: int) -> int:
                 full_text = full_text.strip()
                 if not full_text:
                     continue
-
                 chunks = split_text_into_chunks(full_text, max_chars=CHUNK_MAX_CHARS)
                 html = (sec or {}).get("html")
 
@@ -551,45 +458,66 @@ def upsert_rag_doc_for_job(job_id: int) -> int:
                         },
                     )
                     docs_count += 1
-
         conn.commit()
-
     logger.info("Indexed job %s (%s docs)", job_id, docs_count)
     return docs_count
 
-
-# ==========================
 #  BATCH INDEX NHIỀU JOB
-# ==========================
-
 def select_job_ids_to_index(cur, limit: Optional[int] = None, reindex: bool = False) -> List[int]:
     """
     - reindex=False: chỉ lấy job chưa có job_overview trong rag_job_documents
-    - reindex=True: lấy tất cả jobs
+    - reindex=True: lấy tất cả jobs còn hạn
     """
+
+    now_utc = datetime.now(timezone.utc)
+
     if reindex:
         sql = """
-            SELECT id
-            FROM jobs
-            ORDER BY id
+            WITH last_index AS (
+                SELECT job_id,
+                       metadata ->> 'is_active' AS is_active
+                FROM rag_job_documents
+                WHERE doc_type = 'job_overview'
+                  AND chunk_index = 0
+            )
+            SELECT j.id
+            FROM jobs j
+            LEFT JOIN last_index d ON d.job_id = j.id
+            WHERE (j.deadline IS NULL OR j.deadline >= %(now)s)
+               OR (j.deadline < %(now)s AND d.is_active = 'true')
+            ORDER BY j.id
             LIMIT %(limit)s
         """
     else:
         sql = """
             SELECT j.id
             FROM jobs j
-            WHERE NOT EXISTS (
-                SELECT 1
-                FROM rag_job_documents d
-                WHERE d.job_id = j.id
-                  AND d.doc_type = 'job_overview'
-                  AND d.chunk_index = 0
+            WHERE (
+                (j.deadline IS NULL OR j.deadline >= %(now)s)
+                AND NOT EXISTS (
+                    SELECT 1
+                    FROM rag_job_documents d
+                    WHERE d.job_id = j.id
+                      AND d.doc_type = 'job_overview'
+                      AND d.chunk_index = 0
+                )
             )
+               OR (
+                   j.deadline < %(now)s
+                   AND EXISTS (
+                       SELECT 1
+                       FROM rag_job_documents d
+                       WHERE d.job_id = j.id
+                         AND d.doc_type = 'job_overview'
+                         AND d.chunk_index = 0
+                         AND d.metadata ->> 'is_active' = 'true'
+                   )
+               )
             ORDER BY j.id
             LIMIT %(limit)s
         """
 
-    cur.execute(sql, {"limit": limit or 10_000_000})
+    cur.execute(sql, {"limit": limit or 10_000_000, "now": now_utc})
     rows = cur.fetchall() or []
     return [r["id"] for r in rows]
 
@@ -607,11 +535,7 @@ def index_all_jobs(limit: Optional[int] = None, reindex: bool = False) -> None:
         except Exception as e:
             logger.exception("Lỗi index job %s: %s", job_id, e)
 
-
-# ==========================
-#  CLI
-# ==========================
-
+# CLI
 if __name__ == "__main__":
     import argparse
 
