@@ -16,3 +16,5 @@ __pycache__/
 
 app/topcv/export_jobs_for_questions.py
 jobs_for_chatgpt.jsonl
+
+dataset.json

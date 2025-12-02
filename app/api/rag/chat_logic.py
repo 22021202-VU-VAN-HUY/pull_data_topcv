@@ -2,60 +2,91 @@
 
 from __future__ import annotations
 
+import html
+import json
 import logging
 import re
-import html
 from typing import Any, Dict, List, Optional
 
 import google.generativeai as genai
 
 from app.config import settings
-from app.api.rag.retriever import fetch_full_job_detail, retrieve_jobs
+from app.api.rag.retriever import retrieve_jobs
 from app.api.rag.query_parser import parse_user_query
 
 logger = logging.getLogger(__name__)
 
-SECTION_LABELS = {
-    "mo_ta_cong_viec": "Mô tả công việc",
-    "yeu_cau_ung_vien": "Yêu cầu ứng viên",
-    "thu_nhap": "Thu nhập",
-    "quyen_loi": "Quyền lợi",
-    "dia_diem_lam_viec": "Địa điểm làm việc",
-    "phuc_loi": "Phúc lợi",
-    "thong_tin_khac": "Thông tin khác",
-}
+SYSTEM_PROMPT = """
+Bạn là trợ lý tuyển dụng của nền tảng JobFinder.
 
-SECTION_ORDER = [
-    "mo_ta_cong_viec",
-    "yeu_cau_ung_vien",
-    "thu_nhap",
-    "quyen_loi",
-    "dia_diem_lam_viec",
-    "phuc_loi",
-    "thong_tin_khac",
-]
+NGUYÊN TẮC CHUNG:
+- Trả lời bằng TIẾNG VIỆT, giọng thân thiện, tự nhiên, dễ hiểu.
+- CHỈ dùng thông tin trong NGỮ CẢNH CÔNG VIỆC (context) được cung cấp.
+- KHÔNG tự bịa ra mức lương, yêu cầu, quyền lợi, địa điểm hoặc tên công việc mới.
+- Nếu ngữ cảnh không đủ thông tin để trả lời một phần nào đó của câu hỏi,
+  hãy nói rõ: "Trong mô tả công việc hiện tại không ghi rõ về vấn đề này."
+  hoặc "Em không tìm thấy thông tin này trong dữ liệu hiện có."
+- ƯU TIÊN dùng URL nội bộ JobFinder dạng /jobs/<id> nếu cần đưa link job cho người dùng.
+- Không cần giải thích về hệ thống RAG hay cơ sở dữ liệu, chỉ trả lời như một HR đang tư vấn ứng viên.
+""".strip()
 
-_gemini_model: Optional[genai.GenerativeModel] = None
+UNIFIED_PROMPT = """
+{system_prompt}
 
+Dưới đây là thông tin đã được hệ thống truy xuất từ cơ sở dữ liệu việc làm (context).
+Bạn CHỈ ĐƯỢC sử dụng thông tin trong context để trả lời.
 
-def get_gemini_model() -> genai.GenerativeModel:
-    """
-    Khởi tạo & cache Gemini model.
-    """
-    global _gemini_model
-    if _gemini_model is not None:
-        return _gemini_model
+INTENT: {intent}
+FILTERS (JSON): {filters_json}
 
-    api_key = getattr(settings, "GEMINI_API_KEY", "") or ""
-    model_name = getattr(settings, "GEMINI_MODEL", "gemini-2.0-flash")
+CONTEXT (các job, mỗi job có id, tiêu đề, công ty, lương, địa điểm, mô tả, yêu cầu, quyền lợi,...):
+----------------
+{context}
+----------------
 
-    if not api_key:
-        raise RuntimeError("GEMINI_API_KEY chưa được cấu hình trong .env / Settings.")
+Câu hỏi của người dùng:
+"{question}"
 
-    genai.configure(api_key=api_key)
-    _gemini_model = genai.GenerativeModel(model_name)
-    logger.info("Gemini model initialized: %s", model_name)
-    return _gemini_model
+CÁCH TRẢ LỜI THEO INTENT:
+
+1) Nếu INTENT = "ask_detail":
+   - Người dùng đang hỏi chi tiết về 1 công việc cụ thể (ví dụ: lương, yêu cầu, quyền lợi, địa điểm...).
+   - Trả lời NGẮN GỌN, trực tiếp, 2–5 câu.
+   - KHÔNG cần liệt kê danh sách job, KHÔNG cần đưa link.
+   - Nếu câu hỏi về lương: nêu rõ khoảng lương nếu context có
+     (ví dụ: "Mức lương khoảng từ 12.000.000 đến 14.000.000 VND/tháng.").
+   - Nếu context không có thông tin được hỏi (edge-case): nói rõ
+     "Trong mô tả công việc hiện tại không ghi rõ về vấn đề này." và không bịa thêm.
+
+2) Nếu INTENT = "search_jobs":
+   - Người dùng muốn TÌM KIẾM hoặc GỢI Ý CÔNG VIỆC MỚI.
+   - Hãy chọn 3–5 job PHÙ HỢP NHẤT trong context.
+   - Trả lời dạng bullet, mỗi job 1 dòng:
+     - {{title}} – {{company}}; lương: {{tóm tắt lương hoặc "thoả thuận"}}; địa điểm: {{địa điểm chính}}. Link: /jobs/{{id}}
+   - Nếu không có job phù hợp, hãy giải thích ngắn gọn và gợi ý người dùng nới tiêu chí (KHÔNG bịa job).
+
+3) Nếu INTENT = "compare_jobs":
+   - Người dùng muốn SO SÁNH một vài job trong context.
+   - Hãy so sánh ngắn gọn về:
+     + Mức lương (ai cao hơn / thấp hơn / tương đương)
+     + Yêu cầu ứng viên (job nào đòi hỏi nhiều hơn)
+     + Quyền lợi nổi bật nếu có.
+   - Kết luận 1–2 câu: nên chọn job nào nếu ưu tiên lương, hoặc ưu tiên yêu cầu nhẹ.
+   - KHÔNG bắt buộc phải đưa link.
+
+4) Nếu INTENT = "other":
+   - Trả lời ngắn gọn, thân thiện, dựa trên context.
+   - Nếu câu hỏi không liên quan đến dữ liệu job hoặc context không đủ, hãy nói rõ
+     bạn không có thông tin trong dữ liệu hiện tại, KHÔNG bịa thêm.
+
+NGUYÊN TẮC BẮT BUỘC:
+- Chỉ dùng thông tin trong CONTEXT để khẳng định chi tiết (lương, yêu cầu, quyền lợi, địa điểm...).
+- Nếu context không đủ, hãy nói rõ "không tìm thấy thông tin trong dữ liệu hiện có" thay vì đoán.
+- ƯU TIÊN dùng URL nội bộ JobFinder dạng /jobs/<id> khi cần đưa link job.
+- Trả lời bằng tiếng Việt, giọng thân thiện, tự nhiên.
+""".strip()
+
+_unified_model: Optional[genai.GenerativeModel] = None
 
 
 # ========= FORMAT LƯƠNG / CONTEXT =========
@@ -113,190 +144,138 @@ def _get_title_upper(meta: Dict[str, Any]) -> str:
     return title.upper()
 
 
-def _get_detail_text(
-    detail_sections: Dict[str, Any],
-    key: str,
-    *,
-    max_len: int = 400,
-) -> str:
-    sec = detail_sections.get(key) or {}
-    if isinstance(sec, dict):
-        text = sec.get("text") or ""
-    elif isinstance(sec, str):
-        text = sec
-    else:
-        text = ""
-
-    text = (text or "").strip()
-    if not text:
-        return ""
-
-    if len(text) > max_len:
-        return text[: max_len - 3] + "..."
-    return text
-
-
-def _get_section_full_text(detail_sections: Dict[str, Any], key: str) -> str:
-    sec = detail_sections.get(key) or {}
-    if isinstance(sec, dict):
-        return (sec.get("text") or "").strip()
-    if isinstance(sec, str):
-        return sec.strip()
-    return ""
-
-
-def _format_one_job_context(
-    idx: int,
-    doc: Dict[str, Any],
-    *,
-    is_current: bool = False,
-) -> str:
+def build_context_text(retrieved_docs: List[Dict[str, Any]]) -> str:
     """
-    Format 1 job trong context RAG, đã rút gọn để tiết kiệm token.
+    Ghép các chunk lại thành 1 context text để đưa vào LLM.
+    Ưu tiên include thông tin job_id, title, company cho dễ đọc.
     """
-    meta = doc.get("metadata") or {}
-    job_id = meta.get("id") or doc.get("job_id")
 
-    # URL nội bộ trong hệ thống Flask (ưu tiên dùng cho chatbot)
-    app_url = f"/jobs/{job_id}" if job_id is not None else ""
-
-    # URL gốc TopCV (vẫn giữ nếu bạn cần dùng sau này)
-    source_url = meta.get("url") or ""
-
-    title = _get_title_upper(meta)
-    company = _get_company_name(meta)
-    locations = _get_locations_text(meta)
-    salary_text = _format_salary_block(meta)
-
-    general_info = meta.get("general_info") or {}
-    cap_bac = general_info.get("cap_bac")
-    hinh_thuc = general_info.get("hinh_thuc_lam_viec")
-
-    detail_sections = meta.get("detail_sections") or {}
-    mo_ta = _get_detail_text(detail_sections, "mo_ta_cong_viec", max_len=350)
-    yeu_cau = _get_detail_text(detail_sections, "yeu_cau_ung_vien", max_len=350)
-    quyen_loi = _get_detail_text(detail_sections, "quyen_loi", max_len=350)
-
-    chunk_text = (doc.get("chunk_text") or "").strip()
-    if chunk_text:
-        max_chunk_len = 300
-        if len(chunk_text) > max_chunk_len:
-            chunk_text = chunk_text[: max_chunk_len - 3] + "..."
-
-    score = doc.get("score")
-
-    lines: List[str] = []
-    prefix = f"[JOB {idx}]"
-    if is_current:
-        prefix += " (Job bạn đang xem)"
-
-    lines.append(f"{prefix} ID nội bộ: {job_id}")
-    if title:
-        lines.append(f"Tiêu đề: {title}")
-    if company:
-        lines.append(f"Công ty: {company}")
-    if locations:
-        lines.append(f"Địa điểm: {locations}")
-    if cap_bac:
-        lines.append(f"Cấp bậc: {cap_bac}")
-    if hinh_thuc:
-        lines.append(f"Hình thức: {hinh_thuc}")
-    lines.append(f"Mức lương: {salary_text}")
-
-    # 👉 Link ưu tiên cho chatbot: URL nội bộ JobFinder
-    if app_url:
-        lines.append(
-            f"Link chi tiết trên JobFinder (nên dùng cho người dùng): {app_url}"
+    parts: List[str] = []
+    for d in retrieved_docs:
+        meta = d.get("metadata") or {}
+        job_id = meta.get("id") or d.get("job_id")
+        title = meta.get("title") or ""
+        company_obj = meta.get("company") or {}
+        company_name = (
+            company_obj.get("name")
+            if isinstance(company_obj, dict)
+            else str(company_obj or "")
         )
 
-    # Link TopCV chỉ dùng làm tham khảo cho model
-    if source_url:
-        lines.append(f"Link TopCV gốc (tham khảo): {source_url}")
+        header = f"[JOB {job_id}] {title} – {company_name}".strip()
+        salary_text = _format_salary_block(meta)
+        location_text = _get_locations_text(meta)
+        details: List[str] = []
+        if salary_text:
+            details.append(f"lương: {salary_text}")
+        if location_text:
+            details.append(f"địa điểm: {location_text}")
+        if details:
+            header = f"{header} ({'; '.join(details)})"
 
-    if score is not None:
-        lines.append(f"(Độ liên quan nội bộ: {score:.3f})")
+        chunk_text = d.get("chunk_text") or ""
+        parts.append(header + "\n" + chunk_text)
 
-    if mo_ta:
-        lines.append("")
-        lines.append("Mô tả công việc (tóm tắt):")
-        lines.append(mo_ta)
-    if yeu_cau:
-        lines.append("")
-        lines.append("Yêu cầu ứng viên (tóm tắt):")
-        lines.append(yeu_cau)
-    if quyen_loi:
-        lines.append("")
-        lines.append("Quyền lợi chính:")
-        lines.append(quyen_loi)
-
-    if chunk_text:
-        lines.append("")
-        lines.append("Đoạn thông tin nổi bật từ chỉ mục (rút gọn):")
-        lines.append(chunk_text)
-
-    return "\n".join(lines)
+    return "\n\n".join(parts)
 
 
-def _format_full_current_job(doc: Dict[str, Any]) -> str:
-    meta = doc.get("metadata") or {}
-    job_id = meta.get("id") or doc.get("job_id")
-    title = _get_title_upper(meta)
-    company = _get_company_name(meta)
-    locations = _get_locations_text(meta)
-    salary_text = _format_salary_block(meta)
+def _get_unified_model() -> genai.GenerativeModel:
+    global _unified_model
+    if _unified_model is not None:
+        return _unified_model
 
-    general_info = meta.get("general_info") or {}
-    cap_bac = general_info.get("cap_bac")
-    hinh_thuc = general_info.get("hinh_thuc_lam_viec")
-    hoc_van = general_info.get("hoc_van")
-    so_luong = general_info.get("so_luong_tuyen")
-    experience = general_info.get("experience")
-    deadline = general_info.get("deadline")
+    api_key = getattr(settings, "GEMINI_API_KEY", "") or ""
+    if not api_key:
+        raise RuntimeError("GEMINI_API_KEY chưa được cấu hình.")
 
-    detail_sections = meta.get("detail_sections") or {}
+    model_name = getattr(settings, "GEMINI_CHAT_MODEL", "") or "gemini-2.0-flash"
 
-    lines: List[str] = []
-    lines.append("[JOB ĐANG XEM - NGỮ CẢNH CHI TIẾT]")
-    lines.append(f"ID nội bộ: {job_id}")
-    if title:
-        lines.append(f"Tiêu đề: {title}")
-    if company:
-        lines.append(f"Công ty: {company}")
-    if locations:
-        lines.append(f"Địa điểm: {locations}")
-    lines.append(f"Mức lương: {salary_text}")
-    if cap_bac:
-        lines.append(f"Cấp bậc: {cap_bac}")
-    if hinh_thuc:
-        lines.append(f"Hình thức làm việc: {hinh_thuc}")
-    if hoc_van:
-        lines.append(f"Yêu cầu học vấn: {hoc_van}")
-    if so_luong:
-        lines.append(f"Số lượng tuyển: {so_luong}")
-    if experience:
-        lines.append(f"Kinh nghiệm: {experience}")
-    if deadline:
-        lines.append(f"Hạn nộp hồ sơ: {deadline}")
+    genai.configure(api_key=api_key)
+    _unified_model = genai.GenerativeModel(model_name)
+    return _unified_model
 
-    for stype in SECTION_ORDER:
-        label = SECTION_LABELS.get(stype, stype)
-        text = _get_section_full_text(detail_sections, stype)
+
+def generate_answer_unified(
+    user_message: str, filters: Dict[str, Any], retrieved_docs: List[Dict[str, Any]]
+) -> str:
+    model = _get_unified_model()
+    context_text = build_context_text(retrieved_docs)
+    filters_json = json.dumps(filters or {}, ensure_ascii=False)
+
+    prompt = UNIFIED_PROMPT.format(
+        system_prompt=SYSTEM_PROMPT,
+        intent=(filters.get("intent") or "other"),
+        filters_json=filters_json,
+        context=context_text[:12000],
+        question=user_message,
+    )
+
+    resp = model.generate_content(
+        prompt,
+        generation_config={
+            "temperature": 0.2,
+            "top_p": 0.9,
+            "top_k": 32,
+            "max_output_tokens": 512,
+        },
+    )
+
+    text = ""
+    try:
+        candidates = getattr(resp, "candidates", None) or []
+        if candidates:
+            cand = candidates[0]
+            content = getattr(cand, "content", None)
+            parts = getattr(content, "parts", None) if content is not None else None
+            if parts:
+                buf: List[str] = []
+                for p in parts:
+                    t = getattr(p, "text", None)
+                    if t:
+                        buf.append(t)
+                text = "".join(buf).strip()
+
         if not text:
-            continue
-        lines.append("")
-        lines.append(f"{label}:")
-        lines.append(text)
+            raw = getattr(resp, "text", None)
+            if raw:
+                text = raw.strip()
+    except Exception:
+        raw = getattr(resp, "text", None)
+        if raw:
+            text = raw.strip()
 
-    for stype, sec in detail_sections.items():
-        if stype in SECTION_ORDER:
-            continue
-        text = _get_section_full_text(detail_sections, stype)
-        if text:
-            lines.append("")
-            lines.append(f"{stype}:")
-            lines.append(text)
+    return text or "Hiện tại em chưa trả lời được câu hỏi này từ dữ liệu có sẵn."
 
-    return "\n".join(lines)
+
+def _build_retrieval_query(user_message: str, history: List[Dict[str, str]]) -> str:
+    """
+    Ghép thêm vài lượt hội thoại gần nhất để model retrieve không bị lạc ngữ cảnh
+    (ví dụ: "công việc thứ 2", "mô tả công việc này").
+    """
+    base = (user_message or "").strip()
+    if not history:
+        return base
+
+    # Lấy tối đa 4 lượt cuối, nối thành 1 đoạn ngắn gọn để embedding.
+    tail_turns: List[str] = []
+    for turn in history[-4:]:
+        content = (turn.get("content") or "").strip()
+        if content:
+            tail_turns.append(content)
+
+    if not tail_turns:
+        return base
+
+    history_text = " | ".join(tail_turns)
+
+    # Giới hạn độ dài để tránh làm loãng embedding.
+    max_len = 800
+    if len(history_text) > max_len:
+        history_text = history_text[-max_len:]
+
+    if base:
+        return f"{base} | Ngữ cảnh trước đó: {history_text}"
+    return history_text
 
 
 # ========= PHÂN LOẠI Ý ĐỊNH CƠ BẢN =========
@@ -334,187 +313,6 @@ def _is_greeting_only(message: str) -> bool:
 
     # Câu chào thường ngắn, không kèm yêu cầu rõ.
     return any(k in text for k in greeting_keywords)
-
-
-def _build_context_block(
-    docs: List[Dict[str, Any]],
-    *,
-    current_job_id: Optional[int] = None,
-    current_job_doc: Optional[Dict[str, Any]] = None,
-) -> str:
-    parts: List[str] = []
-
-    # Ưu tiên nhúng toàn bộ nội dung job hiện tại để model trả lời chi tiết.
-    full_doc = current_job_doc
-    if full_doc is None and current_job_id is not None:
-        try:
-            full_doc = fetch_full_job_detail(int(current_job_id))
-        except Exception as e:
-            logger.warning("Không lấy được full job %s: %s", current_job_id, e)
-            full_doc = None
-
-    if not docs and not full_doc:
-        return (
-            "Không tìm được công việc phù hợp trong dữ liệu (không có document nào từ RAG)."
-        )
-
-    if full_doc:
-        parts.append(_format_full_current_job(full_doc))
-        parts.append("\n---\n")
-
-    for i, d in enumerate(docs, start=1):
-        is_current = False
-        meta = d.get("metadata") or {}
-        job_id = meta.get("id") or d.get("job_id")
-        if current_job_id is not None:
-            try:
-                is_current = int(job_id) == int(current_job_id)
-            except Exception:
-                is_current = job_id == current_job_id
-
-        parts.append(_format_one_job_context(i, d, is_current=is_current))
-        parts.append("\n---\n")
-    return "\n".join(parts)
-
-
-def _build_history_block(history: List[Dict[str, str]]) -> str:
-    if not history:
-        return "Chưa có lịch sử hội thoại trước đó."
-
-    lines: List[str] = ["Lịch sử hội thoại trước đó (tin nhắn mới nhất ở cuối):"]
-    for turn in history:
-        role = turn.get("role") or "user"
-        content = (turn.get("content") or "").strip()
-        if not content:
-            continue
-        role_vi = "Người dùng" if role == "user" else "Trợ lý"
-        lines.append(f"{role_vi}: {content}")
-    return "\n".join(lines)
-
-
-def _build_filters_block(query_filters: Dict[str, Any]) -> str:
-    if not query_filters:
-        return "Chưa suy ra được bộ lọc từ câu hỏi người dùng."
-
-    lines: List[str] = ["Các bộ lọc suy ra từ câu hỏi:"]
-
-    job_keywords = query_filters.get("job_keywords") or []
-    if job_keywords:
-        lines.append(f"- Từ khoá ngành/vị trí: {', '.join(job_keywords)}")
-
-    locations = query_filters.get("locations") or []
-    if locations:
-        lines.append(f"- Địa điểm ưu tiên: {', '.join(locations)}")
-
-    min_salary = query_filters.get("min_salary_vnd")
-    max_salary = query_filters.get("max_salary_vnd")
-    if min_salary or max_salary:
-        salary_parts = []
-        if min_salary:
-            salary_parts.append(f"từ {int(min_salary):,} VND")
-        if max_salary:
-            salary_parts.append(f"đến {int(max_salary):,} VND")
-        lines.append(f"- Mức lương mong muốn: {' '.join(salary_parts)}")
-
-    skills = query_filters.get("skills") or []
-    if skills:
-        lines.append(f"- Kỹ năng/yêu cầu: {', '.join(skills)}")
-
-    if len(lines) == 1:
-        lines.append("- Chưa có ràng buộc cụ thể.")
-
-    return "\n".join(lines)
-
-
-def _build_retrieval_query(user_message: str, history: List[Dict[str, str]]) -> str:
-    """
-    Ghép thêm vài lượt hội thoại gần nhất để model retrieve không bị lạc ngữ cảnh
-    (ví dụ: "công việc thứ 2", "mô tả công việc này").
-    """
-    base = (user_message or "").strip()
-    if not history:
-        return base
-
-    # Lấy tối đa 4 lượt cuối, nối thành 1 đoạn ngắn gọn để embedding.
-    tail_turns: List[str] = []
-    for turn in history[-4:]:
-        content = (turn.get("content") or "").strip()
-        if content:
-            tail_turns.append(content)
-
-    if not tail_turns:
-        return base
-
-    history_text = " | ".join(tail_turns)
-
-    # Giới hạn độ dài để tránh làm loãng embedding.
-    max_len = 800
-    if len(history_text) > max_len:
-        history_text = history_text[-max_len:]
-
-    if base:
-        return f"{base} | Ngữ cảnh trước đó: {history_text}"
-    return history_text
-
-
-def _build_prompt(
-    user_message: str,
-    docs: List[Dict[str, Any]],
-    history: List[Dict[str, str]],
-    *,
-    query_filters: Dict[str, Any],
-    current_job_id: Optional[int],
-    current_job_doc: Optional[Dict[str, Any]],
-) -> str:
-    system_prompt = (
-        "Bạn là trợ lý tuyển dụng JobFinder (dữ liệu từ TopCV).\n"
-        "- Trả lời bằng TIẾNG VIỆT, thân thiện, gần gũi như người thật đang trò chuyện.\n"
-        "- CHỈ dùng thông tin trong phần 'NGỮ CẢNH CÔNG VIỆC (RAG)'; không bịa thêm job/công ty/lương/link ngoài ngữ cảnh.\n"
-        "- ƯU TIÊN dùng URL nội bộ JobFinder (bắt đầu bằng /jobs/...) khi đưa link cho người dùng, "
-        "không khuyến khích dùng link TopCV.\n"
-        "- Danh sách job trong RAG đã được hệ thống lọc sẵn. Nếu ngữ cảnh RAG KHÔNG TRỐNG, luôn ưu tiên dùng các job này để gợi ý; không được trả lời rằng 'không có công việc phù hợp'.\n"
-        "- Chỉ khi phần ngữ cảnh ghi rõ 'Không tìm được công việc phù hợp trong dữ liệu' thì mới được nói là không có job phù hợp.\n"
-        "- Khi có block '[JOB ĐANG XEM - NGỮ CẢNH CHI TIẾT]', phải đọc toàn bộ mô tả/yêu cầu/quyền lợi của block đó để trả lời các câu hỏi về job hiện tại, kể cả các câu hỏi lắt léo về kỹ năng/phúc lợi.\n"
-        "- Khi nói về lương, dùng min/max/currency/interval nếu có; nếu không có thì ghi 'Thoả thuận'.\n"
-        "- Nếu câu hỏi nhắc tới 'công việc này', 'job hiện tại'... hãy ưu tiên job được đánh dấu (Job bạn đang xem) trong NGỮ CẢNH và trả lời trực tiếp theo dữ liệu của job đó.\n"
-        "- Nếu câu hỏi mang tính tìm kiếm (ví dụ 'công việc nào cần cả A và B, lương 20tr'), hãy chọn các job trong ngữ cảnh phù hợp nhất thay vì chỉ dùng job đang xem.\n"
-        "- Với câu hỏi dò chi tiết (phúc lợi, trợ cấp, kỹ năng...), hãy trích đúng đoạn liên quan trong mô tả/yêu cầu/quyền lợi nếu có; nếu không thấy thông tin, nói rõ là chưa thấy ghi trong mô tả.\n"
-        "- Nếu người dùng hỏi về kỹ năng, hãy trích từ mô tả / yêu cầu ứng viên của các job trong ngữ cảnh.\n"
-        "- Khi người dùng hỏi thêm thông tin về từng job, hãy đóng vai trò tư vấn: giải thích ngắn gọn, giúp họ hiểu yêu cầu, quyền lợi và cách ứng tuyển dựa trên dữ liệu có sẵn.\n"
-        "- Câu trả lời ngắn gọn, rõ ràng, dùng bullet (-) và xuống dòng giữa các ý.\n"
-    )
-
-    context_block = _build_context_block(
-        docs, current_job_id=current_job_id, current_job_doc=current_job_doc
-    )
-    history_block = _build_history_block(history)
-    filters_block = _build_filters_block(query_filters)
-
-    prompt = f"""{system_prompt}
-
-================= NGỮ CẢNH CÔNG VIỆC (RAG) =================
-{context_block}
-
-================= PHÂN TÍCH YÊU CẦU NGƯỜI DÙNG =================
-{filters_block}
-
-================= LỊCH SỬ HỘI THOẠI =================
-{history_block}
-
-================= CÂU HỎI HIỆN TẠI CỦA NGƯỜI DÙNG =================
-{user_message}
-
-================= YÊU CẦU TRẢ LỜI =================
-- Trả lời ngắn gọn, ưu tiên 2–4 bullet; mỗi bullet ≤ 2 câu.
-- Mẫu bullet: "- <tiêu đề> – <công ty>; lương: <text>; địa điểm: <text>. [link](/jobs/<id>)"
-- Ưu tiên dùng URL dạng /jobs/<id> khi gắn link cho người dùng.
-- Giữ mỗi bullet trên một dòng, có khoảng trắng giữa các bullet để dễ đọc.
-- Nếu có link, hãy đặt trong dấu [](...) để người dùng bấm được (hoặc chèn URL /jobs/<id> trực tiếp vào cuối bullet).
-- Có thể mở đầu 1 câu chào hoặc đồng cảm ngắn để tăng tự nhiên, sau đó dùng bullet để tổng hợp. Giữ giọng điệu mạch lạc, tôn trọng người hỏi.
-- Nếu phần RAG ghi 'Không tìm được công việc phù hợp trong dữ liệu', hãy nói rõ là không tìm thấy job phù hợp và gợi ý người dùng tìm lại.
-- Không tự tạo thêm job hoặc link ngoài danh sách trong NGỮ CẢNH.
-"""
-    return prompt
 
 
 # ========= CLEAN + HTML HOÁ CÂU TRẢ LỜI =========
@@ -647,66 +445,10 @@ def chat_with_rag(
             "context_jobs": [],
         }
 
-    current_job_doc: Optional[Dict[str, Any]] = None
-    if current_job_id is not None:
-        try:
-            current_job_doc = fetch_full_job_detail(int(current_job_id))
-        except Exception as e:
-            logger.warning("Không lấy được full job %s sau khi retrieve: %s", current_job_id, e)
-
-    # 2. Build prompt
-    prompt = _build_prompt(
-        user_message=user_message,
-        docs=docs,
-        history=history,
-        query_filters=query_filters,
-        current_job_id=current_job_id,
-        current_job_doc=current_job_doc,
-    )
-
-    # 3. Gọi Gemini (đã tránh dùng response.text trực tiếp)
+    # 2. Gọi Gemini với unified prompt
     try:
-        model = get_gemini_model()
-        temperature = getattr(settings, "GEMINI_TEMPERATURE", 0.2) or 0.2
-        max_tokens = getattr(settings, "GEMINI_MAX_OUTPUT_TOKENS", 2048) or 2048
-
-        response = model.generate_content(
-            prompt,
-            generation_config={
-                "temperature": float(temperature),
-                "top_p": 0.9,
-                "top_k": 32,
-                "max_output_tokens": int(max_tokens),
-            },
-        )
-
-        answer_text = ""
-        try:
-            candidates = getattr(response, "candidates", None) or []
-            if not candidates:
-                logger.warning("Gemini trả về không có candidate nào.")
-            else:
-                cand0 = candidates[0]
-                content = getattr(cand0, "content", None)
-                parts = getattr(content, "parts", None) if content is not None else None
-
-                if not parts:
-                    logger.warning(
-                        "Gemini candidate không có parts, finish_reason=%s",
-                        getattr(cand0, "finish_reason", None),
-                    )
-                else:
-                    chunks: List[str] = []
-                    for p in parts:
-                        t = getattr(p, "text", None)
-                        if t:
-                            chunks.append(t)
-                    answer_text = "\n".join(chunks).strip()
-        except Exception as inner:
-            logger.warning("Không trích được text từ response Gemini: %s", inner)
-            answer_text = ""
-
-        answer_text = _clean_answer(answer_text)
+        answer_raw = generate_answer_unified(user_message, query_filters, docs)
+        answer_text = _clean_answer(answer_raw)
     except Exception as e:
         logger.exception("Lỗi khi gọi Gemini: %s", e)
         return {
@@ -743,24 +485,6 @@ def chat_with_rag(
                 "score": d.get("score"),
             }
         )
-
-    if current_job_doc:
-        meta = current_job_doc.get("metadata") or {}
-        job_id = meta.get("id") or current_job_doc.get("job_id")
-        already_added = any(j.get("job_id") == job_id for j in context_jobs)
-        if not already_added:
-            context_jobs.insert(
-                0,
-                {
-                    "job_id": job_id,
-                    "title": _get_title_upper(meta),
-                    "company_name": _get_company_name(meta),
-                    "locations": _get_locations_text(meta),
-                    "salary_text": _format_salary_block(meta),
-                    "url": f"/jobs/{job_id}" if job_id is not None else meta.get("url"),
-                    "score": 1.0,
-                },
-            )
 
     return {
         "answer": answer_text,

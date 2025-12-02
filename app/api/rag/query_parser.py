@@ -41,6 +41,7 @@ def _get_parser_model() -> genai.GenerativeModel:
 
 def _default_filters() -> Dict[str, Any]:
     return {
+        "intent": "other",   # NEW
         "job_keywords": [],   # từ khoá ngành / chức danh
         "locations": [],      # ["Hà Nội", "Hồ Chí Minh", ...]
         "min_salary_vnd": None,
@@ -67,6 +68,15 @@ Bạn là module phân tích câu hỏi tuyển dụng, nhiệm vụ là TRẢ V
 
 Hãy đọc câu hỏi của người dùng (tiếng Việt) và trích xuất các trường sau:
 
+- intent: một trong các giá trị:
+  - "search_jobs": nếu người dùng muốn TÌM KIẾM hoặc GỢI Ý CÔNG VIỆC MỚI
+    (ví dụ: "tìm giúp em việc marketing ở HCM", "có job IT nào lương trên 15tr không?")
+  - "ask_detail": nếu người dùng đang hỏi chi tiết về MỘT CÔNG VIỆC CỤ THỂ
+    (ví dụ: "công việc này lương bao nhiêu?", "job kế toán bên ABC yêu cầu gì?")
+  - "compare_jobs": nếu người dùng muốn SO SÁNH CÁC CÔNG VIỆC
+    (ví dụ: "giữa 2 job A và B thì job nào lương cao hơn?")
+  - "other": các trường hợp còn lại.
+
 - job_keywords: danh sách từ khoá ngành, vị trí, lĩnh vực (ví dụ: ["IT", "lập trình", "developer"]).
 - locations: danh sách địa điểm (tỉnh/thành, quận, khu vực...), ưu tiên dạng tên tỉnh/thành (ví dụ: ["Hà Nội"]).
 - min_salary_vnd: mức lương tối thiểu *ước tính* theo VND, nếu người dùng nói "từ 10tr", "trên 15 triệu"...
@@ -75,11 +85,12 @@ Hãy đọc câu hỏi của người dùng (tiếng Việt) và trích xuất c
 
 Yêu cầu:
 - Nếu không suy ra được một trường thì để giá trị null (với số) hoặc [] (với danh sách).
+- intent luôn phải là một trong: "search_jobs", "ask_detail", "compare_jobs", "other".
 - TẤT CẢ TIỀN LƯƠNG quy đổi sang VND, ví dụ "10 triệu" → 10000000.
 - Chỉ TRẢ VỀ JSON THUẦN, KHÔNG giải thích thêm.
 
 Câu hỏi người dùng:
-\"\"\"{msg}\"\"\"
+\"\"\"{msg}\"\"\" 
 """
 
         # ⚠️ Quan trọng: ép model trả về application/json
