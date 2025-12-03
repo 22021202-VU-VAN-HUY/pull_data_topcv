@@ -14,7 +14,7 @@ export_job_71.json
 __pycache__/
 # app/config.py
 
-app/topcv/export_jobs_for_questions.py
+# app/topcv/export_jobs_for_questions.py
 jobs_for_chatgpt.jsonl
 
 dataset.json

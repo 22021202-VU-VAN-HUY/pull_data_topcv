@@ -1,32 +1,19 @@
-# app/api/rag/retriever.py
-
 from __future__ import annotations
-
 import json
 import logging
 from typing import Any, Dict, List, Optional
-
 from datetime import datetime, timezone
-
 from sentence_transformers import SentenceTransformer
-
 from app.db import get_connection
 from app.config import settings
 
 logger = logging.getLogger(__name__)
 
-
-# =========================
 #  EMBEDDING MODEL
-# =========================
-
 _embedding_model: Optional[SentenceTransformer] = None
 
-
+#  Model dùng cho query (phải trùng với model lúc index).
 def get_query_embedding_model() -> SentenceTransformer:
-    """
-    Model dùng cho query (phải trùng với model lúc index).
-    """
     global _embedding_model
     if _embedding_model is None:
         logger.info(
@@ -39,26 +26,18 @@ def get_query_embedding_model() -> SentenceTransformer:
         _embedding_model = model
     return _embedding_model
 
-
 def embed_query(text: str) -> List[float]:
     model = get_query_embedding_model()
     vec = model.encode(text, show_progress_bar=False, normalize_embeddings=True)
     return vec.tolist()
 
-
-# =========================
 #  FILTER HELPERS
-# =========================
-
 
 def _normalize_text(s: str) -> str:
     return (s or "").strip().lower()
 
-
+#     Ghép thêm từ khoá / địa điểm đã parse vào câu truy vấn để tăng độ khớp embedding.
 def _augment_query_with_filters(query: str, filters: Dict[str, Any]) -> str:
-    """
-    Ghép thêm từ khoá / địa điểm đã parse vào câu truy vấn để tăng độ khớp embedding.
-    """
     query = (query or "").strip()
     parts: List[str] = [query] if query else []
 
@@ -81,44 +60,36 @@ def _augment_query_with_filters(query: str, filters: Dict[str, Any]) -> str:
             + (" – " if min_salary is not None and max_salary is not None else "")
             + (f"<= {max_salary:,} VND" if max_salary is not None else "")
         )
-
     return " | ".join(parts)
 
-
+# Lọc theo địa điểm:
+#    - Nếu không có filter_locations -> luôn pass
+#    - Nếu có -> check trong meta["locations"] và text.
 def _location_pass(
     meta: Dict[str, Any],
     filter_locations: List[str],
     chunk_text: str,
 ) -> bool:
-    """
-    Lọc theo địa điểm:
-    - Nếu không có filter_locations -> luôn pass
-    - Nếu có -> check trong meta["locations"] và text.
-    """
     if not filter_locations:
         return True
 
     meta_locs: List[str] = meta.get("locations") or []
     meta_locs_norm = " ".join(_normalize_text(x) for x in meta_locs)
     text_norm = _normalize_text(chunk_text)
-
     for loc in filter_locations:
         loc_norm = _normalize_text(loc)
         if loc_norm and (loc_norm in meta_locs_norm or loc_norm in text_norm):
             return True
     return False
 
-
+# Lọc theo khoảng lương.
+#    - f_min, f_max: VND, có thể None.
+#    - meta["salary"] có thể có min/max, cũng là VND.
 def _salary_pass(
     meta: Dict[str, Any],
     f_min: Optional[int],
     f_max: Optional[int],
 ) -> bool:
-    """
-    Lọc theo khoảng lương.
-    - f_min, f_max: VND, có thể None.
-    - meta["salary"] có thể có min/max, cũng là VND.
-    """
     salary = meta.get("salary") or {}
     s_min = salary.get("min")
     s_max = salary.get("max")
@@ -127,7 +98,7 @@ def _salary_pass(
     if f_min is None and f_max is None:
         return True
 
-    # nếu job không có thông tin lương rõ ràng -> vẫn giữ (đừng loại quá tay)
+    # nếu job không có thông tin lương rõ ràng -> vẫn giữ 
     if s_min is None and s_max is None:
         return True
 
@@ -137,7 +108,6 @@ def _salary_pass(
 
     if low is None and high is None:
         return True
-
     if f_min is not None and high is not None and high < f_min:
         return False
     if f_max is not None and low is not None and low > f_max:
@@ -145,15 +115,12 @@ def _salary_pass(
 
     return True
 
-
+# Lọc theo kỹ năng: check trong mô tả / yêu cầu / chunk_text.
 def _skills_pass(
     meta: Dict[str, Any],
     filter_skills: List[str],
     chunk_text: str,
 ) -> bool:
-    """
-    Lọc theo kỹ năng: check trong mô tả / yêu cầu / chunk_text.
-    """
     if not filter_skills:
         return True
 
@@ -175,11 +142,8 @@ def _skills_pass(
             return True
     return False
 
-
+# Lọc theo chức danh / từ khoá nghề nghiệp để tránh drift sang ngành khác.
 def _keyword_pass(meta: Dict[str, Any], job_keywords: List[str], chunk_text: str) -> bool:
-    """
-    Lọc theo chức danh / từ khoá nghề nghiệp để tránh drift sang ngành khác.
-    """
     if not job_keywords:
         return True
 
@@ -209,15 +173,10 @@ def _get_company(meta: Dict[str, Any]) -> str:
     return ""
 
 
-# =========================
 #  RETRIEVE
-# =========================
-
+#     Lấy nhanh các chunk thuộc 1 job cụ thể (ưu tiên job_overview, sau đó section)."""
 
 def _fetch_job_docs(job_id: int, limit: int = 6) -> List[Dict[str, Any]]:
-    """
-    Lấy nhanh các chunk thuộc 1 job cụ thể (ưu tiên job_overview, sau đó section)."""
-
     sql = """
         SELECT
             d.id          AS doc_id,
@@ -236,7 +195,6 @@ def _fetch_job_docs(job_id: int, limit: int = 6) -> List[Dict[str, Any]]:
         with conn.cursor() as cur:
             cur.execute(sql, [job_id, limit])
             rows = cur.fetchall() or []
-
     results: List[Dict[str, Any]] = []
     for row in rows:
         if isinstance(row, dict):
@@ -248,7 +206,6 @@ def _fetch_job_docs(job_id: int, limit: int = 6) -> List[Dict[str, Any]]:
             score = row.get("score")
         else:
             doc_id, job_id, chunk_index, chunk_text, metadata_raw, score = row
-
         if isinstance(metadata_raw, str):
             try:
                 metadata = json.loads(metadata_raw)
@@ -256,7 +213,6 @@ def _fetch_job_docs(job_id: int, limit: int = 6) -> List[Dict[str, Any]]:
                 metadata = {"raw": metadata_raw}
         else:
             metadata = metadata_raw or {}
-
         results.append(
             {
                 "doc_id": doc_id,
@@ -267,16 +223,11 @@ def _fetch_job_docs(job_id: int, limit: int = 6) -> List[Dict[str, Any]]:
                 "score": float(score) if score is not None else None,
             }
         )
-
     return results
 
-
+# Lấy toàn bộ thông tin 1 job (metadata + các section text) để đưa vào prompt.
+# Trả về doc có cấu trúc tương tự kết quả retrieve, phục vụ cho job hiện tại.
 def fetch_full_job_detail(job_id: int) -> Optional[Dict[str, Any]]:
-    """
-    Lấy toàn bộ thông tin 1 job (metadata + các section text) để đưa vào prompt.
-    Trả về doc có cấu trúc tương tự kết quả retrieve, phục vụ cho job hiện tại.
-    """
-
     sql_job = """
         SELECT
             j.id AS job_id,
@@ -489,7 +440,7 @@ def retrieve_jobs(
         len(raw_results),
     )
 
-    # ------------ 2. Lọc theo filters (hybrid) ------------
+    #  2. Lọc theo filters (hybrid) 
     filtered: List[Dict[str, Any]] = []
     for d in raw_results:
         meta = d.get("metadata") or {}
@@ -506,10 +457,9 @@ def retrieve_jobs(
 
         filtered.append(d)
 
-    # Nếu lọc xong trống → fallback: dùng list gốc
+    # Lọc xong trống → fallback: dùng list gốc
     final_docs = filtered if filtered else raw_results
-
-    # Sort lại theo score giảm dần, lấy top_k
+    # Sort lại, lấy top_k
     final_docs = sorted(
         final_docs,
         key=lambda x: (x.get("score") is not None, x.get("score")),
