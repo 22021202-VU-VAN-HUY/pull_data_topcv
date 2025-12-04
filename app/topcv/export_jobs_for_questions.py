@@ -62,4 +62,4 @@ def export_jobs(limit: int = 200, output_file: str = "jobs_for_chatgpt.jsonl") -
 
 
 if __name__ == "__main__":
-    export_jobs(limit=2000, output_file="jobs_for_chatgpt.jsonl")
+    export_jobs(limit=2000, output_file="create_question/jobs_for_chatgpt.jsonl")

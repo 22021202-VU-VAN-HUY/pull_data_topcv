@@ -280,9 +280,7 @@ def _build_retrieval_query(user_message: str, history: List[Dict[str, str]]) -> 
     return history_text
 
 
-# ========= PHÂN LOẠI Ý ĐỊNH CƠ BẢN =========
-
-
+# = PHÂN LOẠI Ý ĐỊNH CƠ BẢN =
 def _is_greeting_only(message: str) -> bool:
     text = (message or "").strip().lower()
     if not text:
@@ -317,7 +315,7 @@ def _is_greeting_only(message: str) -> bool:
     return any(k in text for k in greeting_keywords)
 
 
-# ========= CLEAN + HTML HOÁ CÂU TRẢ LỜI =========
+# == CLEAN + HTML HOÁ CÂU TRẢ LỜI ==
 
 
 def _markdown_links_to_html(text: str) -> str:
@@ -341,7 +339,6 @@ def _markdown_links_to_html(text: str) -> str:
     # Convert đường dẫn /jobs/123 hoặc jobs/123 trần thành link có anchor "Xem chi tiết"
     url_pattern = re.compile(r"/?jobs/\d+")
     text = url_pattern.sub(lambda m: f'<a href="/{m.group(0).lstrip("/")}" class="chat-link">Xem chi tiết</a>', text)
-
     return text
 
 
