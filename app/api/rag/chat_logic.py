@@ -172,6 +172,66 @@ def _format_experience_block(meta: Dict[str, Any]) -> str:
     return f"Tối thiểu {months} tháng kinh nghiệm"
 
 
+def _extract_detail_sections(meta: Dict[str, Any]) -> List[str]:
+    """
+    Lấy các đoạn mô tả chi tiết của job (mô tả, yêu cầu, quyền lợi, phụ cấp,...)
+    để đưa vào prompt. Ưu tiên text_content, fallback html_content.
+    """
+
+    sections = meta.get("detail_sections")
+    if not isinstance(sections, dict):
+        return []
+
+    readable_names = {
+        "mo_ta_cong_viec": "Mô tả công việc",
+        "yeu_cau_ung_vien": "Yêu cầu ứng viên",
+        "quyen_loi": "Quyền lợi",
+        "phu_cap": "Phụ cấp",
+        "ky_nang": "Kỹ năng",
+        "phuc_loi": "Phúc lợi",
+    }
+
+    # Sắp xếp các trường quan trọng trước, các trường còn lại giữ nguyên thứ tự.
+    priority_order = [
+        "mo_ta_cong_viec",
+        "yeu_cau_ung_vien",
+        "quyen_loi",
+        "phu_cap",
+    ]
+
+    detail_parts: List[str] = []
+    handled_keys = set()
+
+    def _append_section(key: str) -> None:
+        if key in handled_keys:
+            return
+        section = sections.get(key)
+        if not section:
+            return
+
+        text_content = None
+        html_content = None
+        if isinstance(section, dict):
+            text_content = section.get("text")
+            html_content = section.get("html")
+        else:
+            text_content = str(section)
+
+        content = text_content or html_content
+        if content:
+            heading = readable_names.get(key, key)
+            detail_parts.append(f"{heading}: {content}")
+            handled_keys.add(key)
+
+    for key in priority_order:
+        _append_section(key)
+
+    for key in sections.keys():
+        _append_section(key)
+
+    return detail_parts
+
+
 def build_context_text(retrieved_docs: List[Dict[str, Any]]) -> str:
     """
     Ghép các chunk lại thành 1 context text để đưa vào LLM.
@@ -208,6 +268,8 @@ def build_context_text(retrieved_docs: List[Dict[str, Any]]) -> str:
         sections: List[str] = [header]
         if experience_text and experience_text not in chunk_text:
             sections.append(f"Yêu cầu kinh nghiệm: {experience_text}")
+        detail_sections = _extract_detail_sections(meta)
+        sections.extend(detail_sections)
         sections.append(chunk_text)
         parts.append("\n".join([s for s in sections if s]))
 

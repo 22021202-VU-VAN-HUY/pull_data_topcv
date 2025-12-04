@@ -275,7 +275,7 @@ def fetch_full_job_detail(job_id: int) -> Optional[Dict[str, Any]]:
 
             cur.execute(
                 """
-                SELECT section_type, text_content
+                SELECT section_type, text_content, html_content
                 FROM job_sections
                 WHERE job_id = %s
                 ORDER BY id
@@ -287,8 +287,9 @@ def fetch_full_job_detail(job_id: int) -> Optional[Dict[str, Any]]:
             for sr in sec_rows:
                 stype = sr.get("section_type")
                 text = sr.get("text_content")
-                if stype and text:
-                    detail_sections[stype] = {"text": text}
+                html = sr.get("html_content")
+                if stype and (text or html):
+                    detail_sections[stype] = {"text": text, "html": html}
 
     meta = {
         "id": row.get("job_id"),
