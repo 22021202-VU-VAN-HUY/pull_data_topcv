@@ -146,6 +146,32 @@ def _get_title_upper(meta: Dict[str, Any]) -> str:
     return title.upper()
 
 
+def _format_experience_block(meta: Dict[str, Any]) -> str:
+    """Chuyển kinh nghiệm từ metadata thành chuỗi dễ đọc."""
+
+    experience = meta.get("experience") or {}
+    months = experience.get("months")
+    raw_text = experience.get("raw_text") or meta.get("experience_raw_text")
+
+    if raw_text:
+        return raw_text
+
+    if months is None:
+        return ""
+
+    if months <= 0:
+        return "Không yêu cầu kinh nghiệm"
+
+    # Hiển thị theo tháng, tự động quy đổi năm nếu đủ 12 tháng.
+    years = months // 12
+    remaining_months = months % 12
+    if years and remaining_months:
+        return f"Tối thiểu {years} năm {remaining_months} tháng kinh nghiệm"
+    if years:
+        return f"Tối thiểu {years} năm kinh nghiệm"
+    return f"Tối thiểu {months} tháng kinh nghiệm"
+
+
 def build_context_text(retrieved_docs: List[Dict[str, Any]]) -> str:
     """
     Ghép các chunk lại thành 1 context text để đưa vào LLM.
@@ -167,16 +193,23 @@ def build_context_text(retrieved_docs: List[Dict[str, Any]]) -> str:
         header = f"[JOB {job_id}] {title} – {company_name}".strip()
         salary_text = _format_salary_block(meta)
         location_text = _get_locations_text(meta)
+        experience_text = _format_experience_block(meta)
         details: List[str] = []
         if salary_text:
             details.append(f"lương: {salary_text}")
         if location_text:
             details.append(f"địa điểm: {location_text}")
+        if experience_text:
+            details.append(f"kinh nghiệm: {experience_text}")
         if details:
             header = f"{header} ({'; '.join(details)})"
 
         chunk_text = d.get("chunk_text") or ""
-        parts.append(header + "\n" + chunk_text)
+        sections: List[str] = [header]
+        if experience_text and experience_text not in chunk_text:
+            sections.append(f"Yêu cầu kinh nghiệm: {experience_text}")
+        sections.append(chunk_text)
+        parts.append("\n".join([s for s in sections if s]))
 
     return "\n\n".join(parts)
 
@@ -398,23 +431,10 @@ def chat_with_rag(
     history = history or []
     user_message = (user_message or "").strip()
     if not user_message:
+        logger.info("Chặn trả lời do tin nhắn trống từ người dùng.")
         return {
             "answer": "Bạn hãy nhập câu hỏi về công việc, mức lương hoặc kỹ năng nhé.",
             "context_jobs": [],
-        }
-
-    if _is_greeting_only(user_message):
-        intro = (
-            "Chào bạn! Mình là trợ lý JobFinder.\n"
-            "- Tìm kiếm việc làm theo từ khoá, địa điểm, mức lương bạn mong muốn.\n"
-            "- Giải đáp thắc mắc chi tiết về từng job (mô tả, yêu cầu, quyền lợi) và gửi link /jobs/<id> cho bạn xem nhanh.\n"
-            "- Bạn có thể nói mong muốn hoặc gửi mã job đang xem, mình sẽ tư vấn thêm cho bạn."
-        )
-
-        return {
-            "answer": _clean_answer(intro),
-            "context_jobs": [],
-            "query_filters": {},
         }
 
     # 0. Phân tích câu hỏi để lấy filter có cấu trúc
