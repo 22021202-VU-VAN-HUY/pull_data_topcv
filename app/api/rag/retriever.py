@@ -367,7 +367,7 @@ def retrieve_jobs(
         except Exception as e:
             logger.warning("Không lấy được doc cho job hiện tại %s: %s", current_job_id, e)
 
-    # ------------ 1. embedding cho query ------------
+    #  1. embedding cho query 
     augmented_query = _augment_query_with_filters(query, filters)
     query_vec = embed_query(augmented_query)
 

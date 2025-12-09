@@ -7,19 +7,13 @@ import logging
 from typing import Any, Dict, List, Optional
 
 import google.generativeai as genai
-
 from app.config import settings
 
 logger = logging.getLogger(__name__)
-
 _parser_model: Optional[genai.GenerativeModel] = None
 
-
+# gọi model
 def _get_parser_model() -> genai.GenerativeModel:
-    """
-    Model nhẹ dùng riêng cho việc phân tích câu hỏi → JSON filter.
-    Ưu tiên dùng model flash để rẻ & nhanh.
-    """
     global _parser_model
     if _parser_model is not None:
         return _parser_model
@@ -27,8 +21,6 @@ def _get_parser_model() -> genai.GenerativeModel:
     api_key = getattr(settings, "GEMINI_API_KEY", "") or ""
     if not api_key:
         raise RuntimeError("GEMINI_API_KEY chưa được cấu hình.")
-
-    # Cho phép override qua env; mặc định dùng flash
     model_name = (
         getattr(settings, "GEMINI_QUERY_MODEL", "") or "gemini-2.0-flash"
     )
@@ -38,10 +30,9 @@ def _get_parser_model() -> genai.GenerativeModel:
     logger.info("Query parser model initialized: %s", model_name)
     return _parser_model
 
-
 def _default_filters() -> Dict[str, Any]:
     return {
-        "intent": "other",   # NEW
+        "intent": "other",   # 
         "job_keywords": [],   # từ khoá ngành / chức danh
         "locations": [],      # ["Hà Nội", "Hồ Chí Minh", ...]
         "min_salary_vnd": None,

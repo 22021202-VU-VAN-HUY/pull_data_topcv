@@ -16,8 +16,7 @@ from app.api.salary_utils import format_salary_text
 auth_bp = Blueprint("auth", __name__)
 
 
-# ===================== Helpers =====================
-
+# helper
 def get_current_user():
     """Lấy user hiện tại từ session, trả về dict hoặc None."""
     user_id = session.get("user_id")
@@ -47,7 +46,7 @@ def get_current_user():
     return row
 
 
-# ===================== HTML PAGES =====================
+#  HTML PAGES 
 
 @auth_bp.route("/login")
 def login_page():
@@ -188,7 +187,7 @@ def profile_section(section: str):
     )
 
 
-# ===================== JSON API =====================
+#  JSON API 
 
 @auth_bp.route("/api/register", methods=["POST"])
 def api_register():

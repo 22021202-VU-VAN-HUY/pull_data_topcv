@@ -91,9 +91,7 @@ NGUYÊN TẮC BẮT BUỘC:
 _unified_model: Optional[genai.GenerativeModel] = None
 
 
-# ========= FORMAT LƯƠNG / CONTEXT =========
-
-
+# format lương
 def _format_salary_block(meta: Dict[str, Any]) -> str:
     salary = meta.get("salary") or {}
     raw_text = salary.get("raw_text")
@@ -138,31 +136,23 @@ def _get_locations_text(meta: Dict[str, Any]) -> str:
         return ", ".join([str(x) for x in locs if x])
     return str(locs) if locs else ""
 
-
+# upper tiêu đề
 def _get_title_upper(meta: Dict[str, Any]) -> str:
-    """Lấy tiêu đề và chuyển thành chữ in hoa để đồng nhất hiển thị."""
-
     title = meta.get("title") or ""
     return title.upper()
 
-
+# metadata(kinh nghiệm) -> thành chuỗi dễ đọc
 def _format_experience_block(meta: Dict[str, Any]) -> str:
-    """Chuyển kinh nghiệm từ metadata thành chuỗi dễ đọc."""
-
     experience = meta.get("experience") or {}
     months = experience.get("months")
     raw_text = experience.get("raw_text") or meta.get("experience_raw_text")
 
     if raw_text:
         return raw_text
-
     if months is None:
         return ""
-
     if months <= 0:
         return "Không yêu cầu kinh nghiệm"
-
-    # Hiển thị theo tháng, tự động quy đổi năm nếu đủ 12 tháng.
     years = months // 12
     remaining_months = months % 12
     if years and remaining_months:
@@ -171,13 +161,8 @@ def _format_experience_block(meta: Dict[str, Any]) -> str:
         return f"Tối thiểu {years} năm kinh nghiệm"
     return f"Tối thiểu {months} tháng kinh nghiệm"
 
-
+# Lấy các đoạn mô tả chi tiết của job  Ưu tiên text_content, fallback html_content -> cho vào prompt
 def _extract_detail_sections(meta: Dict[str, Any]) -> List[str]:
-    """
-    Lấy các đoạn mô tả chi tiết của job (mô tả, yêu cầu, quyền lợi, phụ cấp,...)
-    để đưa vào prompt. Ưu tiên text_content, fallback html_content.
-    """
-
     sections = meta.get("detail_sections")
     if not isinstance(sections, dict):
         return []
@@ -190,8 +175,7 @@ def _extract_detail_sections(meta: Dict[str, Any]) -> List[str]:
         "ky_nang": "Kỹ năng",
         "phuc_loi": "Phúc lợi",
     }
-
-    # Sắp xếp các trường quan trọng trước, các trường còn lại giữ nguyên thứ tự.
+    # ưu tiên
     priority_order = [
         "mo_ta_cong_viec",
         "yeu_cau_ung_vien",
@@ -231,13 +215,9 @@ def _extract_detail_sections(meta: Dict[str, Any]) -> List[str]:
 
     return detail_parts
 
-
+#  Ghép các chunk lại thành 1 context text để đưa vào LLM.
+#    Ưu tiên include thông tin job_id, title, company cho dễ đọc.
 def build_context_text(retrieved_docs: List[Dict[str, Any]]) -> str:
-    """
-    Ghép các chunk lại thành 1 context text để đưa vào LLM.
-    Ưu tiên include thông tin job_id, title, company cho dễ đọc.
-    """
-
     parts: List[str] = []
     for d in retrieved_docs:
         meta = d.get("metadata") or {}
@@ -275,7 +255,6 @@ def build_context_text(retrieved_docs: List[Dict[str, Any]]) -> str:
 
     return "\n\n".join(parts)
 
-
 def _get_unified_model() -> genai.GenerativeModel:
     global _unified_model
     if _unified_model is not None:
@@ -291,14 +270,12 @@ def _get_unified_model() -> genai.GenerativeModel:
     _unified_model = genai.GenerativeModel(model_name)
     return _unified_model
 
-
 def generate_answer_unified(
     user_message: str, filters: Dict[str, Any], retrieved_docs: List[Dict[str, Any]]
 ) -> str:
     model = _get_unified_model()
     context_text = build_context_text(retrieved_docs)
     filters_json = json.dumps(filters or {}, ensure_ascii=False)
-
     prompt = UNIFIED_PROMPT.format(
         system_prompt=SYSTEM_PROMPT,
         intent=(filters.get("intent") or "other"),
@@ -306,7 +283,6 @@ def generate_answer_unified(
         context=context_text[:12000],
         question=user_message,
     )
-
     resp = model.generate_content(
         prompt,
         generation_config={
@@ -316,7 +292,6 @@ def generate_answer_unified(
             "max_output_tokens": 512,
         },
     )
-
     text = ""
     try:
         candidates = getattr(resp, "candidates", None) or []
@@ -331,7 +306,6 @@ def generate_answer_unified(
                     if t:
                         buf.append(t)
                 text = "".join(buf).strip()
-
         if not text:
             raw = getattr(resp, "text", None)
             if raw:
@@ -340,89 +314,55 @@ def generate_answer_unified(
         raw = getattr(resp, "text", None)
         if raw:
             text = raw.strip()
-
     return text or "Hiện tại em chưa trả lời được câu hỏi này từ dữ liệu có sẵn."
 
-
+# Ghép thêm vài lượt hội thoại gần nhất để model retrieve không bị lạc ngữ cảnh
 def _build_retrieval_query(user_message: str, history: List[Dict[str, str]]) -> str:
-    """
-    Ghép thêm vài lượt hội thoại gần nhất để model retrieve không bị lạc ngữ cảnh
-    (ví dụ: "công việc thứ 2", "mô tả công việc này").
-    """
     base = (user_message or "").strip()
     if not history:
         return base
-
     # Lấy tối đa 4 lượt cuối, nối thành 1 đoạn ngắn gọn để embedding.
     tail_turns: List[str] = []
     for turn in history[-4:]:
         content = (turn.get("content") or "").strip()
         if content:
             tail_turns.append(content)
-
     if not tail_turns:
         return base
-
     history_text = " | ".join(tail_turns)
 
     # Giới hạn độ dài để tránh làm loãng embedding.
     max_len = 800
     if len(history_text) > max_len:
         history_text = history_text[-max_len:]
-
     if base:
         return f"{base} | Ngữ cảnh trước đó: {history_text}"
     return history_text
 
-
-# = PHÂN LOẠI Ý ĐỊNH CƠ BẢN =
+#  phân loại ý định cơ bản
 def _is_greeting_only(message: str) -> bool:
     text = (message or "").strip().lower()
     if not text:
         return False
 
     greeting_keywords = [
-        "xin chào",
-        "chào bạn",
-        "chào anh",
-        "chào chị",
-        "hello",
-        "hi",
-        "alo",
-        "chào",
-        "hey",
+        "xin chào", "chào bạn", "chào anh", "chào chị", "hello", "hi", "alo", "chào", "hey",
     ]
 
     job_intent_keywords = [
-        "công việc",
-        "job",
-        "tuyển",
-        "ứng tuyển",
-        "việc làm",
-        "lương",
-        "tìm",
+        "công việc", "job", "tuyển", "ứng tuyển", "việc làm", "lương", "tìm",
     ]
-
     if any(k in text for k in job_intent_keywords):
         return False
-
     # Câu chào thường ngắn, không kèm yêu cầu rõ.
     return any(k in text for k in greeting_keywords)
 
 
-# == CLEAN + HTML HOÁ CÂU TRẢ LỜI ==
-
-
+# clean html của câu trả lời do  /jobs/123 hoặc jobs/123 -> <a href="/jobs/123">Xem chi tiết</a>
 def _markdown_links_to_html(text: str) -> str:
-    """
-    - [link](/jobs/123) -> <a href="/jobs/123">link</a>
-    - /jobs/123 hoặc jobs/123 -> <a href="/jobs/123">Xem chi tiết</a>
-    (Không động tới link TopCV để tránh user bị dẫn ra ngoài nếu không cần.)
-    """
     if not text:
         return ""
-
-    # Chỉ convert markdown có URL nội bộ /jobs/xxx (cho phép thiếu dấu "/" ở đầu)
+    # Chỉ convert markdown có URL nội bộ /jobs/xxx 
     md_pattern = re.compile(r"\[([^\]]+)\]\((/?jobs/\d+)\)")
     text = md_pattern.sub(
         lambda m: (
@@ -430,49 +370,42 @@ def _markdown_links_to_html(text: str) -> str:
         ),
         text,
     )
-
-    # Convert đường dẫn /jobs/123 hoặc jobs/123 trần thành link có anchor "Xem chi tiết"
+    # Convert đường dẫn /jobs/123 hoặc jobs/123 thành link có "Xem chi tiết"
     url_pattern = re.compile(r"/?jobs/\d+")
     text = url_pattern.sub(lambda m: f'<a href="/{m.group(0).lstrip("/")}" class="chat-link">Xem chi tiết</a>', text)
     return text
 
-
+# Dọn các ký tự lạ / xuống dòng cho dễ đọc, Trả về HTML
 def _clean_answer(text: str) -> str:
-    """
-    Dọn các ký tự lạ / xuống dòng cho dễ đọc.
-    Trả về HTML (dùng cho bubble.innerHTML ở frontend).
-    """
     if not text:
         return ""
-
-    # bullet unicode → "- "
     text = text.replace("\u2022", "- ").replace("•", "- ")
 
-    # loại bỏ &nbsp và khoảng trắng lạ
+    # loại bỏ khoảng trắng lạ
     text = text.replace("\xa0", " ")
     text = re.sub(r"[ \t]+", " ", text)
-
     # ép các bullet đứng trên dòng riêng nếu model trả về liền mạch
     text = re.sub(r"(?<!^)(?<!\n)\s*-\s+", "\n- ", text)
-
     # gọn bớt nhiều dòng trống liên tiếp
     text = re.sub(r"\n{3,}", "\n\n", text)
-
     text = text.strip()
 
-    # escape HTML để tránh injection trước khi tự thêm anchor/BR
     text = html.escape(text)
-
-    # chuyển markdown /jobs link → <a>
     text = _markdown_links_to_html(text)
-
-    # cuối cùng: đổi \n thành <br> để xuống dòng trong HTML (giữ khoảng trắng giữa bullet)
+    # cuối cùng: đổi \n thành <br> để xuống dòng
     text = text.replace("\n\n", "<br><br>")
     text = text.replace("\n", "<br>")
 
     return text
 
-
+# nhận câu hỏi + history (+ job_id đang xem) → RAG retrieve → Gemini generate.
+#Trả về:
+#    {
+#      "answer": "<HTML>",       # đã có <br>, <a>...
+#      "context_jobs": [ ... ],  # dùng cho gợi ý job ở UI
+#      "query_filters": { ... }  # phân tích cấu trúc từ câu hỏi người dùng
+#    }
+#    """
 def chat_with_rag(
     user_message: str,
     history: Optional[List[Dict[str, str]]] = None,
@@ -480,16 +413,6 @@ def chat_with_rag(
     current_job_id: Optional[int] = None,
     top_k: Optional[int] = None,
 ) -> Dict[str, Any]:
-    """
-    Hàm chính: nhận câu hỏi + history (+ job_id đang xem) → RAG retrieve → Gemini generate.
-
-    Trả về:
-    {
-      "answer": "<HTML>",       # đã có <br>, <a>...
-      "context_jobs": [ ... ],  # dùng cho gợi ý job ở UI
-      "query_filters": { ... }  # phân tích cấu trúc từ câu hỏi người dùng
-    }
-    """
     history = history or []
     user_message = (user_message or "").strip()
     if not user_message:
@@ -526,7 +449,7 @@ def chat_with_rag(
             "context_jobs": [],
         }
 
-    # 2. Gọi Gemini với unified prompt
+    # 2. Gọi Gemini với prompt
     try:
         answer_raw = generate_answer_unified(user_message, query_filters, docs)
         answer_text = _clean_answer(answer_raw)

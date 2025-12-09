@@ -1,10 +1,9 @@
-# run.py
 import os
 from dotenv import load_dotenv
 
 from app.api import create_app
 
-# Load .env ở root
+# Load .env
 load_dotenv()
 
 app = create_app()

@@ -137,14 +137,8 @@ def _fetch_job_sections_raw(cur, job_id: int) -> Dict[str, Dict[str, Any]]:
     return result
 
 #  snapshot job / meta
+# Chuẩn hoá thông tin lương theo các dạng trên web TopCV.
 def _build_salary(job_row: Dict[str, Any]) -> Dict[str, Any]:
-    """
-    Chuẩn hoá thông tin lương theo các dạng TopCV:
-    - Thoả thuận
-    - Từ X triệu
-    - Đến Y triệu
-    - Từ X - Y triệu
-    """
     salary_min = job_row.get("salary_min")
     salary_max = job_row.get("salary_max")
     currency = job_row.get("salary_currency") or "VND"
