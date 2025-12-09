@@ -4,13 +4,26 @@
 }
 
 .detail-section-title {
-  border-bottom: 1px solid #e5e7eb;
   padding-bottom: 0.5rem;
+}
+
+.detail-section + .detail-section {
+  border-top: 1px solid #e5e7eb;
+  padding-top: 1rem;
 }
 
 .detail-description {
   font-size: 0.9rem;
   line-height: 1.6;
+}
+
+.detail-section-body p {
+  margin-top: 0;
+  margin-bottom: 0.35rem;
+}
+
+.detail-section-body p:last-child {
+  margin-bottom: 0;
 }
 
 .detail-sidebar-title {

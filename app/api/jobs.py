@@ -12,7 +12,11 @@ SECTION_LABELS = {
     "yeu_cau_ung_vien": "Yêu cầu ứng viên",
     "thu_nhap": "Thu nhập",
     "quyen_loi": "Quyền lợi",
+    "phu_cap": "Phụ cấp",
+    "thiet_bi_lam_viec": "Thiết bị làm việc",
     "dia_diem_lam_viec": "Địa điểm làm việc",
+    "thoi_gian_lam_viec": "Thời gian làm việc",
+    "cach_thuc_ung_tuyen": "Cách thức ứng tuyển",
     "phuc_loi": "Phúc lợi",
     "thong_tin_khac": "Thông tin khác",
 }
@@ -22,7 +26,11 @@ SECTION_ORDER = [
     "yeu_cau_ung_vien",
     "thu_nhap",
     "quyen_loi",
+    "phu_cap",
+    "thiet_bi_lam_viec",
     "dia_diem_lam_viec",
+    "thoi_gian_lam_viec",
+    "cach_thuc_ung_tuyen",
     "phuc_loi",
     "thong_tin_khac",
 ]

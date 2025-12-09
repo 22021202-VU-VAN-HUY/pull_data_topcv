@@ -130,5 +130,52 @@
 
   document.addEventListener("DOMContentLoaded", () => {
     initAuthNav();
+    initBookmarkButtons();
   });
+  // ----- BOOKMARK JOBS (★) -----
+  function setBookmarkState(btn, starred) {
+    if (!btn) return;
+    btn.classList.toggle("text-yellow-400", !!starred);
+    btn.classList.toggle("text-gray-300", !starred);
+    btn.dataset.starred = starred ? "1" : "0";
+  }
+
+  function initBookmarkButtons() {
+    const buttons = document.querySelectorAll(".home-bookmark-button");
+    if (!buttons || buttons.length === 0) return;
+
+    buttons.forEach((btn) => {
+      btn.addEventListener("click", async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const jobId = btn.getAttribute("data-job-id");
+        if (!jobId) return;
+
+        // tránh spam
+        if (btn.dataset.loading === "1") return;
+        btn.dataset.loading = "1";
+
+        try {
+          const res = await window.apiClient.post(
+            `/api/star?job_id=${encodeURIComponent(jobId)}`,
+            {}
+          );
+          setBookmarkState(btn, !!(res && res.starred));
+        } catch (err) {
+          if (err && err.status === 401) {
+            window.location.href = "/login";
+          } else {
+            console.error("Không lưu được bookmark", err);
+          }
+        } finally {
+          btn.dataset.loading = "0";
+        }
+      });
+
+      // đồng bộ trạng thái ban đầu (dựa vào class do server render)
+      const starred = btn.classList.contains("text-yellow-400");
+      setBookmarkState(btn, starred);
+    });
+  }
 })(window, document);
