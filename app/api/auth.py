@@ -11,6 +11,7 @@ from flask import (
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from app.db import get_connection
+from app.api.salary_utils import format_salary_text
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -134,7 +135,11 @@ def profile_section(section: str):
                             ),
                             ''
                         ) AS location_text,
-                        COALESCE(j.salary_raw_text, 'Thoả thuận') AS salary_text
+                        j.salary_min,
+                        j.salary_max,
+                        j.salary_currency,
+                        j.salary_interval,
+                        j.salary_raw_text
                     FROM user_job_bookmarks b
                     JOIN jobs j ON j.id = b.job_id
                     LEFT JOIN companies c ON j.company_id = c.id
@@ -152,6 +157,13 @@ def profile_section(section: str):
 
         for r in rows:
             loc = r["location_text"] or ""
+            salary_text = format_salary_text(
+                r.get("salary_min"),
+                r.get("salary_max"),
+                r.get("salary_currency"),
+                r.get("salary_interval"),
+                r.get("salary_raw_text"),
+            )
             saved_jobs.append(
                 {
                     "job_id": r["job_id"],
@@ -159,7 +171,7 @@ def profile_section(section: str):
                     "company": r["company"],
                     "city": loc,
                     "district": None,
-                    "salary_text": r["salary_text"],
+                    "salary_text": salary_text,
                 }
             )
 

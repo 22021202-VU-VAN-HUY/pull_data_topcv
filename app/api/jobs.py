@@ -3,6 +3,7 @@ from datetime import datetime, timezone
 
 from flask import Blueprint, render_template, request, session, abort
 from app.db import get_connection
+from app.api.salary_utils import format_salary_text
 
 jobs_bp = Blueprint("jobs", __name__)
 
@@ -139,7 +140,11 @@ def index():
                         ),
                         ''
                     ) AS location_text,
-                    COALESCE(j.salary_raw_text, 'Thoả thuận') AS salary_text,
+                    j.salary_min,
+                    j.salary_max,
+                    j.salary_currency,
+                    j.salary_interval,
+                    j.salary_raw_text,
                     j.deadline,
                     CASE WHEN ub.user_id IS NULL THEN FALSE ELSE TRUE END AS starred
                 FROM jobs j
@@ -166,6 +171,13 @@ def index():
     jobs = []
     for r in rows:
         loc = r["location_text"] or ""
+        salary_text = format_salary_text(
+            r.get("salary_min"),
+            r.get("salary_max"),
+            r.get("salary_currency"),
+            r.get("salary_interval"),
+            r.get("salary_raw_text"),
+        )
         jobs.append(
             {
                 "job_id": r["job_id"],
@@ -173,7 +185,7 @@ def index():
                 "company": r["company"] or "",
                 "city": loc,
                 "district": None,
-                "salary_text": r["salary_text"],
+                "salary_text": salary_text,
                 "starred": bool(r["starred"]),
                 "deadline_text": _format_deadline(r["deadline"]),
             }
@@ -254,7 +266,7 @@ def job_detail(job_id: int):
                     j.salary_max,
                     j.salary_currency,
                     j.salary_interval,
-                    COALESCE(j.salary_raw_text, 'Thoả thuận') AS salary_text,
+                    j.salary_raw_text,
                     j.experience_months,
                     j.experience_raw_text,
                     j.cap_bac,
@@ -333,7 +345,13 @@ def job_detail(job_id: int):
     }
 
     is_starred = bool(job_row["starred"])
-    salary_text = job_row["salary_text"]
+    salary_text = format_salary_text(
+        job_row.get("salary_min"),
+        job_row.get("salary_max"),
+        job_row.get("salary_currency"),
+        job_row.get("salary_interval"),
+        job_row.get("salary_raw_text"),
+    )
     deadline_text = _format_deadline(job_row["deadline"])
 
     # fallback
