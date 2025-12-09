@@ -1,135 +1,182 @@
 {% extends "base.html" %}
 {% block content %}
-  <div class="profile-layout grid grid-cols-1 lg:grid-cols-3 gap-6">
-    <!-- JOB ĐÃ LƯU -->
-    <section class="profile-bookmarks lg:col-span-2">
-      <h2 class="profile-section-title text-xl font-semibold mb-4">
-        Công việc đã lưu
-      </h2>
-      {% if saved_jobs and saved_jobs|length > 0 %}
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {% for j in saved_jobs %}
-            <div class="home-job-card-wrapper relative h-full">
-              <a
-                class="base-card home-job-card block bg-white p-5 h-full min-h-[160px]"
-                href="{{ url_for('jobs.job_detail', job_id=j.job_id) }}"
-              >
-                <div class="home-job-company text-xs text-gray-500">{{ j.company }}</div>
-                <div class="home-job-title font-semibold mt-1 text-base text-gray-900">
-                  {{ j.title }}
-                </div>
-                <div class="home-job-location mt-1 text-xs text-gray-600">
-                  <span class="font-medium">Địa điểm:</span>
-                  <span>{{ j.city or '—' }}</span>
-                  {% if j.district %} · <span>{{ j.district }}</span>{% endif %}
-                </div>
-                <div class="home-job-salary mt-1 text-sm text-emerald-700">
-                  {{ j.salary_text or 'Thoả thuận' }}
-                </div>
-              </a>
-              <button
-                type="button"
-                class="home-bookmark-button absolute top-3 right-3 text-xl text-yellow-400"
-                data-job-id="{{ j.job_id }}"
-                aria-label="Bỏ lưu công việc"
-              >
-                ★
-              </button>
-            </div>
-          {% endfor %}
+  <div class="profile-shell grid grid-cols-1 lg:grid-cols-4 gap-6">
+    <aside class="profile-nav base-card bg-white p-4 lg:p-5 h-fit">
+      <div class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+        Quản lý tài khoản
+      </div>
+      <nav class="profile-nav-links flex lg:flex-col gap-2">
+        <a
+          class="profile-nav-link"
+          href="{{ url_for('auth.profile_section', section='bookmarks') }}"
+          aria-current="{{ 'page' if current_section == 'bookmarks' else 'false' }}"
+        >
+          <span class="profile-nav-title">Công việc đã lưu</span>
+          <span class="profile-nav-desc">Danh sách việc làm bạn đánh dấu</span>
+        </a>
+        <a
+          class="profile-nav-link"
+          href="{{ url_for('auth.profile_section', section='info') }}"
+          aria-current="{{ 'page' if current_section == 'info' else 'false' }}"
+        >
+          <span class="profile-nav-title">Thông tin người dùng</span>
+          <span class="profile-nav-desc">Cập nhật họ tên, số điện thoại</span>
+        </a>
+        <a
+          class="profile-nav-link"
+          href="{{ url_for('auth.profile_section', section='password') }}"
+          aria-current="{{ 'page' if current_section == 'password' else 'false' }}"
+        >
+          <span class="profile-nav-title">Đổi mật khẩu</span>
+          <span class="profile-nav-desc">Thiết lập mật khẩu đăng nhập mới</span>
+        </a>
+        <button
+          type="button"
+          data-logout-button
+          class="profile-nav-link profile-nav-logout text-left"
+        >
+          <span class="profile-nav-title">Đăng xuất</span>
+          <span class="profile-nav-desc">Thoát tài khoản hiện tại</span>
+        </button>
+      </nav>
+    </aside>
+
+    <section class="profile-content lg:col-span-3 space-y-4">
+      <header class="profile-header flex items-start justify-between flex-wrap gap-2">
+        <div>
+          <p class="text-sm text-gray-500">{{ user.email }}</p>
+          <h1 class="text-2xl font-semibold text-gray-900 leading-tight">
+            {{ section_title or 'Quản lý tài khoản' }}
+          </h1>
         </div>
-      {% else %}
-        <p class="profile-empty text-sm text-gray-600">
-          Bạn chưa lưu công việc nào.
-        </p>
+      </header>
+
+      {% if current_section == 'bookmarks' %}
+        <div class="base-card bg-white p-5">
+          <h2 class="profile-section-title text-lg font-semibold mb-3">Công việc đã lưu</h2>
+          {% if saved_jobs and saved_jobs|length > 0 %}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {% for j in saved_jobs %}
+                <div class="home-job-card-wrapper relative h-full">
+                  <a
+                    class="base-card home-job-card block bg-white p-5 h-full min-h-[160px]"
+                    href="{{ url_for('jobs.job_detail', job_id=j.job_id) }}"
+                  >
+                    <div class="home-job-company text-xs text-gray-500">{{ j.company }}</div>
+                    <div class="home-job-title font-semibold mt-1 text-base text-gray-900">
+                      {{ j.title }}
+                    </div>
+                    <div class="home-job-location mt-1 text-xs text-gray-600">
+                      <span class="font-medium">Địa điểm:</span>
+                      <span>{{ j.city or '—' }}</span>
+                      {% if j.district %} · <span>{{ j.district }}</span>{% endif %}
+                    </div>
+                    <div class="home-job-salary mt-1 text-sm text-emerald-700">
+                      {{ j.salary_text or 'Thoả thuận' }}
+                    </div>
+                  </a>
+                  <button
+                    type="button"
+                    class="home-bookmark-button absolute top-3 right-3 text-xl text-yellow-400"
+                    data-job-id="{{ j.job_id }}"
+                    aria-label="Bỏ lưu công việc"
+                  >
+                    ★
+                  </button>
+                </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <p class="profile-empty text-sm text-gray-600">
+              Bạn chưa lưu công việc nào.
+            </p>
+          {% endif %}
+        </div>
+      {% elif current_section == 'info' %}
+        <section class="base-card profile-section bg-white p-5">
+          <h2 class="profile-section-title text-lg font-semibold mb-3">
+            Thông tin người dùng
+          </h2>
+          <form id="profile-form" class="profile-form space-y-3">
+            <div class="profile-field">
+              <label class="profile-label block text-sm text-gray-700">Họ và tên</label>
+              <input
+                id="profile-fullname"
+                class="profile-input w-full border rounded px-3 py-2 text-sm"
+                type="text"
+                value="{{ user.full_name if user else '' }}"
+              />
+            </div>
+            <div class="profile-field">
+              <label class="profile-label block text-sm text-gray-700">Email</label>
+              <input
+                id="profile-email"
+                class="profile-input w-full border rounded px-3 py-2 text-sm bg-gray-100"
+                type="email"
+                value="{{ user.email if user else '' }}"
+                disabled
+              />
+            </div>
+            <div class="profile-field">
+              <label class="profile-label block text-sm text-gray-700">Số điện thoại</label>
+              <input
+                id="profile-phone"
+                class="profile-input w-full border rounded px-3 py-2 text-sm"
+                type="text"
+                value="{{ user.phone if user else '' }}"
+              />
+            </div>
+            <button
+              id="btn-profile-save"
+              type="button"
+              class="profile-button-save base-button-primary px-4 py-2 rounded text-sm"
+            >
+              Lưu thay đổi
+            </button>
+            <div id="profile-status" class="profile-status text-xs text-gray-600 mt-1"></div>
+          </form>
+        </section>
+      {% elif current_section == 'password' %}
+        <section class="base-card profile-section bg-white p-5">
+          <h2 class="profile-section-title text-lg font-semibold mb-3">
+            Đổi mật khẩu
+          </h2>
+          <form id="password-form" class="profile-form space-y-3">
+            <div class="profile-field">
+              <label class="profile-label block text-sm text-gray-700">Mật khẩu hiện tại</label>
+              <input
+                id="pw-old"
+                class="profile-input w-full border rounded px-3 py-2 text-sm"
+                type="password"
+              />
+            </div>
+            <div class="profile-field">
+              <label class="profile-label block text-sm text-gray-700">Mật khẩu mới</label>
+              <input
+                id="pw-new"
+                class="profile-input w-full border rounded px-3 py-2 text-sm"
+                type="password"
+              />
+            </div>
+            <div class="profile-field">
+              <label class="profile-label block text-sm text-gray-700">Nhập lại mật khẩu mới</label>
+              <input
+                id="pw-new2"
+                class="profile-input w-full border rounded px-3 py-2 text-sm"
+                type="password"
+              />
+            </div>
+            <button
+              id="btn-pw-change"
+              type="button"
+              class="profile-button-save base-button-primary px-4 py-2 rounded text-sm"
+            >
+              Đổi mật khẩu
+            </button>
+            <div id="pw-status" class="profile-status text-xs text-gray-600 mt-1"></div>
+          </form>
+        </section>
       {% endif %}
     </section>
-
-    <!-- THÔNG TIN USER + ĐỔI PASSWORD -->
-    <aside class="profile-sidebar lg:col-span-1 space-y-6">
-      <section class="base-card profile-section bg-white p-5">
-        <h2 class="profile-section-title text-lg font-semibold mb-3">
-          Thông tin người dùng
-        </h2>
-        <form id="profile-form" class="profile-form space-y-3">
-          <div class="profile-field">
-            <label class="profile-label block text-sm text-gray-700">Họ và tên</label>
-            <input
-              id="profile-fullname"
-              class="profile-input w-full border rounded px-3 py-2 text-sm"
-              type="text"
-              value="{{ user.full_name if user else '' }}"
-            />
-          </div>
-          <div class="profile-field">
-            <label class="profile-label block text-sm text-gray-700">Email</label>
-            <input
-              id="profile-email"
-              class="profile-input w-full border rounded px-3 py-2 text-sm bg-gray-100"
-              type="email"
-              value="{{ user.email if user else '' }}"
-              disabled
-            />
-          </div>
-          <div class="profile-field">
-            <label class="profile-label block text-sm text-gray-700">Số điện thoại</label>
-            <input
-              id="profile-phone"
-              class="profile-input w-full border rounded px-3 py-2 text-sm"
-              type="text"
-              value="{{ user.phone if user else '' }}"
-            />
-          </div>
-          <button
-            id="btn-profile-save"
-            type="button"
-            class="profile-button-save base-button-primary px-4 py-2 rounded text-sm"
-          >
-            Lưu thay đổi
-          </button>
-          <div id="profile-status" class="profile-status text-xs text-gray-600 mt-1"></div>
-        </form>
-      </section>
-
-      <section class="base-card profile-section bg-white p-5">
-        <h2 class="profile-section-title text-lg font-semibold mb-3">
-          Đổi mật khẩu
-        </h2>
-        <form id="password-form" class="profile-form space-y-3">
-          <div class="profile-field">
-            <label class="profile-label block text-sm text-gray-700">Mật khẩu hiện tại</label>
-            <input
-              id="pw-old"
-              class="profile-input w-full border rounded px-3 py-2 text-sm"
-              type="password"
-            />
-          </div>
-          <div class="profile-field">
-            <label class="profile-label block text-sm text-gray-700">Mật khẩu mới</label>
-            <input
-              id="pw-new"
-              class="profile-input w-full border rounded px-3 py-2 text-sm"
-              type="password"
-            />
-          </div>
-          <div class="profile-field">
-            <label class="profile-label block text-sm text-gray-700">Nhập lại mật khẩu mới</label>
-            <input
-              id="pw-new2"
-              class="profile-input w-full border rounded px-3 py-2 text-sm"
-              type="password"
-            />
-          </div>
-          <button
-            id="btn-pw-change"
-            type="button"
-            class="profile-button-save base-button-primary px-4 py-2 rounded text-sm"
-          >
-            Đổi mật khẩu
-          </button>
-          <div id="pw-status" class="profile-status text-xs text-gray-600 mt-1"></div>
-        </form>
-      </section>
-    </aside>
   </div>
 {% endblock %}

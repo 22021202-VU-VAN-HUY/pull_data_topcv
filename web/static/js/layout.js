@@ -71,7 +71,7 @@
     const navRegister = document.getElementById("nav-register");
     const navUserMenu = document.getElementById("nav-user-menu");
     const navUserName = document.getElementById("nav-user-name");
-    const navLogout = document.getElementById("nav-logout");
+    const logoutButtons = document.querySelectorAll("#nav-logout, [data-logout-button]");
     const navUserBtn = document.getElementById("nav-user-button");
     const navDropdown = document.getElementById("nav-user-dropdown");
 
@@ -116,8 +116,8 @@
       // không sao, giữ giao diện mặc định (chưa login)
     }
 
-    if (navLogout) {
-      navLogout.addEventListener("click", async () => {
+    logoutButtons.forEach((btn) => {
+      btn.addEventListener("click", async () => {
         try {
           await window.apiClient.post("/api/logout", {});
         } catch (err) {
@@ -125,7 +125,7 @@
         }
         window.location.href = "/";
       });
-    }
+    });
   }
 
   document.addEventListener("DOMContentLoaded", () => {

@@ -46,3 +46,7 @@
 .base-user-dropdown {
   min-width: 12rem;
 }
+
+.base-user-divider {
+  border-top: 1px solid #e5e7eb;
+}
