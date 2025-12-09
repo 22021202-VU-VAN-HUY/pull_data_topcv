@@ -14,3 +14,102 @@
 .profile-empty {
   padding: 0.75rem 0;
 }
+
+.profile-nav-links {
+  width: 100%;
+}
+
+.profile-nav-link {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 12px 14px;
+  background: #f9fafb;
+  color: #111827;
+  transition: all 0.15s ease;
+  text-decoration: none;
+}
+
+.profile-nav-link:hover {
+  background: #eef2ff;
+  border-color: #c7d2fe;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.profile-nav-link[aria-current="page"],
+.profile-nav-link[aria-current="true"] {
+  background: #eef2ff;
+  border-color: #6366f1;
+  box-shadow: 0 6px 16px rgba(99, 102, 241, 0.15);
+}
+
+.profile-nav-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.profile-nav-desc {
+  font-size: 0.8rem;
+  color: #4b5563;
+}
+
+.profile-nav-logout {
+  border-style: dashed;
+  border-color: #fecdd3;
+  background: #fff1f2;
+  color: #b91c1c;
+}
+
+.profile-header h1 {
+  letter-spacing: -0.01em;
+}
+
+.profile-page {
+  width: 100%;
+}
+
+.profile-section {
+  border: 1px solid #e5e7eb;
+}
+
+.profile-header {
+  gap: 4px;
+}
+
+.profile-form-card {
+  max-width: 42rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.profile-meta-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 9999px;
+  background: #f4f4ff;
+  color: #4338ca;
+  padding: 8px 14px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border: 1px solid #e0e7ff;
+}
+
+.profile-saved-grid .home-job-card {
+  min-height: 170px;
+}
+
+.profile-pagination {
+  border-top: 1px solid #e5e7eb;
+  padding-top: 0.75rem;
+}
+
+.profile-pagination-info {
+  color: #4b5563;
+}
+
+.profile-empty {
+  text-align: center;
+}

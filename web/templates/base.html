@@ -71,9 +71,16 @@
               id="nav-user-dropdown"
               class="base-user-dropdown hidden absolute right-0 mt-2 w-52 bg-white border border-gray-200 rounded-xl shadow-lg py-2 text-sm z-20"
             >
-              <a href="{{ url_for('auth.profile_page') }}" class="block px-4 py-2 hover:bg-gray-50">
-                Công việc đã lưu & thông tin
+              <a href="{{ url_for('auth.profile_section', section='bookmarks') }}" class="block px-4 py-2 hover:bg-gray-50">
+                Công việc đã lưu
               </a>
+              <a href="{{ url_for('auth.profile_section', section='info') }}" class="block px-4 py-2 hover:bg-gray-50">
+                Thông tin người dùng
+              </a>
+              <a href="{{ url_for('auth.profile_section', section='password') }}" class="block px-4 py-2 hover:bg-gray-50">
+                Đổi mật khẩu
+              </a>
+              <div class="base-user-divider my-1"></div>
               <button
                 type="button"
                 id="nav-logout"

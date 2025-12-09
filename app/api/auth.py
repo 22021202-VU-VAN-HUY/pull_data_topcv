@@ -64,58 +64,115 @@ def register_page():
 
 @auth_bp.route("/profile")
 def profile_page():
+    """Chuyển hướng sang trang mặc định (công việc đã lưu)."""
     user = get_current_user()
     if not user:
         return redirect(url_for("auth.login_page"))
 
-    with get_connection() as conn:
-        with conn.cursor() as cur:
-            cur.execute(
-                """
-                SELECT
-                    j.id AS job_id,
-                    j.title,
-                    COALESCE(c.name, '') AS company,
-                    COALESCE(
-                        (
-                            SELECT jl.location_text
-                            FROM job_locations jl
-                            WHERE jl.job_id = j.id
-                            ORDER BY jl.is_primary DESC, jl.sort_order, jl.id
-                            LIMIT 1
-                        ),
-                        ''
-                    ) AS location_text,
-                    COALESCE(j.salary_raw_text, 'Thoả thuận') AS salary_text
-                FROM user_job_bookmarks b
-                JOIN jobs j ON j.id = b.job_id
-                LEFT JOIN companies c ON j.company_id = c.id
-                WHERE b.user_id = %(user_id)s
-                ORDER BY j.crawled_at DESC NULLS LAST, j.id DESC
-                """,
-                {"user_id": user["id"]},
-            )
-            rows = cur.fetchall()
+    return redirect(url_for("auth.profile_section", section="bookmarks"))
+
+
+@auth_bp.route("/profile/<section>")
+def profile_section(section: str):
+    user = get_current_user()
+    if not user:
+        return redirect(url_for("auth.login_page"))
+
+    try:
+        bookmark_page = int(request.args.get("page") or "1")
+    except ValueError:
+        bookmark_page = 1
+    bookmark_page = max(bookmark_page, 1)
+    bookmark_per_page = 9
+    bookmark_total = 0
+    bookmark_total_pages = 1
+    sections = {
+        "bookmarks": "Công việc đã lưu",
+        "info": "Thông tin người dùng",
+        "password": "Đổi mật khẩu",
+    }
+
+    if section not in sections:
+        return redirect(url_for("auth.profile_section", section="bookmarks"))
 
     saved_jobs = []
-    for r in rows:
-        loc = r["location_text"] or ""
-        saved_jobs.append(
-            {
-                "job_id": r["job_id"],
-                "title": r["title"],
-                "company": r["company"],
-                "city": loc,
-                "district": None,
-                "salary_text": r["salary_text"],
-            }
-        )
+    if section == "bookmarks":
+        with get_connection() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """
+                    SELECT COUNT(*) AS cnt
+                    FROM user_job_bookmarks
+                    WHERE user_id = %(user_id)s
+                    """,
+                    {"user_id": user["id"]},
+                )
+                row_cnt = cur.fetchone()
+                bookmark_total = row_cnt["cnt"] if row_cnt else 0
+                if bookmark_total:
+                    bookmark_total_pages = max(
+                        (bookmark_total + bookmark_per_page - 1) // bookmark_per_page, 1
+                    )
+                    bookmark_page = min(bookmark_page, bookmark_total_pages)
+                else:
+                    bookmark_page = 1
+                offset = (bookmark_page - 1) * bookmark_per_page
+
+                cur.execute(
+                    """
+                    SELECT
+                        j.id AS job_id,
+                        j.title,
+                        COALESCE(c.name, '') AS company,
+                        COALESCE(
+                            (
+                                SELECT jl.location_text
+                                FROM job_locations jl
+                                WHERE jl.job_id = j.id
+                                ORDER BY jl.is_primary DESC, jl.sort_order, jl.id
+                                LIMIT 1
+                            ),
+                            ''
+                        ) AS location_text,
+                        COALESCE(j.salary_raw_text, 'Thoả thuận') AS salary_text
+                    FROM user_job_bookmarks b
+                    JOIN jobs j ON j.id = b.job_id
+                    LEFT JOIN companies c ON j.company_id = c.id
+                    WHERE b.user_id = %(user_id)s
+                    ORDER BY j.crawled_at DESC NULLS LAST, j.id DESC
+                    LIMIT %(limit)s OFFSET %(offset)s
+                    """,
+                    {
+                        "user_id": user["id"],
+                        "limit": bookmark_per_page,
+                        "offset": offset,
+                    },
+                )
+                rows = cur.fetchall()
+
+        for r in rows:
+            loc = r["location_text"] or ""
+            saved_jobs.append(
+                {
+                    "job_id": r["job_id"],
+                    "title": r["title"],
+                    "company": r["company"],
+                    "city": loc,
+                    "district": None,
+                    "salary_text": r["salary_text"],
+                }
+            )
 
     return render_template(
         "profile.html",
-        title="Quản lý tài khoản",
+        title=f"{sections[section]} - Quản lý tài khoản",
         user=user,
         saved_jobs=saved_jobs,
+        current_section=section,
+        section_title=sections[section],
+        bookmark_page=bookmark_page,
+        bookmark_total_pages=bookmark_total_pages,
+        bookmark_total=bookmark_total,
     )
 
 
