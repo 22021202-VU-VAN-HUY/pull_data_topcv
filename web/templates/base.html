@@ -16,26 +16,26 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/chat.css') }}">
   </head>
-  <body class="base-body bg-gray-50">
+  <body class="base-body">
     <!-- HEADER -->
-    <header class="base-header border-b bg-white">
-      <div class="base-header-inner mx-auto max-w-6xl px-4 py-3 flex items-center justify-between gap-4">
+    <header class="base-header">
+      <div class="base-header-inner">
         <!-- Logo -->
-        <a href="{{ url_for('jobs.index') }}" class="base-logo text-xl font-bold whitespace-nowrap">
-          <span class="text-gray-800">Job</span><span class="text-indigo-600">Finder</span>
+        <a href="{{ url_for('jobs.index') }}" class="base-logo">
+          <span class="base-logo-text">Job</span><span class="base-logo-highlight">Finder</span>
         </a>
 
         <!-- Search form (trang chủ sẽ dùng) -->
-        <form action="{{ url_for('jobs.index') }}" method="get" class="base-search-form w-full max-w-3xl">
-          <div class="flex gap-2">
+        <form action="{{ url_for('jobs.index') }}" method="get" class="base-search-form">
+          <div class="base-search-row">
             <input
               name="q"
               value="{{ q or '' }}"
               placeholder="Tìm theo tiêu đề, công ty..."
-              class="base-search-input flex-1 border rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
+              class="base-search-input"
             />
             <button
-              class="base-button-primary px-4 py-2 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 text-sm"
+              class="base-button base-button-primary"
               type="submit"
             >
               Tìm kiếm
@@ -44,24 +44,24 @@
         </form>
 
         <!-- User menu -->
-        <nav class="base-user-nav flex items-center gap-3 whitespace-nowrap">
+        <nav class="base-user-nav">
           <!-- Khi chưa đăng nhập -->
-          <a href="{{ url_for('auth.login_page') }}" class="base-link text-sm" id="nav-login">
+          <a href="{{ url_for('auth.login_page') }}" class="base-link" id="nav-login">
             Đăng nhập
           </a>
-          <a href="{{ url_for('auth.register_page') }}" class="base-link text-sm" id="nav-register">
+          <a href="{{ url_for('auth.register_page') }}" class="base-link" id="nav-register">
             Đăng ký
           </a>
 
           <!-- Khi đã đăng nhập -->
-          <div class="base-user-menu relative hidden" id="nav-user-menu">
+          <div class="base-user-menu hidden" id="nav-user-menu">
             <button
               type="button"
-              class="base-user-button flex items-center gap-2 text-sm"
+              class="base-user-button"
               id="nav-user-button"
             >
               <span id="nav-user-name">Tài khoản</span>
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg" class="base-user-icon" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd"
                       d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.25 8.29a.75.75 0 01-.02-1.08z"
                       clip-rule="evenodd" />
@@ -69,22 +69,22 @@
             </button>
             <div
               id="nav-user-dropdown"
-              class="base-user-dropdown hidden absolute right-0 mt-2 w-52 bg-white border border-gray-200 rounded-xl shadow-lg py-2 text-sm z-20"
+              class="base-user-dropdown hidden"
             >
-              <a href="{{ url_for('auth.profile_section', section='bookmarks') }}" class="block px-4 py-2 hover:bg-gray-50">
+              <a href="{{ url_for('auth.profile_section', section='bookmarks') }}" class="base-user-dropdown-link">
                 Công việc đã lưu
               </a>
-              <a href="{{ url_for('auth.profile_section', section='info') }}" class="block px-4 py-2 hover:bg-gray-50">
+              <a href="{{ url_for('auth.profile_section', section='info') }}" class="base-user-dropdown-link">
                 Thông tin người dùng
               </a>
-              <a href="{{ url_for('auth.profile_section', section='password') }}" class="block px-4 py-2 hover:bg-gray-50">
+              <a href="{{ url_for('auth.profile_section', section='password') }}" class="base-user-dropdown-link">
                 Đổi mật khẩu
               </a>
-              <div class="base-user-divider my-1"></div>
+              <div class="base-user-divider"></div>
               <button
                 type="button"
                 id="nav-logout"
-                class="w-full text-left px-4 py-2 hover:bg-gray-50"
+                class="base-user-dropdown-button"
               >
                 Đăng xuất
               </button>
@@ -95,7 +95,7 @@
     </header>
 
     <!-- MAIN -->
-    <main class="base-main mx-auto max-w-6xl px-4 py-6">
+    <main class="base-main">
       {% block content %}{% endblock %}
     </main>
 
@@ -150,7 +150,7 @@
       </button>
     </div>
 
-    <footer class="base-footer py-10 text-center text-gray-500 text-sm">
+    <footer class="base-footer">
       JobFinder by Huyvu
     </footer>
 
