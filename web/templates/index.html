@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
-  <div class="home-header flex items-center justify-between mb-4">
-    <div class="home-result-count text-gray-600 text-sm">
+  <div class="home-header">
+    <div class="home-result-count">
       Tổng công việc: {{ total or 0 }}
       {% if active_total is not none %}
         - {{ active_total }} công việc còn hạn
@@ -10,27 +10,27 @@
   </div>
 
   <!-- LIST JOB -->
-  <div class="home-job-list grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+  <div class="home-job-list">
     {% for j in jobs %}
-      <div class="home-job-card-wrapper relative h-full">
+      <div class="home-job-card-wrapper">
         <a
-          class="base-card home-job-card block bg-white p-5 h-full min-h-[180px]"
+          class="base-card home-job-card"
           href="{{ url_for('jobs.job_detail', job_id=j.job_id) }}"
         >
-          <div class="home-job-company text-xs text-gray-500">{{ j.company }}</div>
-          <div class="home-job-title font-semibold text-base mt-1 text-gray-900">
+          <div class="home-job-company">{{ j.company }}</div>
+          <div class="home-job-title">
             {{ j.title }}
           </div>
-          <div class="home-job-location mt-1 text-xs text-gray-600">
-            <span class="font-medium">Địa điểm:</span>
+          <div class="home-job-location">
+            <span class="home-job-location-label">Địa điểm:</span>
             <span>{{ j.city or '—' }}</span>
           </div>
-          <div class="home-job-salary mt-2 text-sm text-emerald-700 font-medium">
+          <div class="home-job-salary">
             {{ j.salary_text or 'Thoả thuận' }}
           </div>
 
           {% if j.deadline_text %}
-            <div class="home-job-deadline mt-2 text-xs text-gray-500">
+            <div class="home-job-deadline">
               {{ j.deadline_text }}
             </div>
           {% endif %}
@@ -38,7 +38,7 @@
 
         <button
           type="button"
-          class="home-bookmark-button absolute top-3 right-3 text-xl {{ 'text-yellow-400' if j.starred else 'text-gray-300' }}"
+          class="home-bookmark-button {{ 'home-bookmark-button-starred' if j.starred else 'home-bookmark-button-unstarred' }}"
           data-job-id="{{ j.job_id }}"
           aria-label="Đánh dấu công việc"
         >
@@ -49,11 +49,11 @@
   </div>
 
   {% if total_pages and total_pages > 1 %}
-    <div class="home-pagination-wrapper mt-6 flex flex-col gap-2 text-sm">
-      <div class="home-pagination flex items-center gap-2">
+    <div class="home-pagination-wrapper">
+      <div class="home-pagination">
         {% if page > 1 %}
           <a
-            class="home-pagination-link px-3 py-1 border rounded"
+            class="home-pagination-link"
             href="{{ url_for('jobs.index', q=q, page=page-1) }}"
           >
             « Trước
@@ -64,7 +64,7 @@
         </span>
         {% if page < total_pages %}
           <a
-            class="home-pagination-link px-3 py-1 border rounded"
+            class="home-pagination-link"
             href="{{ url_for('jobs.index', q=q, page=page+1) }}"
           >
             Sau »
@@ -74,14 +74,14 @@
 
       <!-- Nhảy nhanh đến trang -->
       <form
-        class="home-page-jump flex items-center gap-2"
+        class="home-page-jump"
         method="get"
         action="{{ url_for('jobs.index') }}"
       >
         <input type="hidden" name="q" value="{{ q or '' }}">
         <span>Đến trang:</span>
         <input
-          class="border rounded px-2 py-1 w-16 text-sm"
+          class="home-page-jump-input"
           type="number"
           name="page"
           min="1"
@@ -90,7 +90,7 @@
         >
         <button
           type="submit"
-          class="px-3 py-1 border rounded bg-white hover:bg-gray-50 text-sm"
+          class="home-page-jump-button"
         >
           Đi
         </button>
