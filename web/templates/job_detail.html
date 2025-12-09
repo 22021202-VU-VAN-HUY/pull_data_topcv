@@ -1,25 +1,25 @@
 {% extends "base.html" %}
 {% block content %}
-  <div class="detail-layout grid grid-cols-1 lg:grid-cols-3 gap-6">
+  <div class="detail-layout">
     <!-- LEFT: HEADER + SECTIONS -->
-    <section class="detail-main lg:col-span-2 space-y-6">
+    <section class="detail-main">
       <!-- HEADER -->
-      <div class="base-card detail-header bg-white p-6 relative">
-        <div class="detail-company text-sm text-gray-500">{{ job.company }}</div>
-        <h1 class="detail-title text-2xl font-bold mt-1 text-gray-900">
+      <div class="base-card detail-card detail-header">
+        <div class="detail-company">{{ job.company }}</div>
+        <h1 class="detail-title">
           {{ job.title }}
         </h1>
 
         <button
           type="button"
-          class="home-bookmark-button detail-bookmark absolute top-4 right-4 text-2xl {{ 'text-yellow-400' if is_starred else 'text-gray-300' }}"
+          class="home-bookmark-button detail-bookmark {{ 'bookmark-starred' if is_starred else 'bookmark-unstarred' }}"
           data-job-id="{{ job.job_id }}"
           aria-label="Đánh dấu công việc"
         >
           ★
         </button>
 
-        <div class="detail-meta mt-3 text-sm text-gray-700 space-y-1">
+        <div class="detail-meta">
           <div><strong>Lương:</strong> {{ salary_text or 'Thoả thuận' }}</div>
           <div>
             <strong>Địa điểm:</strong> {{ job.city or '—' }}
@@ -31,7 +31,7 @@
             </a>
           </div>
           {% if deadline_text %}
-            <div class="detail-deadline text-xs text-gray-600">
+            <div class="detail-deadline">
               {{ deadline_text }}
             </div>
           {% endif %}
@@ -39,32 +39,32 @@
       </div>
 
       <!-- SECTIONS GIỐNG TOPCV -->
-      <div class="base-card detail-content bg-white p-6">
+      <div class="base-card detail-card detail-content">
         {% if detail_sections and detail_sections|length > 0 %}
           {% for sec in detail_sections %}
-            <div class="detail-section mb-6">
-              <h2 class="detail-section-title text-base font-semibold mb-2">
+            <div class="detail-section">
+              <h2 class="detail-section-title">
                 {{ sec.label }}
               </h2>
 
               {% if sec.html %}
-                <div class="detail-section-body text-sm text-gray-800 prose max-w-none">
+                <div class="detail-section-body detail-section-body-prose">
                   {{ sec.html | safe }}
                 </div>
               {% elif sec.text %}
-                <div class="detail-section-body text-sm text-gray-800 whitespace-pre-line">
+                <div class="detail-section-body detail-section-body-plain">
                   {{ sec.text }}
                 </div>
               {% endif %}
             </div>
           {% endfor %}
         {% elif fallback_description %}
-          <h2 class="detail-section-title text-base font-semibold mb-2">
+          <h2 class="detail-section-title">
             Mô tả chi tiết
           </h2>
           <div
             id="job-desc-plain"
-            class="detail-section-body text-sm text-gray-800"
+            class="detail-section-body"
             data-raw="{{ fallback_description | e }}"
           ></div>
           <script>
@@ -80,7 +80,7 @@
             });
           </script>
         {% else %}
-          <p class="text-sm text-gray-500">
+          <p class="detail-section-body">
             Không có mô tả chi tiết cho công việc này.
           </p>
         {% endif %}
@@ -88,18 +88,18 @@
     </section>
 
     <!-- RIGHT: THÔNG TIN THÊM -->
-    <aside class="detail-sidebar lg:col-span-1 space-y-4">
-      <div class="base-card bg-white p-5">
+    <aside class="detail-sidebar">
+      <div class="base-card detail-sidebar-card">
         <!--<h3 class="detail-sidebar-title text-xs font-semibold text-gray-500 mb-3">
           Thông tin thêm
         </h3>-->
 
         <!-- Thông tin công ty -->
         <div class="mb-4">
-          <h2 class="text-sm font-semibold text-gray-800 mb-1">
+          <h2 class="detail-sidebar-heading">
             Thông tin công ty
           </h2>
-          <ul class="detail-sidebar-list text-xs text-gray-700 space-y-1">
+          <ul class="detail-sidebar-list">
             {% for label, value in company_info.items() %}
               {% if value %}
                 <li>
@@ -119,10 +119,10 @@
 
         <!-- Thông tin chung -->
         <div class="mb-3">
-          <h3 class="text-sm font-semibold text-gray-800 mb-1">
+          <h3 class="detail-sidebar-heading">
             Thông tin chung
           </h3>
-          <ul class="detail-sidebar-list text-xs text-gray-700 space-y-1">
+          <ul class="detail-sidebar-list">
             {% for label, value in general_info.items() %}
               {% if value %}
                 <li>
@@ -133,7 +133,7 @@
           </ul>
         </div>
 
-        <a href="{{ url_for('jobs.index') }}" class="base-link text-sm text-indigo-600 inline-block mt-2">
+        <a href="{{ url_for('jobs.index') }}" class="base-link detail-back-link">
           ← Quay lại danh sách
         </a>
       </div>
