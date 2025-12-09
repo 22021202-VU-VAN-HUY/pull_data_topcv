@@ -2,7 +2,6 @@
 {% block content %}
   <div class="profile-page max-w-5xl mx-auto space-y-5">
     <header class="profile-header text-center space-y-1">
-      <p class="text-sm text-gray-500">{{ user.email }}</p>
       <h1 class="text-2xl font-semibold text-gray-900 leading-tight">
         {{ section_title or 'Quản lý tài khoản' }}
       </h1>
@@ -12,9 +11,6 @@
       <section class="profile-section base-card bg-white p-5 md:p-6">
         <div class="profile-saved-header flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
           <div>
-            <h2 class="profile-section-title text-lg font-semibold text-gray-900">
-              Công việc đã lưu
-            </h2>
             <p class="text-sm text-gray-600">Danh sách công việc bạn đánh dấu.</p>
           </div>
           <div class="profile-meta-badge">
@@ -89,9 +85,6 @@
 
     {% elif current_section == 'info' %}
       <section class="base-card profile-section profile-form-card bg-white p-5 md:p-6">
-        <h2 class="profile-section-title text-lg font-semibold mb-3 text-center">
-          Thông tin người dùng
-        </h2>
         <form id="profile-form" class="profile-form space-y-3">
           <div class="profile-field">
             <label class="profile-label block text-sm text-gray-700">Họ và tên</label>
@@ -134,9 +127,6 @@
 
     {% elif current_section == 'password' %}
       <section class="base-card profile-section profile-form-card bg-white p-5 md:p-6">
-        <h2 class="profile-section-title text-lg font-semibold mb-3 text-center">
-          Đổi mật khẩu
-        </h2>
         <form id="password-form" class="profile-form space-y-3">
           <div class="profile-field">
             <label class="profile-label block text-sm text-gray-700">Mật khẩu hiện tại</label>
