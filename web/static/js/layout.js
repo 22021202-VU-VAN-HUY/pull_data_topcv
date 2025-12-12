@@ -135,9 +135,14 @@
   // ----- BOOKMARK JOBS (★) -----
   function setBookmarkState(btn, starred) {
     if (!btn) return;
-    btn.classList.toggle("text-yellow-400", !!starred);
-    btn.classList.toggle("text-gray-300", !starred);
-    btn.dataset.starred = starred ? "1" : "0";
+    const isStarred = !!starred;
+    btn.classList.toggle("text-yellow-400", isStarred);
+    btn.classList.toggle("text-gray-300", !isStarred);
+    btn.classList.toggle("home-bookmark-button-starred", isStarred);
+    btn.classList.toggle("home-bookmark-button-unstarred", !isStarred);
+    btn.classList.toggle("bookmark-starred", isStarred);
+    btn.classList.toggle("bookmark-unstarred", !isStarred);
+    btn.dataset.starred = isStarred ? "1" : "0";
   }
 
   function initBookmarkButtons() {
@@ -174,8 +179,13 @@
       });
 
       // đồng bộ trạng thái ban đầu (dựa vào class do server render)
-      const starred = btn.classList.contains("text-yellow-400");
-      setBookmarkState(btn, starred);
+      const initialStarred =
+        btn.dataset.starred === "1" ||
+        (btn.dataset.starred !== "0" &&
+          (btn.classList.contains("home-bookmark-button-starred") ||
+            btn.classList.contains("bookmark-starred") ||
+            btn.classList.contains("text-yellow-400")));
+      setBookmarkState(btn, initialStarred);
     });
   }
 })(window, document);

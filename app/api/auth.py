@@ -12,6 +12,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from app.db import get_connection
 from app.api.salary_utils import format_salary_text
+from app.api.jobs import _format_deadline
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -138,7 +139,8 @@ def profile_section(section: str):
                         j.salary_max,
                         j.salary_currency,
                         j.salary_interval,
-                        j.salary_raw_text
+                        j.salary_raw_text,
+                        j.deadline
                     FROM user_job_bookmarks b
                     JOIN jobs j ON j.id = b.job_id
                     LEFT JOIN companies c ON j.company_id = c.id
@@ -171,6 +173,7 @@ def profile_section(section: str):
                     "city": loc,
                     "district": None,
                     "salary_text": salary_text,
+                    "deadline_text": _format_deadline(r.get("deadline")),
                 }
             )
 

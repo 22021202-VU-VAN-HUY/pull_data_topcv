@@ -36,8 +36,13 @@
                     {% if j.district %} · <span>{{ j.district }}</span>{% endif %}
                   </div>
                   <div class="home-job-salary mt-2 text-sm text-emerald-700 font-medium">
-                    {{ j.salary_text or 'Thoả thuận' }}
+                    Lương: {{ j.salary_text or 'thỏa thuận' }}
                   </div>
+                  {% if j.deadline_text %}
+                    <div class="home-job-deadline mt-1 text-xs text-gray-500">
+                      {{ j.deadline_text }}
+                    </div>
+                  {% endif %}
                 </a>
                 <button
                   type="button"
