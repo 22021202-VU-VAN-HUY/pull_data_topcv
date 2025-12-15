@@ -1,12 +1,14 @@
 # app/crawl_batch_jobs.py
-import time
+import asyncio
 import random
+import time
 from typing import List, Set
 import requests
 from xml.etree import ElementTree as ET
 
 from app.config import settings
 from app.topcv.crawl_one_job import crawl_and_save_one_job
+from app.topcv.crawl_browser import crawl_job_with_browser
 
 SITEMAP_ROOT_URL = settings.TOPCV_SITEMAP_ROOT
 SITEMAP_MAX_JOBS = settings.SITEMAP_MAX_JOBS
@@ -120,29 +122,42 @@ def crawl_many_jobs_from_sitemap():
     for i, url in enumerate(job_urls, start=1):
         print(f"\n[job {i}/{total}] {url}")
         attempt = 0
-        while attempt < JOB_MAX_RETRY:
+        success = False
+        max_direct_attempts = min(JOB_MAX_RETRY, 2)
+
+        while attempt < max_direct_attempts:
             attempt += 1
-            print(f"Lần {attempt}/{JOB_MAX_RETRY}")
+            print(f"Lần {attempt}/{max_direct_attempts}")
             try:
                 crawl_and_save_one_job(url, seq=i)
+                success = True
                 break
             except Exception as e:
                 # In lỗi
                 print(
-                    f"  [ERROR] Crawl lỗi (lần {attempt}): {e}\n"
+                    f"  [ERROR] Crawl lỗi (lần {attempt}): {e}\n",
                 )
-                if attempt < JOB_MAX_RETRY:
+                if attempt < max_direct_attempts:
                     sleep_s = CRAWL_SLEEP_SECONDS
                     print(
-                        f"  -> Thử lại lần {attempt} sau {sleep_s:.1f}s"
+                        f"  -> Thử lại lần {attempt} sau {sleep_s:.1f}s",
                     )
                     try:
                         time.sleep(sleep_s)
                     except KeyboardInterrupt:
                         print("  -> Bị ngắt")
                         return
-                else:
-                    print("  -> Số lần thử tối đa, crawl fail")
+
+        if not success:
+            print("  -> Fail 2 lần, thử crawl bằng headless browser")
+            try:
+                asyncio.run(crawl_job_with_browser(url, seq=i))
+                success = True
+            except Exception as e:  # pragma: no cover - log lỗi headless
+                print(f"  [ERROR] Crawl headless lỗi: {e}")
+
+        if not success:
+            print("  -> Số lần thử tối đa, crawl fail")
         try:
             time.sleep(CRAWL_SLEEP_SECONDS)
         except KeyboardInterrupt:

@@ -1,14 +1,3 @@
-"""Crawl job detail bằng headless browser.
-
-Sử dụng Playwright để tải đầy đủ trang (kể cả nội dung load động),
-sau đó tái sử dụng parser hiện tại để bóc dữ liệu và lưu vào DB.
-Config qua biến môi trường:
-- PLAYWRIGHT_HEADLESS: đặt "false" nếu cần xem trình duyệt.
-- PLAYWRIGHT_NAV_TIMEOUT_MS: timeout goto/wait (ms), mặc định 20000.
-- PLAYWRIGHT_EXTRA_WAIT_MS: thời gian chờ thêm sau khi network idle (ms).
-- TOPCV_BROWSER_WAIT_SELECTOR: selector cần xuất hiện trước khi đọc HTML (mặc định body).
-- TOPCV_BROWSER_JOB_URL: URL job mặc định nếu không truyền --url.
-"""
 
 import argparse
 import asyncio
@@ -28,10 +17,8 @@ from app.topcv.crawl_one_job import (
 )
 from app.topcv.topcv_parser import parse_job_from_html
 
-
+# Tải HTML job bằng Playwright (headless)
 async def fetch_job_html(job_url: str) -> str:
-    """Tải HTML job bằng Playwright (headless)."""
-
     async with async_playwright() as p:
         browser = await p.chromium.launch(headless=settings.PLAYWRIGHT_HEADLESS)
         page = await browser.new_page()
@@ -76,7 +63,6 @@ async def fetch_job_html(job_url: str) -> str:
 
 
 def _normalize_job_fields(job_data: Dict[str, Any]) -> Dict[str, Any]:
-    """Đảm bảo đủ key để tránh lỗi khi ghi DB."""
 
     job_data.setdefault("salary", {})
     job_data.setdefault("experience", {})
@@ -116,8 +102,6 @@ def _normalize_job_fields(job_data: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def save_job_to_db(job_data: Dict[str, Any], job_url: str, seq: Optional[int] = None):
-    """Lưu job đã parse vào database, tái sử dụng logic cũ."""
-
     job_data = _normalize_job_fields(job_data)
     crawled_at = datetime.now(timezone.utc)
 
