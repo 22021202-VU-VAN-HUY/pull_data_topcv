@@ -26,6 +26,16 @@ class Settings:
     JOB_MAX_RETRY: int = int(os.getenv("JOB_MAX_RETRY", "3"))
     CRAWL_SLEEP_SECONDS: float = float(os.getenv("CRAWL_SLEEP_SECONDS", "5.0"))
 
+    # headless browser crawl
+    PLAYWRIGHT_HEADLESS: bool = os.getenv("PLAYWRIGHT_HEADLESS", "true").lower() != "false"
+    PLAYWRIGHT_NAV_TIMEOUT_MS: int = int(os.getenv("PLAYWRIGHT_NAV_TIMEOUT_MS", "20000"))
+    PLAYWRIGHT_EXTRA_WAIT_MS: int = int(os.getenv("PLAYWRIGHT_EXTRA_WAIT_MS", "1000"))
+    TOPCV_BROWSER_WAIT_SELECTOR: str = os.getenv(
+        "TOPCV_BROWSER_WAIT_SELECTOR",
+        "body",
+    )
+    TOPCV_BROWSER_JOB_URL: str = os.getenv("TOPCV_BROWSER_JOB_URL", "")
+
     # RAG - app/api/rag
     RAG_EMBEDDING_MODEL_NAME: str = os.getenv(
         "RAG_EMBEDDING_MODEL_NAME",

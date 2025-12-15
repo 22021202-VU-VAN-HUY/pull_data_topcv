@@ -216,6 +216,31 @@ def parse_detail_sections(soup: BeautifulSoup) -> Dict[str, Dict[str, Optional[s
     return sections
 
 
+def _cleanup_thu_nhap_section(section: Dict[str, Optional[str]], company_name: Optional[str]) -> Dict[str, Optional[str]]:
+    """
+    Một số job có heading 'Thu nhập' nhưng nội dung lại là link company (không phải lương).
+    Nếu text/html trùng tên công ty thì coi như không có dữ liệu thu nhập.
+    """
+    if not section or not company_name:
+        return section
+
+    def _norm(s: str) -> str:
+        return re.sub(r"\s+", " ", s or "").strip().casefold()
+
+    text_norm = _norm(section.get("text") or "")
+    company_norm = _norm(company_name)
+    if text_norm and text_norm == company_norm:
+        return {"html": None, "text": None}
+
+    html = section.get("html") or ""
+    if html:
+        html_text = BeautifulSoup(html, "html.parser").get_text(" ", strip=True)
+        if _norm(html_text) == company_norm:
+            return {"html": None, "text": None}
+
+    return section
+
+
 def parse_locations_from_section(section: Dict[str, Optional[str]]) -> List[str]:
     text = section.get("text") or ""
     if not text:
@@ -341,8 +366,7 @@ def parse_general_info_box(soup: BeautifulSoup) -> Dict[str, Optional[str]]:
 # ----------------- HÀM CHÍNH: PARSE 1 JOB -----------------
 
 
-def parse_job(url: str) -> Dict[str, Any]:
-    soup = fetch_soup(url)
+def _parse_job_from_soup(soup: BeautifulSoup, url: str) -> Dict[str, Any]:
     jld = parse_jsonld(soup)
 
     # 1) từ JSON-LD
@@ -364,6 +388,12 @@ def parse_job(url: str) -> Dict[str, Any]:
     for k, v in company_extra.items():
         if v:
             company[k] = v
+
+    # Làm sạch trường "Thu nhập" nếu nhầm sang tên công ty
+    detail_sections["thu_nhap"] = _cleanup_thu_nhap_section(
+        detail_sections.get("thu_nhap", {}),
+        company.get("name"),
+    )
 
     # 5) thông tin chung box
     general_extra = parse_general_info_box(soup)
@@ -398,3 +428,13 @@ def parse_job(url: str) -> Dict[str, Any]:
     }
 
     return job
+
+
+def parse_job(url: str) -> Dict[str, Any]:
+    soup = fetch_soup(url)
+    return _parse_job_from_soup(soup, url)
+
+
+def parse_job_from_html(html: str, url: str) -> Dict[str, Any]:
+    soup = BeautifulSoup(html, "html.parser")
+    return _parse_job_from_soup(soup, url)
