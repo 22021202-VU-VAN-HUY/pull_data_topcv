@@ -1,0 +1,6 @@
+{
+  "num_questions": 1091,
+  "avg_judge_score": 3.9940421631530705,
+  "avg_recall_at_5": 0.3495575285110776,
+  "avg_recall_at_10": 0.3661456058246246
+}

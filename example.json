@@ -1,0 +1,1636 @@
+[
+  {
+    "chunk_index": 0,
+    "chunk_text": "Công việc: Nhân Viên Sale Du Lịch\nCông ty: CÔNG TY TNHH TỔ CHỨC SỰ KIỆN VHUNTER\nĐịa điểm: Hải Phòng | Hải Phòng: Số 11 Lạch Tray, Phường Ngô Quyền\nMục: Thu nhập\nHạn nộp: 2025-12-17T16:59:59+00:00\nNội dung: Thu nhập:  Thoả thuận Lương cứng:  6 - 9 triệu VND Lương cứng không phụ thuộc doanh số",
+    "doc_id": 650738,
+    "job_id": 15177,
+    "metadata": {
+      "company": {
+        "address": null,
+        "industry": "Du lịch, Khách sạn / Nhà hàng, Hàng không",
+        "logo": "https://cdn-new.topcv.vn/unsafe/https://static.topcv.vn/company_logos/CsYktXWhtN3RkEiuJq7HYhtpce69dfDX_1717645610____d247cbdf26c5b10ee303c67e2af5a9cd.jpg",
+        "name": "CÔNG TY TNHH TỔ CHỨC SỰ KIỆN VHUNTER",
+        "size": null,
+        "url": "https://www.topcv.vn/cong-ty/cong-ty-tnhh-to-chuc-su-kien-vhunter/179982.html"
+      },
+      "crawled_at": "2025-12-05T06:50:43.723460+00:00",
+      "deadline": "2025-12-17T16:59:59+00:00",
+      "experience": {
+        "months": 12,
+        "raw_text": null
+      },
+      "general_info": {
+        "cap_bac": "Nhân viên",
+        "hinh_thuc_lam_viec": "FULL_TIME",
+        "hinh_thuc_lam_viec_raw": null,
+        "hoc_van": null,
+        "so_luong_tuyen": 1,
+        "so_luong_tuyen_raw": null
+      },
+      "id": 15177,
+      "is_active": true,
+      "locations": [
+        "Hải Phòng",
+        "Hải Phòng: Số 11 Lạch Tray, Phường Ngô Quyền"
+      ],
+      "salary": {
+        "currency": "VND",
+        "interval": "MONTH",
+        "max": null,
+        "min": null,
+        "raw_text": null
+      },
+      "section": {
+        "chunk_index": 0,
+        "chunk_text": "Thu nhập:  Thoả thuận Lương cứng:  6 - 9 triệu VND Lương cứng không phụ thuộc doanh số",
+        "html": "<div class=\"job-description__item--content\">\n<ul>\n<li>Thu nhập:  Thoả thuận</li>\n<li>Lương cứng:  6 - 9 triệu VND </li>\n<li>Lương cứng không phụ thuộc doanh số</li>\n</ul>\n</div>",
+        "label": "Thu nhập",
+        "text": "Thu nhập:  Thoả thuận Lương cứng:  6 - 9 triệu VND Lương cứng không phụ thuộc doanh số",
+        "type": "thu_nhap"
+      },
+      "source": "topcv",
+      "title": "Nhân Viên Sale Du Lịch",
+      "url": "https://www.topcv.vn/viec-lam/nhan-vien-sale-du-lich/1954524.html"
+    },
+    "score": 0.6155524803541933
+  },
+  {
+    "chunk_index": 0,
+    "chunk_text": "Công việc: Nhân Viên Giám Sát Chất Lượng Cuộc Gọi TLS\nCông ty: Công ty Cổ phần BPO Mắt Bão\nĐịa điểm: Hồ Chí Minh | Hồ Chí Minh: 12A Núi Thành, Phường 13, Phường Tân Bình\nThu nhập: từ 12.000.000 VND đến 20.000.000 VND /tháng\nMục: Yêu cầu ứng viên\nHạn nộp: 2025-12-21T16:59:59+00:00\nNội dung: ● Có kinh nghiệm QA Telesales > 6 tháng ● Tin học: thành thạo MS Office. ● Khả năng chịu áp lực cao, có thể làm việc ngoài giờ khi có phát sinh. ● Kỹ năng giao tiếp tốt; Kỹ năng làm báo cáo, tổng hợp và phân tích vấn đề; Kỹ năng training, coaching; Kỹ năng xử lý tình huống.",
+    "doc_id": 661879,
+    "job_id": 20867,
+    "metadata": {
+      "company": {
+        "address": null,
+        "industry": "Kinh doanh / Bán hàng, Hàng gia dụng, Hàng tiêu dùng",
+        "logo": "https://cdn-new.topcv.vn/unsafe/https://static.topcv.vn/company_logos/68a2de2ec46f91755504174.jpg",
+        "name": "Công ty Cổ phần BPO Mắt Bão",
+        "size": null,
+        "url": "https://www.topcv.vn/cong-ty/cong-ty-co-phan-bpo-mat-bao/227058.html"
+      },
+      "crawled_at": "2025-12-10T06:37:22.740567+00:00",
+      "deadline": "2025-12-21T16:59:59+00:00",
+      "experience": {
+        "months": 3,
+        "raw_text": null
+      },
+      "general_info": {
+        "cap_bac": "Nhân viên",
+        "hinh_thuc_lam_viec": "FULL_TIME",
+        "hinh_thuc_lam_viec_raw": null,
+        "hoc_van": null,
+        "so_luong_tuyen": 1,
+        "so_luong_tuyen_raw": null
+      },
+      "id": 20867,
+      "is_active": true,
+      "locations": [
+        "Hồ Chí Minh",
+        "Hồ Chí Minh: 12A Núi Thành, Phường 13, Phường Tân Bình"
+      ],
+      "salary": {
+        "currency": "VND",
+        "interval": "MONTH",
+        "max": 20000000,
+        "min": 12000000,
+        "raw_text": null
+      },
+      "section": {
+        "chunk_index": 0,
+        "chunk_text": "● Có kinh nghiệm QA Telesales > 6 tháng ● Tin học: thành thạo MS Office. ● Khả năng chịu áp lực cao, có thể làm việc ngoài giờ khi có phát sinh. ● Kỹ năng giao tiếp tốt; Kỹ năng làm báo cáo, tổng hợp và phân tích vấn đề; Kỹ năng training, coaching; Kỹ năng xử lý tình huống.",
+        "html": "<div class=\"job-description__item--content\">\n<p>● Có kinh nghiệm QA Telesales &gt; 6 tháng<br/>● Tin học: thành thạo MS Office.<br/>● Khả năng chịu áp lực cao, có thể làm việc ngoài giờ khi có phát sinh.<br/>● Kỹ năng giao tiếp tốt; Kỹ năng làm báo cáo, tổng hợp và phân tích vấn đề;<br/>Kỹ năng training, coaching; Kỹ năng xử lý tình huống.</p>\n</div>",
+        "label": "Yêu cầu ứng viên",
+        "text": "● Có kinh nghiệm QA Telesales > 6 tháng ● Tin học: thành thạo MS Office. ● Khả năng chịu áp lực cao, có thể làm việc ngoài giờ khi có phát sinh. ● Kỹ năng giao tiếp tốt; Kỹ năng làm báo cáo, tổng hợp và phân tích vấn đề; Kỹ năng training, coaching; Kỹ năng xử lý tình huống.",
+        "type": "yeu_cau_ung_vien"
+      },
+      "source": "topcv",
+      "title": "Nhân Viên Giám Sát Chất Lượng Cuộc Gọi TLS",
+      "url": "https://www.topcv.vn/viec-lam/nhan-vien-giam-sat-chat-luong-cuoc-goi-tls/1959815.html"
+    },
+    "score": 0.6154165130357174
+  },
+  {
+    "chunk_index": 0,
+    "chunk_text": "Công việc: Trưởng Phòng Marketing - Ngành Hàng Mẹ Và Bé\nCông ty: CÔNG TY TNHH GÓC CỦA TIN\nĐịa điểm: Hà Nội | Hà Nội: Trần Quốc Toản, Phường Cửa Nam\nThu nhập: từ 25.000.000 VND đến 28.000.000 VND /tháng\nMục: Địa điểm làm việc\nHạn nộp: 2025-12-20T16:59:59+00:00\nNội dung: - Hà Nội: Trần Quốc Toản, Phường Cửa Nam",
+    "doc_id": 657713,
+    "job_id": 18832,
+    "metadata": {
+      "company": {
+        "address": null,
+        "industry": "Marketing / Truyền thông / Quảng cáo, Báo chí / Truyền hình",
+        "logo": "https://cdn-new.topcv.vn/unsafe/https://static.topcv.vn/company_logos/c70291ea25013b035056fb8b712c7f79-5e7192448f47c.jpg",
+        "name": "CÔNG TY TNHH GÓC CỦA TIN",
+        "size": null,
+        "url": "https://www.topcv.vn/cong-ty/cong-ty-tnhh-goc-cua-tin/34758.html"
+      },
+      "crawled_at": "2025-12-08T20:37:04.562511+00:00",
+      "deadline": "2025-12-20T16:59:59+00:00",
+      "experience": {
+        "months": 60,
+        "raw_text": null
+      },
+      "general_info": {
+        "cap_bac": "Trưởng/Phó phòng",
+        "hinh_thuc_lam_viec": "FULL_TIME",
+        "hinh_thuc_lam_viec_raw": null,
+        "hoc_van": null,
+        "so_luong_tuyen": 1,
+        "so_luong_tuyen_raw": null
+      },
+      "id": 18832,
+      "is_active": true,
+      "locations": [
+        "Hà Nội",
+        "Hà Nội: Trần Quốc Toản, Phường Cửa Nam"
+      ],
+      "salary": {
+        "currency": "VND",
+        "interval": "MONTH",
+        "max": 28000000,
+        "min": 25000000,
+        "raw_text": null
+      },
+      "section": {
+        "chunk_index": 0,
+        "chunk_text": "- Hà Nội: Trần Quốc Toản, Phường Cửa Nam",
+        "html": "<div class=\"job-description__item--content\">\n<div style=\"margin-bottom: 10px\">- Hà Nội: Trần Quốc Toản, Phường Cửa Nam</div>\n</div>",
+        "label": "Địa điểm làm việc",
+        "text": "- Hà Nội: Trần Quốc Toản, Phường Cửa Nam",
+        "type": "dia_diem_lam_viec"
+      },
+      "source": "topcv",
+      "title": "Trưởng Phòng Marketing - Ngành Hàng Mẹ Và Bé",
+      "url": "https://www.topcv.vn/viec-lam/truong-phong-marketing-nganh-hang-me-va-be/1959162.html"
+    },
+    "score": 0.6137767475178358
+  },
+  {
+    "chunk_index": 0,
+    "chunk_text": "Công việc: Nhân Viên Kinh Doanh Kỹ Thuật (Sales Engineer)\nCông ty: Công ty cổ phần ITS GLOBAL\nĐịa điểm: Hà Nội | Hà Nội: Dolphin Plaza 28 Trần Bình, Phường Từ Liêm\nMục: Thu nhập\nHạn nộp: 2025-12-17T16:59:59+00:00\nNội dung: Thu nhập khi đạt 100% KPI:  Thoả thuận Thu nhập tính theo tỷ lệ đạt KPI Lương cứng:  8 - 10 triệu VND Lương cứng không phụ thuộc doanh số",
+    "doc_id": 673972,
+    "job_id": 26090,
+    "metadata": {
+      "company": {
+        "address": null,
+        "industry": "Kinh doanh / Bán hàng, Bán hàng kỹ thuật, Điện tử viễn thông",
+        "logo": "https://cdn-new.topcv.vn/unsafe/https://static.topcv.vn/company_logos/Euwp0c1J0HOsTsDSXUfsNHGhePhdKqwz_1694662553____f04befdabc34f887a4962b32833e6fbf.png",
+        "name": "Công ty cổ phần ITS GLOBAL",
+        "size": null,
+        "url": "https://www.topcv.vn/cong-ty/cong-ty-co-phan-its-global/44864.html"
+      },
+      "crawled_at": "2025-12-15T07:44:47.895243+00:00",
+      "deadline": "2025-12-17T16:59:59+00:00",
+      "experience": {
+        "months": 3,
+        "raw_text": null
+      },
+      "general_info": {
+        "cap_bac": "Nhân viên",
+        "hinh_thuc_lam_viec": "FULL_TIME",
+        "hinh_thuc_lam_viec_raw": null,
+        "hoc_van": null,
+        "so_luong_tuyen": 3,
+        "so_luong_tuyen_raw": null
+      },
+      "id": 26090,
+      "is_active": true,
+      "locations": [
+        "Hà Nội",
+        "Hà Nội: Dolphin Plaza 28 Trần Bình, Phường Từ Liêm"
+      ],
+      "salary": {
+        "currency": "VND",
+        "interval": "MONTH",
+        "max": null,
+        "min": null,
+        "raw_text": null
+      },
+      "section": {
+        "chunk_index": 0,
+        "chunk_text": "Thu nhập khi đạt 100% KPI:  Thoả thuận Thu nhập tính theo tỷ lệ đạt KPI Lương cứng:  8 - 10 triệu VND Lương cứng không phụ thuộc doanh số",
+        "html": "<div class=\"job-description__item--content\">\n<ul>\n<li>Thu nhập khi đạt 100% KPI:  Thoả thuận</li>\n<li>Thu nhập tính theo tỷ lệ đạt KPI</li>\n<li>Lương cứng:  8 - 10 triệu VND </li>\n<li>Lương cứng không phụ thuộc doanh số</li>\n</ul>\n</div>",
+        "label": "Thu nhập",
+        "text": "Thu nhập khi đạt 100% KPI:  Thoả thuận Thu nhập tính theo tỷ lệ đạt KPI Lương cứng:  8 - 10 triệu VND Lương cứng không phụ thuộc doanh số",
+        "type": "thu_nhap"
+      },
+      "source": "topcv",
+      "title": "Nhân Viên Kinh Doanh Kỹ Thuật (Sales Engineer)",
+      "url": "https://www.topcv.vn/viec-lam/nhan-vien-kinh-doanh-ky-thuat-sales-engineer/1916188.html"
+    },
+    "score": 0.6131703910015847
+  },
+  {
+    "chunk_index": 0,
+    "chunk_text": "Công việc: Direct Sales - Lương Cứng 11 Triệu (Sản Phẩm Máy Pos ) Ngân Hàng KBank\nCông ty: Công ty Cổ Phần Sài Gòn BPO\nĐịa điểm: Hồ Chí Minh | Hồ Chí Minh: 29A Nguyễn Đình Chiểu, Phường Tân Định\nThu nhập: từ 11.000.000 VND đến 30.000.000 VND /tháng\nMục: Thu nhập\nHạn nộp: 2025-12-16T16:59:59+00:00\nNội dung: Thu nhập:  11 - 30 triệu VND Lương cứng:  Từ 11 triệu VND trở lên Lương cứng không phụ thuộc doanh số",
+    "doc_id": 649105,
+    "job_id": 14298,
+    "metadata": {
+      "company": {
+        "address": null,
+        "industry": "Kinh doanh / Bán hàng, IT phần mềm, Công nghệ thông tin",
+        "logo": "https://cdn-new.topcv.vn/unsafe/https://static.topcv.vn/company_logos/hj7ZQEBPSkqRTCyJJjj9E9YgeQgNoNmS_1676599309____e04c7857151625dd4d086b7687067e35.png",
+        "name": "Công ty Cổ Phần Sài Gòn BPO",
+        "size": null,
+        "url": "https://www.topcv.vn/cong-ty/cong-ty-co-phan-sai-gon-bpo/32752.html"
+      },
+      "crawled_at": "2025-12-04T15:07:06.529973+00:00",
+      "deadline": "2025-12-16T16:59:59+00:00",
+      "experience": {
+        "months": 12,
+        "raw_text": null
+      },
+      "general_info": {
+        "cap_bac": "Nhân viên",
+        "hinh_thuc_lam_viec": "FULL_TIME",
+        "hinh_thuc_lam_viec_raw": null,
+        "hoc_van": null,
+        "so_luong_tuyen": 5,
+        "so_luong_tuyen_raw": null
+      },
+      "id": 14298,
+      "is_active": true,
+      "locations": [
+        "Hồ Chí Minh",
+        "Hồ Chí Minh: 29A Nguyễn Đình Chiểu, Phường Tân Định"
+      ],
+      "salary": {
+        "currency": "VND",
+        "interval": "MONTH",
+        "max": 30000000,
+        "min": 11000000,
+        "raw_text": null
+      },
+      "section": {
+        "chunk_index": 0,
+        "chunk_text": "Thu nhập:  11 - 30 triệu VND Lương cứng:  Từ 11 triệu VND trở lên Lương cứng không phụ thuộc doanh số",
+        "html": "<div class=\"job-description__item--content\">\n<ul>\n<li>Thu nhập:  11 - 30 triệu VND</li>\n<li>Lương cứng:  Từ 11 triệu VND trở lên </li>\n<li>Lương cứng không phụ thuộc doanh số</li>\n</ul>\n</div>",
+        "label": "Thu nhập",
+        "text": "Thu nhập:  11 - 30 triệu VND Lương cứng:  Từ 11 triệu VND trở lên Lương cứng không phụ thuộc doanh số",
+        "type": "thu_nhap"
+      },
+      "source": "topcv",
+      "title": "Direct Sales - Lương Cứng 11 Triệu (Sản Phẩm Máy Pos ) Ngân Hàng KBank",
+      "url": "https://www.topcv.vn/viec-lam/direct-sales-luong-cung-11-trieu-san-pham-may-pos-ngan-hang-kbank/1943552.html"
+    },
+    "score": 0.6115765571594238
+  },
+  {
+    "chunk_index": 0,
+    "chunk_text": "Công việc: Sale Admin\nCông ty: Công ty Cổ phần Thương mại và Phát triển Công nghệ Điện Việt Nam\nĐịa điểm: Hà Nội | Hà Nội: KĐT Louis City Hoàng Mai, Phường Hoàng Mai\nMục: Thu nhập\nHạn nộp: 2025-12-18T16:59:59+00:00\nNội dung: Thu nhập khi đạt 100% KPI:  Thoả thuận Thu nhập tính theo tỷ lệ đạt KPI Lương cứng:  7 - 9 triệu VND Lương cứng không phụ thuộc doanh số",
+    "doc_id": 675153,
+    "job_id": 26412,
+    "metadata": {
+      "company": {
+        "address": null,
+        "industry": "Kinh doanh / Bán hàng, Hành chính / Văn phòng, Thư ký / Trợ lý",
+        "logo": "https://cdn-new.topcv.vn/unsafe/https://static.topcv.vn/company_logos/wPLuZlh7VKJruRZW4vk0FpAjhSNzsKTS_1680677760____0d8088253f100890251ecfea88a92520.jpg",
+        "name": "Công ty Cổ phần Thương mại và Phát triển Công nghệ Điện Việt Nam",
+        "size": null,
+        "url": "https://www.topcv.vn/cong-ty/cong-ty-co-phan-thuong-mai-va-phat-trien-cong-nghe-dien-viet-nam/139637.html"
+      },
+      "crawled_at": "2025-12-15T10:06:02.605680+00:00",
+      "deadline": "2025-12-18T16:59:59+00:00",
+      "experience": {
+        "months": 3,
+        "raw_text": null
+      },
+      "general_info": {
+        "cap_bac": "Nhân viên",
+        "hinh_thuc_lam_viec": "FULL_TIME",
+        "hinh_thuc_lam_viec_raw": null,
+        "hoc_van": null,
+        "so_luong_tuyen": 1,
+        "so_luong_tuyen_raw": null
+      },
+      "id": 26412,
+      "is_active": true,
+      "locations": [
+        "Hà Nội",
+        "Hà Nội: KĐT Louis City Hoàng Mai, Phường Hoàng Mai"
+      ],
+      "salary": {
+        "currency": "VND",
+        "interval": "MONTH",
+        "max": null,
+        "min": null,
+        "raw_text": null
+      },
+      "section": {
+        "chunk_index": 0,
+        "chunk_text": "Thu nhập khi đạt 100% KPI:  Thoả thuận Thu nhập tính theo tỷ lệ đạt KPI Lương cứng:  7 - 9 triệu VND Lương cứng không phụ thuộc doanh số",
+        "html": "<div class=\"job-description__item--content\">\n<ul>\n<li>Thu nhập khi đạt 100% KPI:  Thoả thuận</li>\n<li>Thu nhập tính theo tỷ lệ đạt KPI</li>\n<li>Lương cứng:  7 - 9 triệu VND </li>\n<li>Lương cứng không phụ thuộc doanh số</li>\n</ul>\n</div>",
+        "label": "Thu nhập",
+        "text": "Thu nhập khi đạt 100% KPI:  Thoả thuận Thu nhập tính theo tỷ lệ đạt KPI Lương cứng:  7 - 9 triệu VND Lương cứng không phụ thuộc doanh số",
+        "type": "thu_nhap"
+      },
+      "source": "topcv",
+      "title": "Sale Admin",
+      "url": "https://www.topcv.vn/viec-lam/sale-admin/1623097.html"
+    },
+    "score": 0.6108004218817019
+  },
+  {
+    "chunk_index": 0,
+    "chunk_text": "Công việc: Senior Marketing Executive\nCông ty: CÔNG TY TNHH DONG MART\nĐịa điểm: Hồ Chí Minh | Hồ Chí Minh: Lầu 2, TTTM Pearl Center, 12 Quốc Hương, Phường An Khánh\nMục: Quyền lợi\nHạn nộp: 2025-12-20T16:59:59+00:00\nNội dung: Mức lương cạnh tranh theo năng lực. Thưởng hiệu quả công việc, thưởng lễ tết, lương tháng 13. Bảo hiểm đầy đủ theo quy định Nhà nước. Môi trường làm việc chuyên nghiệp, thân thiện, cơ hội phát triển nghề nghiệp rõ ràng. Nghỉ phép năm, team building và hoạt động nội bộ hấp dẫn.",
+    "doc_id": 657485,
+    "job_id": 18700,
+    "metadata": {
+      "company": {
+        "address": null,
+        "industry": "Marketing / Truyền thông / Quảng cáo, Tư vấn",
+        "logo": "https://cdn-new.topcv.vn/unsafe/https://static.topcv.vn/company_logos/9sTMUeKZd7ajxXV9tncJ3zSYs4iDlAJS_1763452647____1737eee6d6c756b20b7df4390d4594b2.png",
+        "name": "CÔNG TY TNHH DONG MART",
+        "size": null,
+        "url": "https://www.topcv.vn/cong-ty/cong-ty-tnhh-dong-mart/201705.html"
+      },
+      "crawled_at": "2025-12-08T20:10:42.370917+00:00",
+      "deadline": "2025-12-20T16:59:59+00:00",
+      "experience": {
+        "months": 36,
+        "raw_text": null
+      },
+      "general_info": {
+        "cap_bac": "Nhân viên",
+        "hinh_thuc_lam_viec": "FULL_TIME",
+        "hinh_thuc_lam_viec_raw": null,
+        "hoc_van": null,
+        "so_luong_tuyen": 1,
+        "so_luong_tuyen_raw": null
+      },
+      "id": 18700,
+      "is_active": true,
+      "locations": [
+        "Hồ Chí Minh",
+        "Hồ Chí Minh: Lầu 2, TTTM Pearl Center, 12 Quốc Hương, Phường An Khánh"
+      ],
+      "salary": {
+        "currency": "VND",
+        "interval": "MONTH",
+        "max": null,
+        "min": null,
+        "raw_text": null
+      },
+      "section": {
+        "chunk_index": 0,
+        "chunk_text": "Mức lương cạnh tranh theo năng lực. Thưởng hiệu quả công việc, thưởng lễ tết, lương tháng 13. Bảo hiểm đầy đủ theo quy định Nhà nước. Môi trường làm việc chuyên nghiệp, thân thiện, cơ hội phát triển nghề nghiệp rõ ràng. Nghỉ phép năm, team building và hoạt động nội bộ hấp dẫn.",
+        "html": "<div class=\"job-description__item--content\">\n<ul><li>Mức lương cạnh tranh theo năng lực.</li><li>Thưởng hiệu quả công việc, thưởng lễ tết, lương tháng 13.</li><li>Bảo hiểm đầy đủ theo quy định Nhà nước.</li><li>Môi trường làm việc chuyên nghiệp, thân thiện, cơ hội phát triển nghề nghiệp rõ ràng.</li><li>Nghỉ phép năm, team building và hoạt động nội bộ hấp dẫn.</li></ul>\n</div>",
+        "label": "Quyền lợi",
+        "text": "Mức lương cạnh tranh theo năng lực. Thưởng hiệu quả công việc, thưởng lễ tết, lương tháng 13. Bảo hiểm đầy đủ theo quy định Nhà nước. Môi trường làm việc chuyên nghiệp, thân thiện, cơ hội phát triển nghề nghiệp rõ ràng. Nghỉ phép năm, team building và hoạt động nội bộ hấp dẫn.",
+        "type": "quyen_loi"
+      },
+      "source": "topcv",
+      "title": "Senior Marketing Executive",
+      "url": "https://www.topcv.vn/viec-lam/senior-marketing-executive/1959495.html"
+    },
+    "score": 0.6076405749963784
+  },
+  {
+    "chunk_index": 0,
+    "chunk_text": "Công việc: Giám Sát Mua Hàng / Procurement Supervisor\nCông ty: CÔNG TY CP VIETNAM HOUSEWARES INTL\nĐịa điểm: Hồ Chí Minh | Hồ Chí Minh: Phường An Phú\nMục: Yêu cầu ứng viên\nHạn nộp: 2025-12-20T16:59:59+00:00\nNội dung: Học vấn - Tốt nghiệp Đại học chuyên ngành Kế toán – Tài chính. Chuyên môn – Bằng cấp - Có kỹ năng chuyên môn vững trong vai trò Giám sát mua hàng với hơn 12 năm kinh nghiệm trong ngành nội thất. - Hiểu biết tốt về hệ thống và phương pháp quản lý chất lượng. - Xuất sắc trong phân tích và giải quyết vấn đề. - Tỉ mỉ, chính xác. - Tinh thần học hỏi nhanh, biết lắng nghe, tự tin và tôn trọng. - Có khả năng làm việc độc lập dưới áp lực cao. - Thành thạo Microsoft Office. Kinh nghiệm chuyên môn - Trên 12 năm. Kỹ năng ngôn ngữ - Tiếng Anh thành thạo.",
+    "doc_id": 655480,
+    "job_id": 17790,
+    "metadata": {
+      "company": {
+        "address": null,
+        "industry": "Logistics, Xuất nhập khẩu",
+        "logo": "https://cdn-new.topcv.vn/unsafe/https://static.topcv.vn/company_logos/KxwlFBxYLGU0GmsqMwwmwDc9uiZj6I38_1754104101____f4dbf236a1921d61f540a2904213e83d.jpg",
+        "name": "CÔNG TY CP VIETNAM HOUSEWARES INTL",
+        "size": null,
+        "url": "https://www.topcv.vn/cong-ty/cong-ty-cp-vietnam-housewares-intl/231119.html"
+      },
+      "crawled_at": "2025-12-08T17:08:27.359324+00:00",
+      "deadline": "2025-12-20T16:59:59+00:00",
+      "experience": {
+        "months": null,
+        "raw_text": null
+      },
+      "general_info": {
+        "cap_bac": "Nhân viên",
+        "hinh_thuc_lam_viec": "FULL_TIME",
+        "hinh_thuc_lam_viec_raw": null,
+        "hoc_van": null,
+        "so_luong_tuyen": 1,
+        "so_luong_tuyen_raw": null
+      },
+      "id": 17790,
+      "is_active": true,
+      "locations": [
+        "Hồ Chí Minh",
+        "Hồ Chí Minh: Phường An Phú"
+      ],
+      "salary": {
+        "currency": "VND",
+        "interval": "MONTH",
+        "max": null,
+        "min": null,
+        "raw_text": null
+      },
+      "section": {
+        "chunk_index": 0,
+        "chunk_text": "Học vấn - Tốt nghiệp Đại học chuyên ngành Kế toán – Tài chính. Chuyên môn – Bằng cấp - Có kỹ năng chuyên môn vững trong vai trò Giám sát mua hàng với hơn 12 năm kinh nghiệm trong ngành nội thất. - Hiểu biết tốt về hệ thống và phương pháp quản lý chất lượng. - Xuất sắc trong phân tích và giải quyết vấn đề. - Tỉ mỉ, chính xác. - Tinh thần học hỏi nhanh, biết lắng nghe, tự tin và tôn trọng. - Có khả năng làm việc độc lập dưới áp lực cao. - Thành thạo Microsoft Office. Kinh nghiệm chuyên môn - Trên 12 năm. Kỹ năng ngôn ngữ - Tiếng Anh thành thạo.",
+        "html": "<div class=\"job-description__item--content\">\n<p><b>Học vấn</b><br/><br/>- Tốt nghiệp Đại học chuyên ngành Kế toán – Tài chính.<br/><br/><b>Chuyên môn – Bằng cấp</b><br/><br/>- Có kỹ năng chuyên môn vững trong vai trò Giám sát mua hàng với hơn 12 năm kinh nghiệm trong ngành nội thất.<br/><br/>- Hiểu biết tốt về hệ thống và phương pháp quản lý chất lượng.<br/><br/>- Xuất sắc trong phân tích và giải quyết vấn đề.<br/><br/>- Tỉ mỉ, chính xác.<br/><br/>- Tinh thần học hỏi nhanh, biết lắng nghe, tự tin và tôn trọng.<br/><br/>- Có khả năng làm việc độc lập dưới áp lực cao.<br/><br/>- Thành thạo Microsoft Office.<br/><br/><b>Kinh nghiệm chuyên môn</b><br/><br/>- Trên 12 năm.<br/><br/><b>Kỹ năng ngôn ngữ</b><br/><br/>- Tiếng Anh thành thạo.</p>\n</div>",
+        "label": "Yêu cầu ứng viên",
+        "text": "Học vấn - Tốt nghiệp Đại học chuyên ngành Kế toán – Tài chính. Chuyên môn – Bằng cấp - Có kỹ năng chuyên môn vững trong vai trò Giám sát mua hàng với hơn 12 năm kinh nghiệm trong ngành nội thất. - Hiểu biết tốt về hệ thống và phương pháp quản lý chất lượng. - Xuất sắc trong phân tích và giải quyết vấn đề. - Tỉ mỉ, chính xác. - Tinh thần học hỏi nhanh, biết lắng nghe, tự tin và tôn trọng. - Có khả năng làm việc độc lập dưới áp lực cao. - Thành thạo Microsoft Office. Kinh nghiệm chuyên môn - Trên 12 năm. Kỹ năng ngôn ngữ - Tiếng Anh thành thạo.",
+        "type": "yeu_cau_ung_vien"
+      },
+      "source": "topcv",
+      "title": "Giám Sát Mua Hàng / Procurement Supervisor",
+      "url": "https://www.topcv.vn/viec-lam/giam-sat-mua-hang-procurement-supervisor/1959185.html"
+    },
+    "score": 0.6053177369398616
+  },
+  {
+    "chunk_index": 0,
+    "chunk_text": "Công việc: Nhân Viên Kinh Doanh Bất Động Sản\nCông ty: Công ty Cổ Phần Tập Đoàn Bất Động Sản CRV\nĐịa điểm: Hải Phòng | Hải Phòng: Hoàng Huy Commerce, Phường Lê Chân - Hải Phòng: Hoàng Huy New city, Phường Thủy Nguyên\nMục: Thu nhập\nHạn nộp: 2025-12-24T16:59:59+00:00\nNội dung: Thu nhập khi đạt 100% KPI:  Thoả thuận Thu nhập tính theo tỷ lệ đạt KPI Lương cứng:  Từ 7 triệu VND trở lên Lương cứng phụ thuộc vào doanh số",
+    "doc_id": 663743,
+    "job_id": 22091,
+    "metadata": {
+      "company": {
+        "address": null,
+        "industry": "Xây dựng, Bảo trì / Sửa chữa, Điện / Điện tử / Điện lạnh",
+        "logo": "https://cdn-new.topcv.vn/unsafe/https://static.topcv.vn/company_logos/RE4MDOkmbBym9XrUPY1nVPHC2HzY3PH7_1694659605____b498167c3aa11deedd449e9c89da3213.jpg",
+        "name": "Công ty Cổ Phần Tập Đoàn Bất Động Sản CRV",
+        "size": null,
+        "url": "https://www.topcv.vn/cong-ty/cong-ty-co-phan-tap-doan-bat-dong-san-crv/73001.html"
+      },
+      "crawled_at": "2025-12-11T08:52:03.957838+00:00",
+      "deadline": "2025-12-24T16:59:59+00:00",
+      "experience": {
+        "months": null,
+        "raw_text": null
+      },
+      "general_info": {
+        "cap_bac": "Nhân viên",
+        "hinh_thuc_lam_viec": "FULL_TIME",
+        "hinh_thuc_lam_viec_raw": null,
+        "hoc_van": null,
+        "so_luong_tuyen": 1,
+        "so_luong_tuyen_raw": null
+      },
+      "id": 22091,
+      "is_active": true,
+      "locations": [
+        "Hải Phòng",
+        "Hải Phòng: Hoàng Huy Commerce, Phường Lê Chân - Hải Phòng: Hoàng Huy New city, Phường Thủy Nguyên"
+      ],
+      "salary": {
+        "currency": "VND",
+        "interval": "MONTH",
+        "max": null,
+        "min": null,
+        "raw_text": null
+      },
+      "section": {
+        "chunk_index": 0,
+        "chunk_text": "Thu nhập khi đạt 100% KPI:  Thoả thuận Thu nhập tính theo tỷ lệ đạt KPI Lương cứng:  Từ 7 triệu VND trở lên Lương cứng phụ thuộc vào doanh số",
+        "html": "<div class=\"job-description__item--content\">\n<ul>\n<li>Thu nhập khi đạt 100% KPI:  Thoả thuận</li>\n<li>Thu nhập tính theo tỷ lệ đạt KPI</li>\n<li>Lương cứng:  Từ 7 triệu VND trở lên </li>\n<li>Lương cứng phụ thuộc vào doanh số</li>\n</ul>\n</div>",
+        "label": "Thu nhập",
+        "text": "Thu nhập khi đạt 100% KPI:  Thoả thuận Thu nhập tính theo tỷ lệ đạt KPI Lương cứng:  Từ 7 triệu VND trở lên Lương cứng phụ thuộc vào doanh số",
+        "type": "thu_nhap"
+      },
+      "source": "topcv",
+      "title": "Nhân Viên Kinh Doanh Bất Động Sản",
+      "url": "https://www.topcv.vn/viec-lam/nhan-vien-kinh-doanh-bat-dong-san/1831292.html"
+    },
+    "score": 0.6012662649154663
+  },
+  {
+    "chunk_index": 0,
+    "chunk_text": "Tiêu đề: Thợ Gò Sửa Chữa Ô Tô\nCông ty: Công ty Cổ Phần Phát Triển Công nghệ ô tô I.Tech\nĐịa điểm: Hà Nội | Hà Nội: Phường Nghĩa Đô\nThu nhập: từ 8.000.000 VND đến 15.000.000 VND /tháng\nKinh nghiệm: từ 36 tháng trở lên\nCấp bậc: Nhân viên\nSố lượng tuyển: 1\nHình thức làm việc: FULL_TIME\nHạn nộp: 2025-12-26T16:59:59+00:00",
+    "doc_id": 666656,
+    "job_id": 23617,
+    "metadata": {
+      "company": {
+        "address": null,
+        "industry": "Công nghệ Ô tô, Bảo trì / Sửa chữa",
+        "logo": "https://cdn-new.topcv.vn/unsafe/https://static.topcv.vn/company_logos/gbmE9DSe2y4i3FW0k45UpD7gSPhosTOz_1683184627____d804eaaf3773074eb0e9bf2e726664ee.png",
+        "name": "Công ty Cổ Phần Phát Triển Công nghệ ô tô I.Tech",
+        "size": null,
+        "url": "https://www.topcv.vn/cong-ty/cong-ty-co-phan-phat-trien-cong-nghe-o-to-i-tech/49614.html"
+      },
+      "crawled_at": "2025-12-13T07:10:29.913741+00:00",
+      "deadline": "2025-12-26T16:59:59+00:00",
+      "experience": {
+        "months": 36,
+        "raw_text": null
+      },
+      "general_info": {
+        "cap_bac": "Nhân viên",
+        "hinh_thuc_lam_viec": "FULL_TIME",
+        "hinh_thuc_lam_viec_raw": null,
+        "hoc_van": null,
+        "so_luong_tuyen": 1,
+        "so_luong_tuyen_raw": null
+      },
+      "id": 23617,
+      "is_active": true,
+      "locations": [
+        "Hà Nội",
+        "Hà Nội: Phường Nghĩa Đô"
+      ],
+      "salary": {
+        "currency": "VND",
+        "interval": "MONTH",
+        "max": 15000000,
+        "min": 8000000,
+        "raw_text": null
+      },
+      "source": "topcv",
+      "title": "Thợ Gò Sửa Chữa Ô Tô",
+      "url": "https://www.topcv.vn/viec-lam/tho-go-sua-chua-o-to/1515091.html"
+    },
+    "score": 0.6011552810668945
+  },
+  {
+    "chunk_index": 0,
+    "chunk_text": "Công việc: Trưởng Phòng Kinh Doanh - Sales Manager\nCông ty: CÔNG TY TNHH VN HACO\nĐịa điểm: Hà Nội | Hà Nội: Tầng 5-6, số 13-14D1 Hồng Quang - KĐT Đại Kim, Phường Định Công\nMục: Thu nhập\nHạn nộp: 2025-12-17T16:59:59+00:00\nNội dung: Thu nhập khi đạt 100% KPI:  Thoả thuận Thu nhập tính theo tỷ lệ đạt KPI Lương cứng phụ thuộc vào doanh số",
+    "doc_id": 672407,
+    "job_id": 25787,
+    "metadata": {
+      "company": {
+        "address": null,
+        "industry": "Kinh doanh / Bán hàng, Hàng gia dụng, Hàng tiêu dùng",
+        "logo": "https://cdn-new.topcv.vn/unsafe/https://static.topcv.vn/company_logos/VNmVUvwZuEo86Xct4Z585vzGSHQanBD4_1663578424____a43aa74d7f1be5774d2a811df76fd3c0.jpg",
+        "name": "CÔNG TY TNHH VN HACO",
+        "size": null,
+        "url": "https://www.topcv.vn/cong-ty/cong-ty-tnhh-vn-haco/119751.html"
+      },
+      "crawled_at": "2025-12-15T06:27:15.701358+00:00",
+      "deadline": "2025-12-17T16:59:59+00:00",
+      "experience": {
+        "months": 24,
+        "raw_text": null
+      },
+      "general_info": {
+        "cap_bac": "Trưởng/Phó phòng",
+        "hinh_thuc_lam_viec": "FULL_TIME",
+        "hinh_thuc_lam_viec_raw": null,
+        "hoc_van": null,
+        "so_luong_tuyen": 1,
+        "so_luong_tuyen_raw": null
+      },
+      "id": 25787,
+      "is_active": true,
+      "locations": [
+        "Hà Nội",
+        "Hà Nội: Tầng 5-6, số 13-14D1 Hồng Quang - KĐT Đại Kim, Phường Định Công"
+      ],
+      "salary": {
+        "currency": "VND",
+        "interval": "MONTH",
+        "max": null,
+        "min": null,
+        "raw_text": null
+      },
+      "section": {
+        "chunk_index": 0,
+        "chunk_text": "Thu nhập khi đạt 100% KPI:  Thoả thuận Thu nhập tính theo tỷ lệ đạt KPI Lương cứng phụ thuộc vào doanh số",
+        "html": "<div class=\"job-description__item--content\">\n<ul>\n<li>Thu nhập khi đạt 100% KPI:  Thoả thuận</li>\n<li>Thu nhập tính theo tỷ lệ đạt KPI</li>\n<li>Lương cứng phụ thuộc vào doanh số</li>\n</ul>\n</div>",
+        "label": "Thu nhập",
+        "text": "Thu nhập khi đạt 100% KPI:  Thoả thuận Thu nhập tính theo tỷ lệ đạt KPI Lương cứng phụ thuộc vào doanh số",
+        "type": "thu_nhap"
+      },
+      "source": "topcv",
+      "title": "Trưởng Phòng Kinh Doanh - Sales Manager",
+      "url": "https://www.topcv.vn/viec-lam/truong-phong-kinh-doanh-sales-manager/1953844.html"
+    },
+    "score": 0.6005603669404157
+  },
+  {
+    "chunk_index": 0,
+    "chunk_text": "Công việc: Nhân Viên Phát Triển Kinh Doanh IT\nCông ty: CÔNG TY CỔ PHẦN CÔNG NGHỆ & GIẢI PHÁP PHẦN MỀM BAMBOO\nĐịa điểm: Hà Nội | Hà Nội: HUD 3 Tower, 121-123 Tô Hiệu, Phường Hà Đông\nMục: Thu nhập\nHạn nộp: 2025-12-20T16:59:59+00:00\nNội dung: Thu nhập:  Thoả thuận Lương cứng phụ thuộc vào doanh số",
+    "doc_id": 659436,
+    "job_id": 19689,
+    "metadata": {
+      "company": {
+        "address": null,
+        "industry": "Kinh doanh / Bán hàng, IT phần mềm, Công nghệ thông tin",
+        "logo": "https://cdn-new.topcv.vn/unsafe/https://static.topcv.vn/company_logos/ISh4xsL4xxlHgy44WkvrmcfPfkIzZsKr_1726025852____54dacd344e1b73484a02d5bc38d43141.png",
+        "name": "CÔNG TY CỔ PHẦN CÔNG NGHỆ & GIẢI PHÁP PHẦN MỀM BAMBOO",
+        "size": null,
+        "url": "https://www.topcv.vn/cong-ty/cong-ty-co-phan-cong-nghe-giai-phap-phan-mem-bamboo/190613.html"
+      },
+      "crawled_at": "2025-12-08T23:29:17.382002+00:00",
+      "deadline": "2025-12-20T16:59:59+00:00",
+      "experience": {
+        "months": 24,
+        "raw_text": null
+      },
+      "general_info": {
+        "cap_bac": "Nhân viên",
+        "hinh_thuc_lam_viec": "FULL_TIME",
+        "hinh_thuc_lam_viec_raw": null,
+        "hoc_van": null,
+        "so_luong_tuyen": 2,
+        "so_luong_tuyen_raw": null
+      },
+      "id": 19689,
+      "is_active": true,
+      "locations": [
+        "Hà Nội",
+        "Hà Nội: HUD 3 Tower, 121-123 Tô Hiệu, Phường Hà Đông"
+      ],
+      "salary": {
+        "currency": "VND",
+        "interval": "MONTH",
+        "max": null,
+        "min": null,
+        "raw_text": null
+      },
+      "section": {
+        "chunk_index": 0,
+        "chunk_text": "Thu nhập:  Thoả thuận Lương cứng phụ thuộc vào doanh số",
+        "html": "<div class=\"job-description__item--content\">\n<ul>\n<li>Thu nhập:  Thoả thuận</li>\n<li>Lương cứng phụ thuộc vào doanh số</li>\n</ul>\n</div>",
+        "label": "Thu nhập",
+        "text": "Thu nhập:  Thoả thuận Lương cứng phụ thuộc vào doanh số",
+        "type": "thu_nhap"
+      },
+      "source": "topcv",
+      "title": "Nhân Viên Phát Triển Kinh Doanh IT",
+      "url": "https://www.topcv.vn/viec-lam/nhan-vien-phat-trien-kinh-doanh-it/1959271.html"
+    },
+    "score": 0.5995975612874535
+  },
+  {
+    "chunk_index": 0,
+    "chunk_text": "Công việc: Nhân Viên Kế Toán\nCông ty: Công ty cổ phần vận tải Thái Việt Trung\nĐịa điểm: Hà Nội | Hà Nội: Số 2, ngõ 1, Phúc Lợi, Phường Việt Hưng\nMục: Yêu cầu ứng viên\nHạn nộp: 2025-12-18T16:59:59+00:00\nNội dung: -Nam nữ độ tuổi từ 22-35. -Tốt nghiệp Đại học chuyên ngành Tài chính - Kế toán. -Không yêu cầu kinh nghiệm . -Thành thạo tin học văn phòng Microsoft Office, Word, Excel. -Biết sử dụng phần mềm kế toán Vacom là một lợi thế.",
+    "doc_id": 649578,
+    "job_id": 14539,
+    "metadata": {
+      "company": {
+        "address": null,
+        "industry": "Kế toán / Kiểm toán, Hành chính / Văn phòng, Dịch vụ khách hàng",
+        "logo": "https://cdn-new.topcv.vn/unsafe/https://static.topcv.vn/company_logos/6AQ2f3UNFe2XkGwQohc4buyitI60khVA_1657092792____488e18b80ff4129bb252edf7ea9a8670.jpg",
+        "name": "Công ty cổ phần vận tải Thái Việt Trung",
+        "size": null,
+        "url": "https://www.topcv.vn/cong-ty/cong-ty-co-phan-van-tai-thai-viet-trung/109602.html"
+      },
+      "crawled_at": "2025-12-05T04:42:04.243892+00:00",
+      "deadline": "2025-12-18T16:59:59+00:00",
+      "experience": {
+        "months": null,
+        "raw_text": null
+      },
+      "general_info": {
+        "cap_bac": "Nhân viên",
+        "hinh_thuc_lam_viec": "FULL_TIME",
+        "hinh_thuc_lam_viec_raw": null,
+        "hoc_van": null,
+        "so_luong_tuyen": 1,
+        "so_luong_tuyen_raw": null
+      },
+      "id": 14539,
+      "is_active": true,
+      "locations": [
+        "Hà Nội",
+        "Hà Nội: Số 2, ngõ 1, Phúc Lợi, Phường Việt Hưng"
+      ],
+      "salary": {
+        "currency": "VND",
+        "interval": "MONTH",
+        "max": null,
+        "min": null,
+        "raw_text": null
+      },
+      "section": {
+        "chunk_index": 0,
+        "chunk_text": "-Nam nữ độ tuổi từ 22-35. -Tốt nghiệp Đại học chuyên ngành Tài chính - Kế toán. -Không yêu cầu kinh nghiệm . -Thành thạo tin học văn phòng Microsoft Office, Word, Excel. -Biết sử dụng phần mềm kế toán Vacom là một lợi thế.",
+        "html": "<div class=\"job-description__item--content\">\n<p>-Nam nữ độ tuổi từ 22-35.<br>-Tốt nghiệp Đại học chuyên ngành Tài chính - Kế toán.<br/>-Không yêu cầu kinh nghiệm .<br/>-Thành thạo tin học văn phòng Microsoft Office, Word, Excel.<br/>-Biết sử dụng phần mềm kế toán Vacom là một lợi thế.</br></p>\n</div>",
+        "label": "Yêu cầu ứng viên",
+        "text": "-Nam nữ độ tuổi từ 22-35. -Tốt nghiệp Đại học chuyên ngành Tài chính - Kế toán. -Không yêu cầu kinh nghiệm . -Thành thạo tin học văn phòng Microsoft Office, Word, Excel. -Biết sử dụng phần mềm kế toán Vacom là một lợi thế.",
+        "type": "yeu_cau_ung_vien"
+      },
+      "source": "topcv",
+      "title": "Nhân Viên Kế Toán",
+      "url": "https://www.topcv.vn/viec-lam/nhan-vien-ke-toan/746208.html"
+    },
+    "score": 0.5990577216424295
+  },
+  {
+    "chunk_index": 0,
+    "chunk_text": "Công việc: Kỹ Sư Kinh Doanh (Sales Engineer)\nCông ty: CÔNG TY TNHH THƯƠNG MẠI DỊCH VỤ THINK SMART\nĐịa điểm: Hồ Chí Minh | Hồ Chí Minh: Số 5, Đường số 4, KDC Khang An, Phường Thủ Đức\nMục: Mô tả công việc\nHạn nộp: 2025-12-20T16:59:59+00:00\nNội dung: 1.\tTư vấn và giới thiệu các giải pháp công nghệ 3D: In 3D, Quét 3D, Kiểm tra chất lượng (QC). 2.\tPhối hợp với team kỹ thuật đề xuất giải pháp tối ưu cho từng job/dự án. 3.\tTìm kiếm, xây dựng và duy trì mối quan hệ với khách hàng doanh nghiệp (B2B). 4.\tLập báo giá, theo dõi tiến độ thực hiện công việc, báo cáo kết quả. 5.\tChăm sóc khách hàng sau bán hàng, hỗ trợ kỹ thuật cơ bản.",
+    "doc_id": 659181,
+    "job_id": 19598,
+    "metadata": {
+      "company": {
+        "address": null,
+        "industry": "Kinh doanh / Bán hàng, Bán hàng kỹ thuật, Sản xuất",
+        "logo": "https://cdn-new.topcv.vn/unsafe/https://static.topcv.vn/company_logos/3fa3f15f2849685cbe5dc415bfeab687-6613b9de1b1a1.jpg",
+        "name": "CÔNG TY TNHH THƯƠNG MẠI DỊCH VỤ THINK SMART",
+        "size": null,
+        "url": "https://www.topcv.vn/cong-ty/cong-ty-tnhh-thuong-mai-dich-vu-think-smart/168519.html"
+      },
+      "crawled_at": "2025-12-08T23:11:03.382396+00:00",
+      "deadline": "2025-12-20T16:59:59+00:00",
+      "experience": {
+        "months": 12,
+        "raw_text": null
+      },
+      "general_info": {
+        "cap_bac": "Nhân viên",
+        "hinh_thuc_lam_viec": "FULL_TIME",
+        "hinh_thuc_lam_viec_raw": null,
+        "hoc_van": null,
+        "so_luong_tuyen": 1,
+        "so_luong_tuyen_raw": null
+      },
+      "id": 19598,
+      "is_active": true,
+      "locations": [
+        "Hồ Chí Minh",
+        "Hồ Chí Minh: Số 5, Đường số 4, KDC Khang An, Phường Thủ Đức"
+      ],
+      "salary": {
+        "currency": "VND",
+        "interval": "MONTH",
+        "max": null,
+        "min": null,
+        "raw_text": null
+      },
+      "section": {
+        "chunk_index": 0,
+        "chunk_text": "1.\tTư vấn và giới thiệu các giải pháp công nghệ 3D: In 3D, Quét 3D, Kiểm tra chất lượng (QC). 2.\tPhối hợp với team kỹ thuật đề xuất giải pháp tối ưu cho từng job/dự án. 3.\tTìm kiếm, xây dựng và duy trì mối quan hệ với khách hàng doanh nghiệp (B2B). 4.\tLập báo giá, theo dõi tiến độ thực hiện công việc, báo cáo kết quả. 5.\tChăm sóc khách hàng sau bán hàng, hỗ trợ kỹ thuật cơ bản.",
+        "html": "<div class=\"job-description__item--content\">\n<p>1.\tTư vấn và giới thiệu các giải pháp công nghệ 3D: In 3D, Quét 3D, Kiểm tra chất lượng (QC).\n</p><p>2.\tPhối hợp với team kỹ thuật đề xuất giải pháp tối ưu cho từng job/dự án.\n</p><p>3.\tTìm kiếm, xây dựng và duy trì mối quan hệ với khách hàng doanh nghiệp (B2B).\n</p><p>4.\tLập báo giá, theo dõi tiến độ thực hiện công việc, báo cáo kết quả.\n</p><p>5.\tChăm sóc khách hàng sau bán hàng, hỗ trợ kỹ thuật cơ bản.\n</p><p><br/></p>\n</div>",
+        "label": "Mô tả công việc",
+        "text": "1.\tTư vấn và giới thiệu các giải pháp công nghệ 3D: In 3D, Quét 3D, Kiểm tra chất lượng (QC). 2.\tPhối hợp với team kỹ thuật đề xuất giải pháp tối ưu cho từng job/dự án. 3.\tTìm kiếm, xây dựng và duy trì mối quan hệ với khách hàng doanh nghiệp (B2B). 4.\tLập báo giá, theo dõi tiến độ thực hiện công việc, báo cáo kết quả. 5.\tChăm sóc khách hàng sau bán hàng, hỗ trợ kỹ thuật cơ bản.",
+        "type": "mo_ta_cong_viec"
+      },
+      "source": "topcv",
+      "title": "Kỹ Sư Kinh Doanh (Sales Engineer)",
+      "url": "https://www.topcv.vn/viec-lam/ky-su-kinh-doanh-sales-engineer/1959424.html"
+    },
+    "score": 0.5989267230033875
+  },
+  {
+    "chunk_index": 0,
+    "chunk_text": "Công việc: Sales Engineer C&I – Junior\nCông ty: CÔNG TY CỔ PHẦN ĐẦU TƯ VÀ PHÁT TRIỂN NĂNG LƯỢNG MẶT TRỜI BÁCH KHOA\nĐịa điểm: Hồ Chí Minh | Hồ Chí Minh: 47 Lê Văn Thịnh, Phường Bình Trưng - Hà Nội: Số 5 Điện Biên Phủ, Phường Ba Đình\nMục: Thu nhập\nHạn nộp: 2025-12-16T16:59:59+00:00\nNội dung: Thu nhập khi đạt 100% KPI:  Thoả thuận Thu nhập tính theo tỷ lệ đạt KPI Lương cứng không phụ thuộc doanh số",
+    "doc_id": 649207,
+    "job_id": 14356,
+    "metadata": {
+      "company": {
+        "address": null,
+        "industry": "Nhân sự, Hành chính / Văn phòng, Giáo dục / Đào tạo",
+        "logo": "https://cdn-new.topcv.vn/unsafe/https://static.topcv.vn/company_logos/2T9dx1gnCI4aK8rfJFW7BfRbjsHFUgiQ_1750302675____1098610e74e91ac1ceaf02413b0488d6.jpg",
+        "name": "CÔNG TY CỔ PHẦN ĐẦU TƯ VÀ PHÁT TRIỂN NĂNG LƯỢNG MẶT TRỜI BÁCH KHOA",
+        "size": null,
+        "url": "https://www.topcv.vn/cong-ty/cong-ty-co-phan-dau-tu-va-phat-trien-nang-luong-mat-troi-bach-khoa/75263.html"
+      },
+      "crawled_at": "2025-12-04T15:18:43.250543+00:00",
+      "deadline": "2025-12-16T16:59:59+00:00",
+      "experience": {
+        "months": 3,
+        "raw_text": null
+      },
+      "general_info": {
+        "cap_bac": "Nhân viên",
+        "hinh_thuc_lam_viec": "FULL_TIME",
+        "hinh_thuc_lam_viec_raw": null,
+        "hoc_van": null,
+        "so_luong_tuyen": 3,
+        "so_luong_tuyen_raw": null
+      },
+      "id": 14356,
+      "is_active": true,
+      "locations": [
+        "Hồ Chí Minh",
+        "Hồ Chí Minh: 47 Lê Văn Thịnh, Phường Bình Trưng - Hà Nội: Số 5 Điện Biên Phủ, Phường Ba Đình"
+      ],
+      "salary": {
+        "currency": "VND",
+        "interval": "MONTH",
+        "max": null,
+        "min": null,
+        "raw_text": null
+      },
+      "section": {
+        "chunk_index": 0,
+        "chunk_text": "Thu nhập khi đạt 100% KPI:  Thoả thuận Thu nhập tính theo tỷ lệ đạt KPI Lương cứng không phụ thuộc doanh số",
+        "html": "<div class=\"job-description__item--content\">\n<ul>\n<li>Thu nhập khi đạt 100% KPI:  Thoả thuận</li>\n<li>Thu nhập tính theo tỷ lệ đạt KPI</li>\n<li>Lương cứng không phụ thuộc doanh số</li>\n</ul>\n</div>",
+        "label": "Thu nhập",
+        "text": "Thu nhập khi đạt 100% KPI:  Thoả thuận Thu nhập tính theo tỷ lệ đạt KPI Lương cứng không phụ thuộc doanh số",
+        "type": "thu_nhap"
+      },
+      "source": "topcv",
+      "title": "Sales Engineer C&I – Junior",
+      "url": "https://www.topcv.vn/viec-lam/sales-engineer-ci-junior/1452456.html"
+    },
+    "score": 0.5988279581069946
+  },
+  {
+    "chunk_index": 0,
+    "chunk_text": "Công việc: Sale Manager SME\nCông ty: Công ty cổ phần Hạ tầng Viễn thông CMC Telecom\nĐịa điểm: Hà Nội | Hà Nội: CMC Tower, 11 Duy Tân,, Phường Cầu Giấy\nMục: Thu nhập\nHạn nộp: 2025-12-26T16:59:59+00:00\nNội dung: Thu nhập khi đạt 100% KPI:  Thoả thuận Thu nhập tính theo tỷ lệ đạt KPI Lương cứng không phụ thuộc doanh số",
+    "doc_id": 668677,
+    "job_id": 24833,
+    "metadata": {
+      "company": {
+        "address": null,
+        "industry": "Marketing / Truyền thông / Quảng cáo",
+        "logo": "https://cdn-new.topcv.vn/unsafe/https://static.topcv.vn/company_logos/cong-ty-co-phan-ha-tang-vien-thong-cmc-telecom-5af4f4a61b6e4_rs.jpg",
+        "name": "Công ty cổ phần Hạ tầng Viễn thông CMC Telecom",
+        "size": null,
+        "url": "https://www.topcv.vn/cong-ty/cong-ty-co-phan-ha-tang-vien-thong-cmc-telecom/200874.html"
+      },
+      "crawled_at": "2025-12-13T15:03:00.741413+00:00",
+      "deadline": "2025-12-26T16:59:59+00:00",
+      "experience": {
+        "months": 24,
+        "raw_text": null
+      },
+      "general_info": {
+        "cap_bac": "Trưởng/Phó phòng",
+        "hinh_thuc_lam_viec": "FULL_TIME",
+        "hinh_thuc_lam_viec_raw": null,
+        "hoc_van": null,
+        "so_luong_tuyen": 2,
+        "so_luong_tuyen_raw": null
+      },
+      "id": 24833,
+      "is_active": true,
+      "locations": [
+        "Hà Nội",
+        "Hà Nội: CMC Tower, 11 Duy Tân,, Phường Cầu Giấy"
+      ],
+      "salary": {
+        "currency": "VND",
+        "interval": "MONTH",
+        "max": null,
+        "min": null,
+        "raw_text": null
+      },
+      "section": {
+        "chunk_index": 0,
+        "chunk_text": "Thu nhập khi đạt 100% KPI:  Thoả thuận Thu nhập tính theo tỷ lệ đạt KPI Lương cứng không phụ thuộc doanh số",
+        "html": "<div class=\"job-description__item--content\">\n<ul>\n<li>Thu nhập khi đạt 100% KPI:  Thoả thuận</li>\n<li>Thu nhập tính theo tỷ lệ đạt KPI</li>\n<li>Lương cứng không phụ thuộc doanh số</li>\n</ul>\n</div>",
+        "label": "Thu nhập",
+        "text": "Thu nhập khi đạt 100% KPI:  Thoả thuận Thu nhập tính theo tỷ lệ đạt KPI Lương cứng không phụ thuộc doanh số",
+        "type": "thu_nhap"
+      },
+      "source": "topcv",
+      "title": "Sale Manager SME",
+      "url": "https://www.topcv.vn/viec-lam/sale-manager-sme/1716148.html"
+    },
+    "score": 0.5983484983444214
+  },
+  {
+    "chunk_index": 0,
+    "chunk_text": "Công việc: Chuyên Viên SOC\nCông ty: Ngân Hàng TMCP Xuất Nhập Khẩu Việt Nam (Eximbank)\nĐịa điểm: Hồ Chí Minh | Hồ Chí Minh: Phường Xuân Hòa\nMục: Quyền lợi\nHạn nộp: 2025-12-20T16:59:59+00:00\nNội dung: Thu nhập cạnh tranh tương xứng năng lực. Tham gia các khóa học kỹ năng nâng cao nghiệp vụ. Hưởng chế độ bảo hiểm chất lượng cao. Lương tháng 13, thưởng Lễ-Tết, doanh số, ...",
+    "doc_id": 659085,
+    "job_id": 19550,
+    "metadata": {
+      "company": {
+        "address": null,
+        "industry": "Giáo dục / Đào tạo, Nhân sự, Hành chính / Văn phòng",
+        "logo": "https://cdn-new.topcv.vn/unsafe/https://static.topcv.vn/company_logos/ngan-hang-tmcp-xuat-nhap-khau-viet-nam-eximbank-5bdbd8b04e534_rs.jpg",
+        "name": "Ngân Hàng TMCP Xuất Nhập Khẩu Việt Nam (Eximbank)",
+        "size": null,
+        "url": "https://www.topcv.vn/cong-ty/ngan-hang-tmcp-xuat-nhap-khau-viet-nam-eximbank/198814.html"
+      },
+      "crawled_at": "2025-12-08T23:01:18.686301+00:00",
+      "deadline": "2025-12-20T16:59:59+00:00",
+      "experience": {
+        "months": 36,
+        "raw_text": null
+      },
+      "general_info": {
+        "cap_bac": "Nhân viên",
+        "hinh_thuc_lam_viec": "FULL_TIME",
+        "hinh_thuc_lam_viec_raw": null,
+        "hoc_van": null,
+        "so_luong_tuyen": 2,
+        "so_luong_tuyen_raw": null
+      },
+      "id": 19550,
+      "is_active": true,
+      "locations": [
+        "Hồ Chí Minh",
+        "Hồ Chí Minh: Phường Xuân Hòa"
+      ],
+      "salary": {
+        "currency": "VND",
+        "interval": "MONTH",
+        "max": null,
+        "min": null,
+        "raw_text": null
+      },
+      "section": {
+        "chunk_index": 0,
+        "chunk_text": "Thu nhập cạnh tranh tương xứng năng lực. Tham gia các khóa học kỹ năng nâng cao nghiệp vụ. Hưởng chế độ bảo hiểm chất lượng cao. Lương tháng 13, thưởng Lễ-Tết, doanh số, ...",
+        "html": "<div class=\"job-description__item--content\">\n<ul><li>Thu nhập cạnh tranh tương xứng năng lực. </li><li>Tham gia các khóa học kỹ năng nâng cao nghiệp vụ. </li><li>Hưởng chế độ bảo hiểm chất lượng cao. </li><li>Lương tháng 13, thưởng Lễ-Tết, doanh số, ...</li></ul>\n</div>",
+        "label": "Quyền lợi",
+        "text": "Thu nhập cạnh tranh tương xứng năng lực. Tham gia các khóa học kỹ năng nâng cao nghiệp vụ. Hưởng chế độ bảo hiểm chất lượng cao. Lương tháng 13, thưởng Lễ-Tết, doanh số, ...",
+        "type": "quyen_loi"
+      },
+      "source": "topcv",
+      "title": "Chuyên Viên SOC",
+      "url": "https://www.topcv.vn/viec-lam/chuyen-vien-soc/1958558.html"
+    },
+    "score": 0.598165798405914
+  },
+  {
+    "chunk_index": 0,
+    "chunk_text": "Công việc: Chuyên Viên Phát Triển Chương Trình Giảng Dạy\nCông ty: CÔNG TY TNHH MỘT THÀNH VIÊN KIẾN THỨC VIỆT\nĐịa điểm: Đồng Nai | Đồng Nai: 161/1, Trương Định, Tam Hiệp, Phường Tam Hiệp\nMục: Quyền lợi\nHạn nộp: 2025-12-20T16:59:59+00:00\nNội dung: Lương cạnh tranh theo năng lực. Thưởng hiệu suất học thuật. Cơ hội phát triển lên Academic Supervisor/Manager. Được training về phương pháp giảng dạy & phát triển học liệu chuyên sâu.",
+    "doc_id": 655070,
+    "job_id": 17576,
+    "metadata": {
+      "company": {
+        "address": null,
+        "industry": "Giáo dục / Đào tạo",
+        "logo": "https://cdn-new.topcv.vn/unsafe/https://static.topcv.vn/company_logos/UB4Fu2GWWmsHJb4lPTxaY1ACADlVRp1l_1669190964____baf2f1fb895e3a6dd79bb8c68228814e.png",
+        "name": "CÔNG TY TNHH MỘT THÀNH VIÊN KIẾN THỨC VIỆT",
+        "size": null,
+        "url": "https://www.topcv.vn/cong-ty/cong-ty-tnhh-mot-thanh-vien-kien-thuc-viet/83837.html"
+      },
+      "crawled_at": "2025-12-08T16:25:40.418022+00:00",
+      "deadline": "2025-12-20T16:59:59+00:00",
+      "experience": {
+        "months": 24,
+        "raw_text": null
+      },
+      "general_info": {
+        "cap_bac": "Nhân viên",
+        "hinh_thuc_lam_viec": "FULL_TIME",
+        "hinh_thuc_lam_viec_raw": null,
+        "hoc_van": null,
+        "so_luong_tuyen": 1,
+        "so_luong_tuyen_raw": null
+      },
+      "id": 17576,
+      "is_active": true,
+      "locations": [
+        "Đồng Nai",
+        "Đồng Nai: 161/1, Trương Định, Tam Hiệp, Phường Tam Hiệp"
+      ],
+      "salary": {
+        "currency": "VND",
+        "interval": "MONTH",
+        "max": null,
+        "min": null,
+        "raw_text": null
+      },
+      "section": {
+        "chunk_index": 0,
+        "chunk_text": "Lương cạnh tranh theo năng lực. Thưởng hiệu suất học thuật. Cơ hội phát triển lên Academic Supervisor/Manager. Được training về phương pháp giảng dạy & phát triển học liệu chuyên sâu.",
+        "html": "<div class=\"job-description__item--content\">\n<p>Lương cạnh tranh theo năng lực.<br/>Thưởng hiệu suất học thuật.<br/>Cơ hội phát triển lên Academic Supervisor/Manager.<br/>Được training về phương pháp giảng dạy &amp; phát triển học liệu chuyên sâu.</p>\n</div>",
+        "label": "Quyền lợi",
+        "text": "Lương cạnh tranh theo năng lực. Thưởng hiệu suất học thuật. Cơ hội phát triển lên Academic Supervisor/Manager. Được training về phương pháp giảng dạy & phát triển học liệu chuyên sâu.",
+        "type": "quyen_loi"
+      },
+      "source": "topcv",
+      "title": "Chuyên Viên Phát Triển Chương Trình Giảng Dạy",
+      "url": "https://www.topcv.vn/viec-lam/chuyen-vien-phat-trien-chuong-trinh-giang-day/1959437.html"
+    },
+    "score": 0.5976398703622706
+  },
+  {
+    "chunk_index": 0,
+    "chunk_text": "Công việc: Chuyên Viên Quan Hệ Khách Hàng Cá Nhân\nCông ty: Ngân hàng Thương mại cổ phần Lộc Phát Việt Nam - LPBank\nĐịa điểm: Khánh Hòa | Khánh Hòa: Phường Nha Trang\nMục: Thu nhập\nHạn nộp: 2025-12-17T16:59:59+00:00\nNội dung: Thu nhập khi đạt 100% KPI:  Thoả thuận Thu nhập tính theo tỷ lệ đạt KPI Lương cứng không phụ thuộc doanh số",
+    "doc_id": 650824,
+    "job_id": 15229,
+    "metadata": {
+      "company": {
+        "address": null,
+        "industry": "Ngân hàng / Tài chính, Tư vấn, Tài chính / Đầu tư",
+        "logo": "https://cdn-new.topcv.vn/unsafe/https://static.topcv.vn/company_logos/ujPot2X7qbrMIBvsIaine8Rj71xvsGPi_1717560955____fa59c111317771f0b9409aefea9fac94.png",
+        "name": "Ngân hàng Thương mại cổ phần Lộc Phát Việt Nam - LPBank",
+        "size": null,
+        "url": "https://www.topcv.vn/cong-ty/ngan-hang-thuong-mai-co-phan-loc-phat-viet-nam-lpbank/170347.html"
+      },
+      "crawled_at": "2025-12-05T07:01:01.294873+00:00",
+      "deadline": "2025-12-17T16:59:59+00:00",
+      "experience": {
+        "months": null,
+        "raw_text": null
+      },
+      "general_info": {
+        "cap_bac": "Nhân viên",
+        "hinh_thuc_lam_viec": "FULL_TIME",
+        "hinh_thuc_lam_viec_raw": null,
+        "hoc_van": null,
+        "so_luong_tuyen": 1,
+        "so_luong_tuyen_raw": null
+      },
+      "id": 15229,
+      "is_active": true,
+      "locations": [
+        "Khánh Hòa",
+        "Khánh Hòa: Phường Nha Trang"
+      ],
+      "salary": {
+        "currency": "VND",
+        "interval": "MONTH",
+        "max": null,
+        "min": null,
+        "raw_text": null
+      },
+      "section": {
+        "chunk_index": 0,
+        "chunk_text": "Thu nhập khi đạt 100% KPI:  Thoả thuận Thu nhập tính theo tỷ lệ đạt KPI Lương cứng không phụ thuộc doanh số",
+        "html": "<div class=\"job-description__item--content\">\n<ul>\n<li>Thu nhập khi đạt 100% KPI:  Thoả thuận</li>\n<li>Thu nhập tính theo tỷ lệ đạt KPI</li>\n<li>Lương cứng không phụ thuộc doanh số</li>\n</ul>\n</div>",
+        "label": "Thu nhập",
+        "text": "Thu nhập khi đạt 100% KPI:  Thoả thuận Thu nhập tính theo tỷ lệ đạt KPI Lương cứng không phụ thuộc doanh số",
+        "type": "thu_nhap"
+      },
+      "source": "topcv",
+      "title": "Chuyên Viên Quan Hệ Khách Hàng Cá Nhân",
+      "url": "https://www.topcv.vn/viec-lam/chuyen-vien-quan-he-khach-hang-ca-nhan/1954038.html"
+    },
+    "score": 0.5971560362391471
+  },
+  {
+    "chunk_index": 0,
+    "chunk_text": "Tiêu đề: Trưởng Nhóm Kế Toán Doanh Thu\nCông ty: CÔNG TY TNHH MỘT THÀNH VIÊN CHUYỂN PHÁT NHANH THUẬN PHONG- CHI NHÁNH HÀ NỘI\nĐịa điểm: Hà Nội | Hà Nội: Lô 4, KCN Quang Minh, Xã Quang Minh\nKinh nghiệm: từ 60 tháng trở lên\nCấp bậc: Trưởng nhóm\nSố lượng tuyển: 1\nHình thức làm việc: FULL_TIME\nHạn nộp: 2025-12-20T16:59:59+00:00",
+    "doc_id": 660123,
+    "job_id": 20046,
+    "metadata": {
+      "company": {
+        "address": null,
+        "industry": "Kinh doanh / Bán hàng, Hàng gia dụng, Hàng tiêu dùng",
+        "logo": "https://cdn-new.topcv.vn/unsafe/https://static.topcv.vn/company_logos/IrbBrkqXFeS47KmS5c9q3itONjHFCkvg_1747205599____856cfe2c7c8e5855d63d3b35cbb93920.jpg",
+        "name": "CÔNG TY TNHH MỘT THÀNH VIÊN CHUYỂN PHÁT NHANH THUẬN PHONG- CHI NHÁNH HÀ NỘI",
+        "size": null,
+        "url": "https://www.topcv.vn/cong-ty/cong-ty-tnhh-mot-thanh-vien-chuyen-phat-nhanh-thuan-phong-chi-nhanh-ha-noi/221839.html"
+      },
+      "crawled_at": "2025-12-09T00:41:06.646324+00:00",
+      "deadline": "2025-12-20T16:59:59+00:00",
+      "experience": {
+        "months": 60,
+        "raw_text": null
+      },
+      "general_info": {
+        "cap_bac": "Trưởng nhóm",
+        "hinh_thuc_lam_viec": "FULL_TIME",
+        "hinh_thuc_lam_viec_raw": null,
+        "hoc_van": null,
+        "so_luong_tuyen": 1,
+        "so_luong_tuyen_raw": null
+      },
+      "id": 20046,
+      "is_active": true,
+      "locations": [
+        "Hà Nội",
+        "Hà Nội: Lô 4, KCN Quang Minh, Xã Quang Minh"
+      ],
+      "salary": {
+        "currency": "VND",
+        "interval": "MONTH",
+        "max": null,
+        "min": null,
+        "raw_text": null
+      },
+      "source": "topcv",
+      "title": "Trưởng Nhóm Kế Toán Doanh Thu",
+      "url": "https://www.topcv.vn/viec-lam/truong-nhom-ke-toan-doanh-thu/1958679.html"
+    },
+    "score": 0.5969868071110878
+  },
+  {
+    "chunk_index": 0,
+    "chunk_text": "Công việc: Global Account Manager (Chinese-English Speaking)\nCông ty: Công ty cổ phần Hạ tầng Viễn thông CMC Telecom\nĐịa điểm: Hà Nội | Hà Nội: Tòa CMC - 11 Duy Tân, Phường Cầu Giấy\nMục: Quyền lợi\nHạn nộp: 2025-12-17T16:59:59+00:00\nNội dung: Đãi ngộ (lương, thưởng, review lương): Mức lương cứng hấp dẫn + KPI lũy kế + phúc lợi Lễ tết Ký Hợp đồng lao động, đóng bảo hiểm đầy đủ, nghỉ 12 ngày phép năm, các ngày Lễ, Tết theo quy định Nhà nước. Xét thưởng và xét tăng lương 2 lần/ năm. Cơ chế lương 3 vòng thu nhập, có thưởng KPI tháng và phúc lợi khác.",
+    "doc_id": 650526,
+    "job_id": 15070,
+    "metadata": {
+      "company": {
+        "address": null,
+        "industry": "Marketing / Truyền thông / Quảng cáo",
+        "logo": "https://cdn-new.topcv.vn/unsafe/https://static.topcv.vn/company_logos/cong-ty-co-phan-ha-tang-vien-thong-cmc-telecom-5af4f4a61b6e4_rs.jpg",
+        "name": "Công ty cổ phần Hạ tầng Viễn thông CMC Telecom",
+        "size": null,
+        "url": "https://www.topcv.vn/cong-ty/cong-ty-co-phan-ha-tang-vien-thong-cmc-telecom/200874.html"
+      },
+      "crawled_at": "2025-12-15T04:42:06.485072+00:00",
+      "deadline": "2025-12-17T16:59:59+00:00",
+      "experience": {
+        "months": 36,
+        "raw_text": null
+      },
+      "general_info": {
+        "cap_bac": "Nhân viên",
+        "hinh_thuc_lam_viec": "FULL_TIME",
+        "hinh_thuc_lam_viec_raw": null,
+        "hoc_van": null,
+        "so_luong_tuyen": 2,
+        "so_luong_tuyen_raw": null
+      },
+      "id": 15070,
+      "is_active": true,
+      "locations": [
+        "Hà Nội",
+        "Hà Nội: Tòa CMC - 11 Duy Tân, Phường Cầu Giấy"
+      ],
+      "salary": {
+        "currency": "VND",
+        "interval": "MONTH",
+        "max": null,
+        "min": null,
+        "raw_text": null
+      },
+      "section": {
+        "chunk_index": 0,
+        "chunk_text": "Đãi ngộ (lương, thưởng, review lương): Mức lương cứng hấp dẫn + KPI lũy kế + phúc lợi Lễ tết Ký Hợp đồng lao động, đóng bảo hiểm đầy đủ, nghỉ 12 ngày phép năm, các ngày Lễ, Tết theo quy định Nhà nước. Xét thưởng và xét tăng lương 2 lần/ năm. Cơ chế lương 3 vòng thu nhập, có thưởng KPI tháng và phúc lợi khác.",
+        "html": "<div class=\"job-description__item--content\">\n<p><i><strong>Đãi ngộ (lương, thưởng, review lương):</strong></i></p><ul style=\"list-style-type:disc;\"><li>Mức lương cứng hấp dẫn + KPI lũy kế + phúc lợi Lễ tết</li><li>Ký Hợp đồng lao động, đóng bảo hiểm đầy đủ, nghỉ 12 ngày phép năm, các ngày Lễ, Tết theo quy định Nhà nước.</li><li>Xét thưởng và xét tăng lương 2 lần/ năm.</li><li>Cơ chế lương 3 vòng thu nhập, có thưởng KPI tháng và phúc lợi khác.</li><li>Được tham gia các khóa huấn luyện, đào tạo nâng cao kỹ năng, nghiệp vụ của CMC cũng như các hãng công nghệ lớn như Microsoft, IBM, Google …</li><li>Bảo hiểm chăm sóc sức khỏe Aon Care (điều trị nội trú và ngoại trú) dành cho nhân viên</li><li>Các ngày nghỉ lễ tết theo quy định của nhà nước và có thưởng theo quy định của công ty </li></ul><p><i><strong>Cơ hội thử thách và phát triển:</strong></i></p><ul style=\"list-style-type:disc;\"><li>Cơ hội được làm việc tại công ty công nghệ viễn thông hàng đầu Việt Nam (Top 4)</li><li>Cơ hội làm việc với tập khách hàng hàng đầu thế giới</li><li>Cơ hội được tiếp cận, đào sâu những công nghệ mới nhất, tiên tiến nhất với tập khách hàng đa ngành và những dự án siêu khủng</li><li>Được dẫn dắt, hỗ trợ bởi team lead/chuyên gia ưu tú, đầu ngành trong lĩnh vực</li><li>Được ủng hộ, trao quyền cho những ý kiến sáng tạo và đột phá </li></ul><p><i><strong>Văn hoá môi trường làm việc:</strong></i></p><ul style=\"list-style-type:disc;\"><li>Làm việc 5 ngày/tuần, nghỉ thứ 7, Chủ Nhật</li><li>Môi trường làm việc trẻ, năng động, sáng tạo, công bằng, kỷ luật</li><li>Văn phòng xanh, đạt tiêu chuẩn quốc tế</li><li>Tham gia gắn kết với tập thể, tổ chức với các hoạt động team building thú vị, các clb chạy và đá bóng, esport,…các party liên hoan của Công ty (sinh nhật, lễ Tết,…)</li><li>Chế độ chăm sóc y tế đặc biệt cho CBNV</li></ul>\n</div>",
+        "label": "Quyền lợi",
+        "text": "Đãi ngộ (lương, thưởng, review lương): Mức lương cứng hấp dẫn + KPI lũy kế + phúc lợi Lễ tết Ký Hợp đồng lao động, đóng bảo hiểm đầy đủ, nghỉ 12 ngày phép năm, các ngày Lễ, Tết theo quy định Nhà nước. Xét thưởng và xét tăng lương 2 lần/ năm. Cơ chế lương 3 vòng thu nhập, có thưởng KPI tháng và phúc lợi khác. Được tham gia các khóa huấn luyện, đào tạo nâng cao kỹ năng, nghiệp vụ của CMC cũng như các hãng công nghệ lớn như Microsoft, IBM, Google … Bảo hiểm chăm sóc sức khỏe Aon Care (điều trị nội trú và ngoại trú) dành cho nhân viên Các ngày nghỉ lễ tết theo quy định của nhà nước và có thưởng theo quy định của công ty Cơ hội thử thách và phát triển: Cơ hội được làm việc tại công ty công nghệ viễn thông hàng đầu Việt Nam (Top 4) Cơ hội làm việc với tập khách hàng hàng đầu thế giới Cơ hội được tiếp cận, đào sâu những công nghệ mới nhất, tiên tiến nhất với tập khách hàng đa ngành và những dự án siêu khủng Được dẫn dắt, hỗ trợ bởi team lead/chuyên gia ưu tú, đầu ngành trong lĩnh vực Được ủng hộ, trao quyền cho những ý kiến sáng tạo và đột phá Văn hoá môi trường làm việc: Làm việc 5 ngày/tuần, nghỉ thứ 7, Chủ Nhật Môi trường làm việc trẻ, năng động, sáng tạo, công bằng, kỷ luật Văn phòng xanh, đạt tiêu chuẩn quốc tế Tham gia gắn kết với tập thể, tổ chức với các hoạt động team building thú vị, các clb chạy và đá bóng, esport,…các party liên hoan của Công ty (sinh nhật, lễ Tết,…) Chế độ chăm sóc y tế đặc biệt cho CBNV",
+        "type": "quyen_loi"
+      },
+      "source": "topcv",
+      "title": "Global Account Manager (Chinese-English Speaking)",
+      "url": "https://www.topcv.vn/viec-lam/global-account-manager-chinese-english-speaking/1954151.html"
+    },
+    "score": 0.5968816458249585
+  },
+  {
+    "chunk_index": 0,
+    "chunk_text": "Công việc: NHÂN VIÊN TIẾNG TRUNG Phòng Sales\nCông ty: CÔNG TY TNHH HÓA CHẤT HYOSUNG VINA\nĐịa điểm: Hồ Chí Minh | Hồ Chí Minh: Vincom Center, Phường Sài Gòn\nMục: Thu nhập\nHạn nộp: 2025-12-26T16:59:59+00:00\nNội dung: Thu nhập khi đạt 100% KPI:  Thoả thuận Thu nhập tính theo tỷ lệ đạt KPI Lương cứng:  15 - 25 triệu VND Lương cứng không phụ thuộc doanh số",
+    "doc_id": 647815,
+    "job_id": 1123,
+    "metadata": {
+      "company": {
+        "address": null,
+        "industry": "Kinh doanh / Bán hàng, Hàng gia dụng, Hàng tiêu dùng",
+        "logo": "https://cdn-new.topcv.vn/unsafe/https://static.topcv.vn/v4/image/normal-company/logo_default.png",
+        "name": "CÔNG TY TNHH HÓA CHẤT HYOSUNG VINA",
+        "size": null,
+        "url": "https://www.topcv.vn/cong-ty/cong-ty-tnhh-hoa-chat-hyosung-vina/180254.html"
+      },
+      "crawled_at": "2025-12-13T15:04:17.299745+00:00",
+      "deadline": "2025-12-26T16:59:59+00:00",
+      "experience": {
+        "months": null,
+        "raw_text": null
+      },
+      "general_info": {
+        "cap_bac": "Nhân viên",
+        "hinh_thuc_lam_viec": "FULL_TIME",
+        "hinh_thuc_lam_viec_raw": null,
+        "hoc_van": null,
+        "so_luong_tuyen": 1,
+        "so_luong_tuyen_raw": null
+      },
+      "id": 1123,
+      "is_active": true,
+      "locations": [
+        "Hồ Chí Minh",
+        "Hồ Chí Minh: Vincom Center, Phường Sài Gòn"
+      ],
+      "salary": {
+        "currency": "VND",
+        "interval": "MONTH",
+        "max": null,
+        "min": null,
+        "raw_text": null
+      },
+      "section": {
+        "chunk_index": 0,
+        "chunk_text": "Thu nhập khi đạt 100% KPI:  Thoả thuận Thu nhập tính theo tỷ lệ đạt KPI Lương cứng:  15 - 25 triệu VND Lương cứng không phụ thuộc doanh số",
+        "html": "<div class=\"job-description__item--content\">\n<ul>\n<li>Thu nhập khi đạt 100% KPI:  Thoả thuận</li>\n<li>Thu nhập tính theo tỷ lệ đạt KPI</li>\n<li>Lương cứng:  15 - 25 triệu VND </li>\n<li>Lương cứng không phụ thuộc doanh số</li>\n</ul>\n</div>",
+        "label": "Thu nhập",
+        "text": "Thu nhập khi đạt 100% KPI:  Thoả thuận Thu nhập tính theo tỷ lệ đạt KPI Lương cứng:  15 - 25 triệu VND Lương cứng không phụ thuộc doanh số",
+        "type": "thu_nhap"
+      },
+      "source": "topcv",
+      "title": "NHÂN VIÊN TIẾNG TRUNG Phòng Sales",
+      "url": "https://www.topcv.vn/viec-lam/nhan-vien-tieng-trung-phong-sales/1629968.html"
+    },
+    "score": 0.5965188919460446
+  },
+  {
+    "chunk_index": 0,
+    "chunk_text": "Công việc: Quản Lý Khu Vực Chuỗi F&B (Area Manager)\nCông ty: Công ty TNHH Sản xuất, Dịch vụ và Thương mại An Tâm\nĐịa điểm: Hà Nội | Hà Nội: Lô D10/12, cụm làng nghề Triều Khúc, Tân Triều, Thanh Trì, Xã Thanh Trì\nThu nhập: từ 12.000.000 VND đến 18.000.000 VND /tháng\nMục: Thu nhập\nHạn nộp: 2025-12-20T16:59:59+00:00\nNội dung: Thu nhập:  12 - 18 triệu VND Lương cứng không phụ thuộc doanh số",
+    "doc_id": 655488,
+    "job_id": 17791,
+    "metadata": {
+      "company": {
+        "address": null,
+        "industry": "Kinh doanh / Bán hàng, Hành chính / Văn phòng, Thư ký / Trợ lý",
+        "logo": "https://cdn-new.topcv.vn/unsafe/https://static.topcv.vn/company_logos/cong-ty-tnhh-san-xuat-dich-vu-va-thuong-mai-an-tam-62aaf7de5f982.jpg",
+        "name": "Công ty TNHH Sản xuất, Dịch vụ và Thương mại An Tâm",
+        "size": null,
+        "url": "https://www.topcv.vn/cong-ty/cong-ty-tnhh-san-xuat-dich-vu-va-thuong-mai-an-tam/8091.html"
+      },
+      "crawled_at": "2025-12-08T17:08:43.049104+00:00",
+      "deadline": "2025-12-20T16:59:59+00:00",
+      "experience": {
+        "months": 12,
+        "raw_text": null
+      },
+      "general_info": {
+        "cap_bac": "Quản lý / Giám sát",
+        "hinh_thuc_lam_viec": "FULL_TIME",
+        "hinh_thuc_lam_viec_raw": null,
+        "hoc_van": null,
+        "so_luong_tuyen": 2,
+        "so_luong_tuyen_raw": null
+      },
+      "id": 17791,
+      "is_active": true,
+      "locations": [
+        "Hà Nội",
+        "Hà Nội: Lô D10/12, cụm làng nghề Triều Khúc, Tân Triều, Thanh Trì, Xã Thanh Trì"
+      ],
+      "salary": {
+        "currency": "VND",
+        "interval": "MONTH",
+        "max": 18000000,
+        "min": 12000000,
+        "raw_text": null
+      },
+      "section": {
+        "chunk_index": 0,
+        "chunk_text": "Thu nhập:  12 - 18 triệu VND Lương cứng không phụ thuộc doanh số",
+        "html": "<div class=\"job-description__item--content\">\n<ul>\n<li>Thu nhập:  12 - 18 triệu VND</li>\n<li>Lương cứng không phụ thuộc doanh số</li>\n</ul>\n</div>",
+        "label": "Thu nhập",
+        "text": "Thu nhập:  12 - 18 triệu VND Lương cứng không phụ thuộc doanh số",
+        "type": "thu_nhap"
+      },
+      "source": "topcv",
+      "title": "Quản Lý Khu Vực Chuỗi F&B (Area Manager)",
+      "url": "https://www.topcv.vn/viec-lam/quan-ly-khu-vuc-chuoi-fb-area-manager/1958959.html"
+    },
+    "score": 0.5964205735481907
+  },
+  {
+    "chunk_index": 0,
+    "chunk_text": "Công việc: Kỹ Sư Kinh Doanh (Sales Engineer)\nCông ty: CÔNG TY TNHH THƯƠNG MẠI DỊCH VỤ THINK SMART\nĐịa điểm: Hồ Chí Minh | Hồ Chí Minh: Số 5, Đường số 4, KDC Khang An, Phường Thủ Đức\nMục: Thu nhập\nHạn nộp: 2025-12-20T16:59:59+00:00\nNội dung: Thu nhập khi đạt 100% KPI:  Thoả thuận Thu nhập tính theo tỷ lệ đạt KPI Lương cứng không phụ thuộc doanh số",
+    "doc_id": 659183,
+    "job_id": 19598,
+    "metadata": {
+      "company": {
+        "address": null,
+        "industry": "Kinh doanh / Bán hàng, Bán hàng kỹ thuật, Sản xuất",
+        "logo": "https://cdn-new.topcv.vn/unsafe/https://static.topcv.vn/company_logos/3fa3f15f2849685cbe5dc415bfeab687-6613b9de1b1a1.jpg",
+        "name": "CÔNG TY TNHH THƯƠNG MẠI DỊCH VỤ THINK SMART",
+        "size": null,
+        "url": "https://www.topcv.vn/cong-ty/cong-ty-tnhh-thuong-mai-dich-vu-think-smart/168519.html"
+      },
+      "crawled_at": "2025-12-08T23:11:03.382396+00:00",
+      "deadline": "2025-12-20T16:59:59+00:00",
+      "experience": {
+        "months": 12,
+        "raw_text": null
+      },
+      "general_info": {
+        "cap_bac": "Nhân viên",
+        "hinh_thuc_lam_viec": "FULL_TIME",
+        "hinh_thuc_lam_viec_raw": null,
+        "hoc_van": null,
+        "so_luong_tuyen": 1,
+        "so_luong_tuyen_raw": null
+      },
+      "id": 19598,
+      "is_active": true,
+      "locations": [
+        "Hồ Chí Minh",
+        "Hồ Chí Minh: Số 5, Đường số 4, KDC Khang An, Phường Thủ Đức"
+      ],
+      "salary": {
+        "currency": "VND",
+        "interval": "MONTH",
+        "max": null,
+        "min": null,
+        "raw_text": null
+      },
+      "section": {
+        "chunk_index": 0,
+        "chunk_text": "Thu nhập khi đạt 100% KPI:  Thoả thuận Thu nhập tính theo tỷ lệ đạt KPI Lương cứng không phụ thuộc doanh số",
+        "html": "<div class=\"job-description__item--content\">\n<ul>\n<li>Thu nhập khi đạt 100% KPI:  Thoả thuận</li>\n<li>Thu nhập tính theo tỷ lệ đạt KPI</li>\n<li>Lương cứng không phụ thuộc doanh số</li>\n</ul>\n</div>",
+        "label": "Thu nhập",
+        "text": "Thu nhập khi đạt 100% KPI:  Thoả thuận Thu nhập tính theo tỷ lệ đạt KPI Lương cứng không phụ thuộc doanh số",
+        "type": "thu_nhap"
+      },
+      "source": "topcv",
+      "title": "Kỹ Sư Kinh Doanh (Sales Engineer)",
+      "url": "https://www.topcv.vn/viec-lam/ky-su-kinh-doanh-sales-engineer/1959424.html"
+    },
+    "score": 0.5963660719176499
+  },
+  {
+    "chunk_index": 0,
+    "chunk_text": "Công việc: Chuyên Viên Tài Chính Doanh Nghiệp\nCông ty: Công ty CP Đầu tư Xây dựng và Kỹ thuật VNCN E&C\nĐịa điểm: Hà Nội | Hà Nội: Phường Đống Đa\nMục: Yêu cầu ứng viên\nHạn nộp: 2025-12-20T16:59:59+00:00\nNội dung: - Nam, Tốt nghiệp Đại học chuyên ngành Tài chính doanh nghiệp - Có hiểu biết về Luật doanh nghiệp, Luật Đầu tư, Luật Nhà ở, Luật KD BĐS, Luật CK là 1 lợi thế - Ngoại ngữ tiếng Anh (không cần giỏi). - Thành thạo MS Office",
+    "doc_id": 656871,
+    "job_id": 18401,
+    "metadata": {
+      "company": {
+        "address": null,
+        "industry": "Tài chính / Đầu tư, Ngân hàng / Tài chính",
+        "logo": "https://cdn-new.topcv.vn/unsafe/https://static.topcv.vn/company_logos/v5o1m54JkIH9n4LdtaH3psl76Y09qiKG_1652326059____d00392b6c3e0f0eefdcf097473606b37.jpg",
+        "name": "Công ty CP Đầu tư Xây dựng và Kỹ thuật VNCN E&C",
+        "size": null,
+        "url": "https://www.topcv.vn/cong-ty/cong-ty-cp-dau-tu-xay-dung-va-ky-thuat-vncn-ec/100365.html"
+      },
+      "crawled_at": "2025-12-08T19:10:50.101949+00:00",
+      "deadline": "2025-12-20T16:59:59+00:00",
+      "experience": {
+        "months": 3,
+        "raw_text": null
+      },
+      "general_info": {
+        "cap_bac": "Nhân viên",
+        "hinh_thuc_lam_viec": "FULL_TIME",
+        "hinh_thuc_lam_viec_raw": null,
+        "hoc_van": null,
+        "so_luong_tuyen": 1,
+        "so_luong_tuyen_raw": null
+      },
+      "id": 18401,
+      "is_active": true,
+      "locations": [
+        "Hà Nội",
+        "Hà Nội: Phường Đống Đa"
+      ],
+      "salary": {
+        "currency": "VND",
+        "interval": "MONTH",
+        "max": null,
+        "min": null,
+        "raw_text": null
+      },
+      "section": {
+        "chunk_index": 0,
+        "chunk_text": "- Nam, Tốt nghiệp Đại học chuyên ngành Tài chính doanh nghiệp - Có hiểu biết về Luật doanh nghiệp, Luật Đầu tư, Luật Nhà ở, Luật KD BĐS, Luật CK là 1 lợi thế - Ngoại ngữ tiếng Anh (không cần giỏi). - Thành thạo MS Office",
+        "html": "<div class=\"job-description__item--content\">\n<p>- Nam, Tốt nghiệp Đại học chuyên ngành Tài chính doanh nghiệp<br/>- Có hiểu biết về Luật doanh nghiệp, Luật Đầu tư, Luật Nhà ở, Luật KD BĐS, Luật CK là 1 lợi thế<br/>- Ngoại ngữ tiếng Anh (không cần giỏi).<br/>- Thành thạo MS Office</p>\n</div>",
+        "label": "Yêu cầu ứng viên",
+        "text": "- Nam, Tốt nghiệp Đại học chuyên ngành Tài chính doanh nghiệp - Có hiểu biết về Luật doanh nghiệp, Luật Đầu tư, Luật Nhà ở, Luật KD BĐS, Luật CK là 1 lợi thế - Ngoại ngữ tiếng Anh (không cần giỏi). - Thành thạo MS Office",
+        "type": "yeu_cau_ung_vien"
+      },
+      "source": "topcv",
+      "title": "Chuyên Viên Tài Chính Doanh Nghiệp",
+      "url": "https://www.topcv.vn/viec-lam/chuyen-vien-tai-chinh-doanh-nghiep/1959314.html"
+    },
+    "score": 0.5958973524509293
+  },
+  {
+    "chunk_index": 0,
+    "chunk_text": "Công việc: Trưởng Phòng Marketing - Ngành Hàng Mẹ Và Bé\nCông ty: CÔNG TY TNHH GÓC CỦA TIN\nĐịa điểm: Hà Nội | Hà Nội: Trần Quốc Toản, Phường Cửa Nam\nThu nhập: từ 25.000.000 VND đến 28.000.000 VND /tháng\nMục: Thời gian làm việc\nHạn nộp: 2025-12-20T16:59:59+00:00\nNội dung: Thứ 2 - Thứ 6 (từ 08:00 đến 17:00) Thứ 7 (từ 08:00 đến 12:00)",
+    "doc_id": 657714,
+    "job_id": 18832,
+    "metadata": {
+      "company": {
+        "address": null,
+        "industry": "Marketing / Truyền thông / Quảng cáo, Báo chí / Truyền hình",
+        "logo": "https://cdn-new.topcv.vn/unsafe/https://static.topcv.vn/company_logos/c70291ea25013b035056fb8b712c7f79-5e7192448f47c.jpg",
+        "name": "CÔNG TY TNHH GÓC CỦA TIN",
+        "size": null,
+        "url": "https://www.topcv.vn/cong-ty/cong-ty-tnhh-goc-cua-tin/34758.html"
+      },
+      "crawled_at": "2025-12-08T20:37:04.562511+00:00",
+      "deadline": "2025-12-20T16:59:59+00:00",
+      "experience": {
+        "months": 60,
+        "raw_text": null
+      },
+      "general_info": {
+        "cap_bac": "Trưởng/Phó phòng",
+        "hinh_thuc_lam_viec": "FULL_TIME",
+        "hinh_thuc_lam_viec_raw": null,
+        "hoc_van": null,
+        "so_luong_tuyen": 1,
+        "so_luong_tuyen_raw": null
+      },
+      "id": 18832,
+      "is_active": true,
+      "locations": [
+        "Hà Nội",
+        "Hà Nội: Trần Quốc Toản, Phường Cửa Nam"
+      ],
+      "salary": {
+        "currency": "VND",
+        "interval": "MONTH",
+        "max": 28000000,
+        "min": 25000000,
+        "raw_text": null
+      },
+      "section": {
+        "chunk_index": 0,
+        "chunk_text": "Thứ 2 - Thứ 6 (từ 08:00 đến 17:00) Thứ 7 (từ 08:00 đến 12:00)",
+        "html": "<div class=\"job-description__item--content\">\n<div class=\"job-description__item--content-list\">Thứ 2 - Thứ 6 (từ 08:00 đến 17:00)</div>\n<div class=\"job-description__item--content-list\">Thứ 7 (từ 08:00 đến 12:00)</div>\n</div>",
+        "label": "Thời gian làm việc",
+        "text": "Thứ 2 - Thứ 6 (từ 08:00 đến 17:00) Thứ 7 (từ 08:00 đến 12:00)",
+        "type": "thoi_gian_lam_viec"
+      },
+      "source": "topcv",
+      "title": "Trưởng Phòng Marketing - Ngành Hàng Mẹ Và Bé",
+      "url": "https://www.topcv.vn/viec-lam/truong-phong-marketing-nganh-hang-me-va-be/1959162.html"
+    },
+    "score": 0.5947443246841431
+  },
+  {
+    "chunk_index": 0,
+    "chunk_text": "Công việc: KẾ TOÁN Thuế\nCông ty: CÔNG TY TNHH DỊCH VỤ KẾ TOÁN VÀ TƯ VẤN LUẬT AN KHANG\nĐịa điểm: Hà Nội | Hà Nội: tầng 8 Tòa nhà Trần Phú số 6 Dương Đình Nghệ, Phường Yên Hòa\nMục: Yêu cầu ứng viên\nHạn nộp: 2025-12-24T16:59:59+00:00\nNội dung: Nữ, sinh năm 2003 trở lên Giao tiếp tốt, chăm chỉ Có Laptop, kĩ năng tin học văn phòng, biết sử dụng phần mềm kế toán (Misa) là lợi thế Có chứng chỉ đại lý thuế là lợi thế Tốt nghiệp Cao đẳng/Đại học chuyên ngành Kế toán, Tài chính, Kiểm toán.",
+    "doc_id": 663635,
+    "job_id": 22030,
+    "metadata": {
+      "company": {
+        "address": null,
+        "industry": "Kế toán / Kiểm toán, Hành chính / Văn phòng, Dịch vụ khách hàng",
+        "logo": "https://cdn-new.topcv.vn/unsafe/https://static.topcv.vn/company_logos/eU96kKNmvHxXKNiAIWeytebVXJxSHpu5_1709108904____92089f7f328de363ca555abaf83ba850.jpg",
+        "name": "CÔNG TY TNHH DỊCH VỤ KẾ TOÁN VÀ TƯ VẤN LUẬT AN KHANG",
+        "size": null,
+        "url": "https://www.topcv.vn/cong-ty/cong-ty-tnhh-dich-vu-ke-toan-va-tu-van-luat-an-khang/164122.html"
+      },
+      "crawled_at": "2025-12-11T08:40:54.844432+00:00",
+      "deadline": "2025-12-24T16:59:59+00:00",
+      "experience": {
+        "months": 12,
+        "raw_text": null
+      },
+      "general_info": {
+        "cap_bac": "Nhân viên",
+        "hinh_thuc_lam_viec": "FULL_TIME",
+        "hinh_thuc_lam_viec_raw": null,
+        "hoc_van": null,
+        "so_luong_tuyen": 2,
+        "so_luong_tuyen_raw": null
+      },
+      "id": 22030,
+      "is_active": true,
+      "locations": [
+        "Hà Nội",
+        "Hà Nội: tầng 8 Tòa nhà Trần Phú số 6 Dương Đình Nghệ, Phường Yên Hòa"
+      ],
+      "salary": {
+        "currency": "VND",
+        "interval": "MONTH",
+        "max": null,
+        "min": null,
+        "raw_text": null
+      },
+      "section": {
+        "chunk_index": 0,
+        "chunk_text": "Nữ, sinh năm 2003 trở lên Giao tiếp tốt, chăm chỉ Có Laptop, kĩ năng tin học văn phòng, biết sử dụng phần mềm kế toán (Misa) là lợi thế Có chứng chỉ đại lý thuế là lợi thế Tốt nghiệp Cao đẳng/Đại học chuyên ngành Kế toán, Tài chính, Kiểm toán.",
+        "html": "<div class=\"job-description__item--content\">\n<p>Nữ, sinh năm 2003 trở lên</p><p>Giao tiếp tốt, chăm chỉ</p><p>Có Laptop, kĩ năng tin học văn phòng, biết sử dụng phần mềm kế toán (Misa) là lợi thế</p><p>Có chứng chỉ đại lý thuế là lợi thế</p><p>Tốt nghiệp Cao đẳng/Đại học chuyên ngành Kế toán, Tài chính, Kiểm toán.</p>\n</div>",
+        "label": "Yêu cầu ứng viên",
+        "text": "Nữ, sinh năm 2003 trở lên Giao tiếp tốt, chăm chỉ Có Laptop, kĩ năng tin học văn phòng, biết sử dụng phần mềm kế toán (Misa) là lợi thế Có chứng chỉ đại lý thuế là lợi thế Tốt nghiệp Cao đẳng/Đại học chuyên ngành Kế toán, Tài chính, Kiểm toán.",
+        "type": "yeu_cau_ung_vien"
+      },
+      "source": "topcv",
+      "title": "KẾ TOÁN Thuế",
+      "url": "https://www.topcv.vn/viec-lam/ke-toan-thue/1759547.html"
+    },
+    "score": 0.594646753476064
+  },
+  {
+    "chunk_index": 0,
+    "chunk_text": "Công việc: Nhân Viên Chăm Sóc Khách Hàng Full-Time\nCông ty: CÔNG TY TNHH SẢN XUẤT THƯƠNG MẠI VÀ DỊCH VỤ SAO HỎA\nĐịa điểm: Hà Nội | Hà Nội: Khu liền kề Phú Lương, Phường Phú Lương\nMục: Địa điểm làm việc\nHạn nộp: 2025-12-17T16:59:59+00:00\nNội dung: - Hà Nội: Khu liền kề Phú Lương, Phường Phú Lương",
+    "doc_id": 654104,
+    "job_id": 17018,
+    "metadata": {
+      "company": {
+        "address": null,
+        "industry": "Dịch vụ khách hàng, Tư vấn, Kinh doanh / Bán hàng",
+        "logo": "https://cdn-new.topcv.vn/unsafe/https://static.topcv.vn/company_logos/691adf0e4fbde1763368718.png",
+        "name": "CÔNG TY TNHH SẢN XUẤT THƯƠNG MẠI VÀ DỊCH VỤ SAO HỎA",
+        "size": null,
+        "url": "https://www.topcv.vn/cong-ty/cong-ty-tnhh-san-xuat-thuong-mai-va-dich-vu-sao-hoa/242720.html"
+      },
+      "crawled_at": "2025-12-15T05:50:25.401969+00:00",
+      "deadline": "2025-12-17T16:59:59+00:00",
+      "experience": {
+        "months": null,
+        "raw_text": "Thời Trang"
+      },
+      "general_info": {
+        "cap_bac": "Nhân viên",
+        "hinh_thuc_lam_viec": "FULL_TIME",
+        "hinh_thuc_lam_viec_raw": null,
+        "hoc_van": null,
+        "so_luong_tuyen": 2,
+        "so_luong_tuyen_raw": null
+      },
+      "id": 17018,
+      "is_active": true,
+      "locations": [
+        "Hà Nội",
+        "Hà Nội: Khu liền kề Phú Lương, Phường Phú Lương"
+      ],
+      "salary": {
+        "currency": "VND",
+        "interval": "MONTH",
+        "max": null,
+        "min": null,
+        "raw_text": null
+      },
+      "section": {
+        "chunk_index": 0,
+        "chunk_text": "- Hà Nội: Khu liền kề Phú Lương, Phường Phú Lương",
+        "html": "<div class=\"job-description__item--content\">\n<div style=\"margin-bottom: 10px\">- Hà Nội: Khu liền kề Phú Lương, Phường Phú Lương</div>\n</div>",
+        "label": "Địa điểm làm việc",
+        "text": "- Hà Nội: Khu liền kề Phú Lương, Phường Phú Lương",
+        "type": "dia_diem_lam_viec"
+      },
+      "source": "topcv",
+      "title": "Nhân Viên Chăm Sóc Khách Hàng Full-Time",
+      "url": "https://www.topcv.vn/viec-lam/nhan-vien-cham-soc-khach-hang-full-time/1954931.html"
+    },
+    "score": 0.5945308900902926
+  },
+  {
+    "chunk_index": 0,
+    "chunk_text": "Công việc: Trade Marketing Manager\nCông ty: CÔNG TY TNHH THƯƠNG MẠI WANT WANT VIỆT NAM\nĐịa điểm: Hồ Chí Minh | Hồ Chí Minh: 506 Nguyễn Đình Chiểu, Phường Bàn Cờ\nMục: Thu nhập\nHạn nộp: 2025-12-18T16:59:59+00:00\nNội dung: Thu nhập khi đạt 100% KPI:  Thoả thuận Thu nhập tính theo tỷ lệ đạt KPI Lương cứng không phụ thuộc doanh số",
+    "doc_id": 649663,
+    "job_id": 14582,
+    "metadata": {
+      "company": {
+        "address": null,
+        "industry": "Kinh doanh / Bán hàng, Bán lẻ / bán sỉ, Hàng tiêu dùng",
+        "logo": "https://cdn-new.topcv.vn/unsafe/https://static.topcv.vn/company_logos/cong-ty-tnhh-thuong-mai-want-want-viet-nam-60c724b55103c.jpg",
+        "name": "CÔNG TY TNHH THƯƠNG MẠI WANT WANT VIỆT NAM",
+        "size": null,
+        "url": "https://www.topcv.vn/cong-ty/cong-ty-tnhh-thuong-mai-want-want-viet-nam/31856.html"
+      },
+      "crawled_at": "2025-12-05T04:50:36.969718+00:00",
+      "deadline": "2025-12-18T16:59:59+00:00",
+      "experience": {
+        "months": 60,
+        "raw_text": null
+      },
+      "general_info": {
+        "cap_bac": "Quản lý / Giám sát",
+        "hinh_thuc_lam_viec": "FULL_TIME",
+        "hinh_thuc_lam_viec_raw": null,
+        "hoc_van": null,
+        "so_luong_tuyen": 1,
+        "so_luong_tuyen_raw": null
+      },
+      "id": 14582,
+      "is_active": true,
+      "locations": [
+        "Hồ Chí Minh",
+        "Hồ Chí Minh: 506 Nguyễn Đình Chiểu, Phường Bàn Cờ"
+      ],
+      "salary": {
+        "currency": "VND",
+        "interval": "MONTH",
+        "max": null,
+        "min": null,
+        "raw_text": null
+      },
+      "section": {
+        "chunk_index": 0,
+        "chunk_text": "Thu nhập khi đạt 100% KPI:  Thoả thuận Thu nhập tính theo tỷ lệ đạt KPI Lương cứng không phụ thuộc doanh số",
+        "html": "<div class=\"job-description__item--content\">\n<ul>\n<li>Thu nhập khi đạt 100% KPI:  Thoả thuận</li>\n<li>Thu nhập tính theo tỷ lệ đạt KPI</li>\n<li>Lương cứng không phụ thuộc doanh số</li>\n</ul>\n</div>",
+        "label": "Thu nhập",
+        "text": "Thu nhập khi đạt 100% KPI:  Thoả thuận Thu nhập tính theo tỷ lệ đạt KPI Lương cứng không phụ thuộc doanh số",
+        "type": "thu_nhap"
+      },
+      "source": "topcv",
+      "title": "Trade Marketing Manager",
+      "url": "https://www.topcv.vn/viec-lam/trade-marketing-manager/835323.html"
+    },
+    "score": 0.594447313084424
+  },
+  {
+    "chunk_index": 0,
+    "chunk_text": "Công việc: Business Development Manager\nCông ty: CÔNG TY TNHH TRUYỀN THÔNG MẸ VÀ CON\nĐịa điểm: Hồ Chí Minh | Hồ Chí Minh: 48 Hoa Mai, Phường Cầu Kiệu\nMục: Thu nhập\nHạn nộp: 2025-12-20T16:59:59+00:00\nNội dung: Thu nhập khi đạt 100% KPI:  Thoả thuận Thu nhập tính theo tỷ lệ đạt KPI Lương cứng không phụ thuộc doanh số",
+    "doc_id": 656097,
+    "job_id": 18061,
+    "metadata": {
+      "company": {
+        "address": null,
+        "industry": "Kinh doanh / Bán hàng, Marketing / Truyền thông / Quảng cáo, Tổ chức sự kiện / Quà tặng",
+        "logo": "https://cdn-new.topcv.vn/unsafe/https://static.topcv.vn/company_logos/wfXVEgzBl0mZdbUY7i4oWVjWVuD4vKro_1741852700____a3a6f0551081f14c5e7b3f867a95fe75.jpg",
+        "name": "CÔNG TY TNHH TRUYỀN THÔNG MẸ VÀ CON",
+        "size": null,
+        "url": "https://www.topcv.vn/cong-ty/cong-ty-tnhh-truyen-thong-me-va-con/58355.html"
+      },
+      "crawled_at": "2025-12-08T18:02:39.507268+00:00",
+      "deadline": "2025-12-20T16:59:59+00:00",
+      "experience": {
+        "months": 24,
+        "raw_text": null
+      },
+      "general_info": {
+        "cap_bac": "Trưởng nhóm",
+        "hinh_thuc_lam_viec": "FULL_TIME",
+        "hinh_thuc_lam_viec_raw": null,
+        "hoc_van": null,
+        "so_luong_tuyen": 1,
+        "so_luong_tuyen_raw": null
+      },
+      "id": 18061,
+      "is_active": true,
+      "locations": [
+        "Hồ Chí Minh",
+        "Hồ Chí Minh: 48 Hoa Mai, Phường Cầu Kiệu"
+      ],
+      "salary": {
+        "currency": "VND",
+        "interval": "MONTH",
+        "max": null,
+        "min": null,
+        "raw_text": null
+      },
+      "section": {
+        "chunk_index": 0,
+        "chunk_text": "Thu nhập khi đạt 100% KPI:  Thoả thuận Thu nhập tính theo tỷ lệ đạt KPI Lương cứng không phụ thuộc doanh số",
+        "html": "<div class=\"job-description__item--content\">\n<ul>\n<li>Thu nhập khi đạt 100% KPI:  Thoả thuận</li>\n<li>Thu nhập tính theo tỷ lệ đạt KPI</li>\n<li>Lương cứng không phụ thuộc doanh số</li>\n</ul>\n</div>",
+        "label": "Thu nhập",
+        "text": "Thu nhập khi đạt 100% KPI:  Thoả thuận Thu nhập tính theo tỷ lệ đạt KPI Lương cứng không phụ thuộc doanh số",
+        "type": "thu_nhap"
+      },
+      "source": "topcv",
+      "title": "Business Development Manager",
+      "url": "https://www.topcv.vn/viec-lam/business-development-manager/1959098.html"
+    },
+    "score": 0.5938747199810382
+  }
+]

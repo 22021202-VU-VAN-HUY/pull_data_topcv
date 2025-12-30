@@ -1,0 +1,15 @@
+{
+  "timestamp": "2025-12-16T06:46:15.087522+00:00",
+  "query": "tôi muốn tìm job golang có lương cao nhất | Từ khoá: golang",
+  "filters": {
+    "intent": "search_jobs",
+    "job_keywords": [
+      "golang"
+    ],
+    "locations": [],
+    "min_salary_vnd": null,
+    "max_salary_vnd": null,
+    "skills": []
+  },
+  "candidates": []
+}

@@ -1,0 +1,77 @@
+{
+  "num_questions": 300,
+  "overall": {
+    "avg_judge_score": 4.136666666666667,
+    "std_judge_score": 1.4627561504077007,
+    "median_judge_score": 5.0,
+    "min_judge_score": 0.0,
+    "max_judge_score": 5.0,
+    "avg_recall_at_5": 0.4347834090427848,
+    "avg_recall_at_10": 0.4625260004943179
+  },
+  "quality_distribution": {
+    "num_with_judge_score": 300,
+    "pct_judge_score_ge_4": 0.7666666666666667,
+    "pct_judge_score_le_2": 0.17
+  },
+  "gold_coverage": {
+    "num_with_gold": 274,
+    "num_without_gold": 26,
+    "avg_recall_at_5_with_gold": 0.4347834090427848,
+    "avg_recall_at_10_with_gold": 0.4625260004943179
+  },
+  "by_intent": {
+    "search_jobs": {
+      "count": 120,
+      "avg_judge_score": 3.95,
+      "avg_recall_at_5": 0.14336770756657796,
+      "avg_recall_at_10": 0.15286313909864743
+    },
+    "ask_detail": {
+      "count": 120,
+      "avg_judge_score": 4.4,
+      "avg_recall_at_5": 0.7666666666666667,
+      "avg_recall_at_10": 0.8
+    },
+    "compare_jobs": {
+      "count": 38,
+      "avg_judge_score": 3.8157894736842106,
+      "avg_recall_at_5": 0.27631578947368424,
+      "avg_recall_at_10": 0.34210526315789475
+    },
+    "other": {
+      "count": 22,
+      "avg_judge_score": 4.2727272727272725,
+      "avg_recall_at_5": null,
+      "avg_recall_at_10": null
+    }
+  },
+  "by_difficulty": {
+    "easy": {
+      "count": 116,
+      "avg_judge_score": 4.366379310344827,
+      "avg_recall_at_5": 0.4831380329909742,
+      "avg_recall_at_10": 0.5144316236595649
+    },
+    "medium": {
+      "count": 146,
+      "avg_judge_score": 4.157534246575342,
+      "avg_recall_at_5": 0.47238505747126436,
+      "avg_recall_at_10": 0.49959594182500583
+    },
+    "hard": {
+      "count": 38,
+      "avg_judge_score": 3.3552631578947367,
+      "avg_recall_at_5": 0.11614583333333334,
+      "avg_recall_at_10": 0.13489583333333333
+    }
+  },
+  "answerability": {
+    "pct_empty_or_error_answers": 0.0,
+    "pct_refusals": 0.0
+  },
+  "retrieval_vs_answer_quality": {
+    "avg_judge_score_when_recall_at_10_gt_0": 4.518518518518518,
+    "avg_judge_score_when_recall_at_10_eq_0": 3.59375
+  }
+}
