@@ -71,24 +71,57 @@ Mục tiêu của đề tài là kết hợp **Crawler + CSDL + Web App + AI Cha
 - **Docker / Docker Compose** (dịch vụ DB)
 - **python-dotenv** (quản lý biến môi trường)
 
+---
 
+## 4) Kiến trúc tổng quan
 
+```text
+TopCV Sitemap/Pages
+        |
+        v
+   Crawler (requests/BS4/Playwright)
+        |
+        v
+ PostgreSQL + pgvector
+   |- jobs, companies, job_sections...
+   |- rag_job_documents (embedding)
+        |
+        v
+ Flask Web App + APIs
+   |- Jobs pages
+   |- Auth/Profile APIs
+   |- Chat API
+        |
+        v
+   Chatbot RAG (Retriever + Gemini)
 ```
-# URL mặc định nếu không truyền tham số
-TOPCV_BROWSER_JOB_URL="https://www.topcv.vn/viec-lam/your-job.html"
 
-# Tùy chọn Playwright
-PLAYWRIGHT_HEADLESS=true
-# Tăng nếu hay bị timeout (gợi ý: 45000)
-PLAYWRIGHT_NAV_TIMEOUT_MS=20000
-PLAYWRIGHT_EXTRA_WAIT_MS=1000
-TOPCV_BROWSER_WAIT_SELECTOR="body"
+---
+
+## 5) Cấu trúc thư mục chính
+
+```text
+app/
+  api/
+    rag/                 # Query parser, retriever, chat logic, embeddings
+    auth.py              # Đăng ký/đăng nhập/profile
+    jobs.py              # Trang danh sách + chi tiết job
+    chat.py              # Endpoint /api/chat
+  topcv/
+    crawl_batch_jobs.py  # Crawl hàng loạt từ sitemap
+    crawl_one_job.py     # Crawl 1 job
+    crawl_browser.py     # Crawl fallback bằng Playwright
+  db.py                  # Helper kết nối và upsert DB
+
+web/
+  templates/             # Giao diện Jinja2
+  static/                # CSS/JS frontend
+
+db/
+  db.sql                 # Schema CSDL + pgvector
+
+testing_chatbot/
+  ...                    # Bộ dữ liệu và script đánh giá chatbot
 ```
 
-2. Chạy crawler headless cho một job:
 
-```
-python -m app.topcv.crawl_browser --url "https://www.topcv.vn/viec-lam/your-job.html"
-```
-
-Nếu bỏ `--url`, script sẽ dùng giá trị từ `TOPCV_BROWSER_JOB_URL`.
